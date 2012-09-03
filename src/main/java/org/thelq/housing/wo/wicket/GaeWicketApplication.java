@@ -1,4 +1,4 @@
-package org.thelq.mavenproject1;
+package org.thelq.housing.wo.wicket;
 
 import org.apache.wicket.Page;
 import org.apache.wicket.protocol.http.HttpSessionStore;

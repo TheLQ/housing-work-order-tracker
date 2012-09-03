@@ -9,7 +9,7 @@
  */
 
 
-package org.thelq.mavenproject1;
+package org.thelq.housing.wo.wicket;
 
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
