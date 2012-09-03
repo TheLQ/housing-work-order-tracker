@@ -125,6 +125,21 @@
 			<version>${gae.version}</version>
 			<scope>test</scope>
 		</dependency> -->
+		<dependency>
+			<groupId>com.google.gdata.gdata-java-client</groupId>
+			<artifactId>gdata-spreadsheet-3.0</artifactId>
+			<version>1.47.1</version>
+		</dependency>
+		<dependency>
+			<groupId>com.google.oauth-client</groupId>
+			<artifactId>google-oauth-client</artifactId>
+			<version>1.11.0-beta</version>
+		</dependency>
+		<dependency>
+			<groupId>com.google.oauth-client</groupId>
+			<artifactId>google-oauth-client-appengine</artifactId>
+			<version>1.11.0-beta</version>
+		</dependency>
 	</dependencies>
   
 	<properties>
@@ -143,6 +158,15 @@
 		<!-- port defaults to 8080 -->
 		<gae.port>8080</gae.port>
 	</properties>
+
+	<repositories>
+		<!-- Provides mavenised gdata libraries -->
+		<repository>
+			<id>gdata-maven-github</id>
+			<name>Google Gdata Maven Repository</name>
+			<url>https://raw.github.com/eburtsev/gdata-maven/master</url>
+		</repository>
+	</repositories>
 
 	<profiles>
 		<!--
