@@ -1,3 +1,8 @@
+/**
+ * Copyright (C) 2012 Leon Blakey <lord.quackstar at gmail.com>, RATS ${ratsYear}
+ *
+ * This file is part of Housing WorkOrder System.
+ */
 package org.thelq.housing.wo.wicket;
 
 import org.apache.wicket.Page;

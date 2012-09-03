@@ -1,4 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+
+    Copyright (C) 2012 Leon Blakey <lord.quackstar at gmail.com>, RATS ${ratsYear}
+
+    This file is part of Housing WorkOrder System.
+
+-->
 <jdoconfig xmlns="http://java.sun.com/xml/ns/jdo/jdoconfig"
 		   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 		   xsi:noNamespaceSchemaLocation="http://java.sun.com/xml/ns/jdo/jdoconfig">

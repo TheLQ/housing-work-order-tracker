@@ -16,6 +16,35 @@
 
 	<build>
 		<plugins>
+			<!--Makes sure License Headers are consistant across all files-->
+			<plugin>
+				<groupId>com.mycila.maven-license-plugin</groupId>
+				<artifactId>maven-license-plugin</artifactId>
+				<version>1.10.b1</version>
+				<configuration>
+					<header>src/main/resources/LICENSE</header>
+					<properties>
+						<email>lord.quackstar at gmail.com</email>
+						<name>Leon Blakey</name>
+						<year>2012</year>
+						<projectname>Housing WorkOrder System</projectname>
+					</properties>
+					<excludes>
+						<exclude>**/*.txt</exclude>
+						<exclude>**/*.log</exclude>
+						<exclude>**/nbactions.xml</exclude>
+					</excludes>
+					<strictCheck>true</strictCheck>
+				</configuration>
+				<executions>
+					<execution>
+						<phase>process-sources</phase>
+						<goals>
+							<goal>format</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
 			<!--
 				The actual maven-gae-plugin. Type "mvn gae:run" to run project, "mvn gae:update"
 				to upload to GAE.
