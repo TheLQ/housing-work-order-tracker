@@ -94,7 +94,7 @@
   
 	<properties>
 		<!-- Sets the project's default encoding.
-			http://docs.codehaus.org/display/MAVENUSER/POM+Element+for+Source+File+Encoding -->
+		http://docs.codehaus.org/display/MAVENUSER/POM+Element+for+Source+File+Encoding -->
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
 		<!--

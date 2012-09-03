@@ -7,8 +7,6 @@
  * Confidential Information and shall use it only in accordance with the terms
  * of the license agreement you entered into with Kindleit.
  */
-
-
 package org.thelq.housing.wo.wicket;
 
 import org.apache.wicket.markup.html.WebPage;
@@ -19,9 +17,7 @@ import org.apache.wicket.markup.html.basic.Label;
  *
  */
 public class HomePage extends WebPage {
-
-  public HomePage() {
-    add(new Label("hello", "Hello World"));
-  }
-
+	public HomePage() {
+		add(new Label("hello", "Hello World"));
+	}
 }
