@@ -12,11 +12,11 @@
 		<link href="css/bootstrap.min.css" rel="stylesheet"/>
 		<link href="css/main.css" rel="stylesheet"/>
 	</head>
-	<body style="padding-left: 4px; background-color: #F0F0F0;">
+	<body style="padding-left: 4px; background-color: /*#F0F0F0*/white;">
 		<div class="row-fluid">
 			<div class="span6 form-inline" style="font-weight:bold; text-align: center">
 				<!-- Header -->
-				<div class="wrap-box" style="text-align: center">
+				<div class="well" style="text-align: center">
 					<h2>Housing - RATS Work Orders</h2>
 					<h3>Ticket Manager</h3>
 				</div>
@@ -34,7 +34,7 @@
 					<p>Status: Loaded 1 issue(s) from test</p>
 				</div>
 				<!-- Issue Select -->
-				<div class="wrap-box" style="text-align: center">
+				<div class="well well-small">
 					<span><i class="icon-question-sign"></i></span>
 					Issue:
 					<select name="issue1">
@@ -54,8 +54,9 @@
 					</select>
 					Notes: <input type="text" name="notes1"/>
 				</div>
+				
 			</div>
-			<div class="span6 wrap-box" wicket:id="hello">Part 2</div>
+			<div class="span6 well" wicket:id="hello">Part 2</div>
 		</div>
 
 	</body>
