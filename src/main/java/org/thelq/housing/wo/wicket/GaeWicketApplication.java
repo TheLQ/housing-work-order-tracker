@@ -1,9 +1,9 @@
 package org.thelq.housing.wo.wicket;
 
-import org.apache.wicket.Page;
-import org.apache.wicket.protocol.http.HttpSessionStore;
+import org.apache.wicket.Page;;
 import org.apache.wicket.protocol.http.WebApplication;
 import org.apache.wicket.session.ISessionStore;
+import org.apache.wicket.util.time.Duration;
 
 public class GaeWicketApplication extends WebApplication {
 	@Override
@@ -14,11 +14,6 @@ public class GaeWicketApplication extends WebApplication {
 	@Override
 	protected void init() {
 		super.init();
-		getResourceSettings().setResourcePollFrequency(null);
-	}
-
-	@Override
-	protected ISessionStore newSessionStore() {
-		return new HttpSessionStore(this);
+		getResourceSettings().setResourcePollFrequency(Duration.ONE_SECOND);
 	}
 }
