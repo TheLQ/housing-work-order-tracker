@@ -83,12 +83,13 @@
 			<scope>test</scope>
 		</dependency>
 
+		<!-- Doesn't exist?
 		<dependency>
 			<groupId>com.google.appengine</groupId>
 			<artifactId>appengine-local-runtime</artifactId>
 			<version>${gae.version}</version>
 			<scope>test</scope>
-		</dependency>
+		</dependency> -->
 	</dependencies>
   
 	<properties>
