@@ -1,8 +1,8 @@
 package org.thelq.housing.wo.wicket;
 
-import org.apache.wicket.Page;;
+import org.apache.wicket.Page;
 import org.apache.wicket.protocol.http.WebApplication;
-import org.apache.wicket.session.ISessionStore;
+import org.apache.wicket.settings.IExceptionSettings;
 import org.apache.wicket.util.time.Duration;
 
 public class GaeWicketApplication extends WebApplication {
@@ -15,5 +15,9 @@ public class GaeWicketApplication extends WebApplication {
 	protected void init() {
 		super.init();
 		getResourceSettings().setResourcePollFrequency(Duration.ONE_SECOND);
+		getMarkupSettings().setStripWicketTags(false);
+		getDebugSettings().setComponentUseCheck(true);
+		getExceptionSettings().setUnexpectedExceptionDisplay(IExceptionSettings.SHOW_EXCEPTION_PAGE);
+		getMarkupSettings().setStripWicketTags(false);
 	}
 }
