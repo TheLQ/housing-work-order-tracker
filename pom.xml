@@ -28,6 +28,7 @@
 						<name>Leon Blakey</name>
 						<year>2012</year>
 						<projectname>Housing WorkOrder System</projectname>
+						<ratsYear>2012</ratsYear>
 					</properties>
 					<excludes>
 						<exclude>**/*.txt</exclude>

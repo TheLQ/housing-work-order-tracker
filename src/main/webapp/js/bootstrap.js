@@ -1,9 +1,8 @@
 /*
- * Copyright (C) 2012 Leon Blakey <lord.quackstar at gmail.com>, RATS ${ratsYear}
+ * Copyright (C) 2012 Leon Blakey <lord.quackstar at gmail.com>, RATS 2012
  *
  * This file is part of Housing WorkOrder System.
  */
-
 !function ($) {
 
   $(function () {
