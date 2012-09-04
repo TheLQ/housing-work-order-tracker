@@ -24,5 +24,8 @@ public class GaeWicketApplication extends WebApplication {
 		getDebugSettings().setComponentUseCheck(true);
 		getExceptionSettings().setUnexpectedExceptionDisplay(IExceptionSettings.SHOW_EXCEPTION_PAGE);
 		getMarkupSettings().setStripWicketTags(false);
+		
+		//Handle URL mapping
+		mountPage("/processData", ProcessData.class);
 	}
 }
