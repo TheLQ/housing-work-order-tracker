@@ -17,6 +17,6 @@
 	</filter>
 	<filter-mapping>
 		<filter-name>Housing-wo-wicket</filter-name>
-		<url-pattern>/workorders/*</url-pattern>
+		<url-pattern>/*</url-pattern>
 	</filter-mapping>
 </web-app>
