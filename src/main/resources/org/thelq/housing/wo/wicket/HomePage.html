@@ -15,26 +15,31 @@
 	<body style="padding-left: 4px; background-color: /*#F0F0F0*/white;">
 		<div class="row-fluid">
 			<div class="span6 form-inline" style="font-weight:bold; text-align: center">
-				<!-- Header -->
-				<div class="well" style="text-align: center">
-					<h2>Housing - RATS Work Orders</h2>
-					<h3>Ticket Manager</h3>
-				</div>
-				<!-- Building and room select -->
-				<div>
-					Building: <select name="building" wicket:id="building"></select>
-					Room: <input type="text" name="usrname" maxlength="3"/>
-					<p>Status: Loaded 1 issue(s) from test</p>
-				</div>
-				<!-- Issue Select template -->
-				<div class="well well-small" id="issuesBox">
-					<span><i class="icon-question-sign"></i></span>
-					Issue: <select wicket:id="issues" name="issue" id="issue"></select>
-					Notes: <input type="text" name="note" id="note"/>
-				</div>
-				<button id="plus" class="btn btn-info"><i class="icon-plus"></i>Add Issue</button>
-				<button id="minus" class="btn btn-warning"><i class="icon-search"></i>Remove Issue</button>
-				<button type="Submit" name="Submit" value="Submit" class="btn btn-success"><i class=" icon-ok-sign"></i>Submit</button>
+				<form target="transFrame" method="POST" action="/processData"  >
+					<!-- Header -->
+					<div class="well" style="text-align: center">
+						<h2>Housing - RATS Work Orders</h2>
+						<h3>Ticket Manager</h3>
+					</div>
+					<!-- Building and room select -->
+					<div>
+						Building: <select name="building" wicket:id="building"></select>
+						Room: <input type="text" name="usrname" maxlength="3"/>
+						<p>Status: Loaded 1 issue(s) from test</p>
+					</div>
+					<!-- Issue Select template -->
+					<div class="well well-small" id="issuesBox">
+						<span><i class="icon-question-sign"></i></span>
+						Issue: <select wicket:id="issues" name="issue" id="issue"></select>
+						Notes: <input type="text" name="note" id="note"/>
+					</div>
+					<button id="plus" class="btn btn-info"><i class="icon-plus"></i>Add Issue</button>
+					<button id="minus" class="btn btn-warning"><i class="icon-search"></i>Remove Issue</button>
+					<button type="Submit" name="Submit" value="Submit" id="submit" class="btn btn-success"><i class=" icon-ok-sign"></i>Submit</button>
+					<p>Submit Status: <span id="submitStatus">Waiting</span></p>
+				</form>
+				<!-- Invisible frame that the form submits to in background -->
+				<iframe style="" name="transFrame" id="transFrame"></iframe>
 			</div>
 			<div class="span6 well" wicket:id="hello">Part 2</div>
 		</div>
@@ -47,6 +52,13 @@
 			$(document).ready(function(){
 				//Issue Duplication
 				$("#issuesBox").dynamicForm("#plus", "#minus", {limit:3, createColor:'yellow',	removeColor: 'red'});
+				
+				//Magic submit
+				$("#submit").bind('click', function(event) {
+					$("#submitStatus").text("Submitting...");
+				});
+				
+				$('#transFrame').ready(function () {alert("loaded")});
 			});
 		</script>
 	</body>
