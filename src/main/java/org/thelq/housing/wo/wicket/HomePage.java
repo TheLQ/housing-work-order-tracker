@@ -18,6 +18,7 @@ import java.util.Properties;
 import java.util.Set;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.form.DropDownChoice;
 
 /** Page is responsible of
  * @author rhansen@kindleit.net
@@ -34,7 +35,9 @@ public class HomePage extends WebPage {
 	protected List<String> buildings = new ArrayList();
 
 	public HomePage() {
+		loadSpreadsheet();
 		add(new Label("hello", "Hello World"));
+		add(new DropDownChoice("building", buildings));
 	}
 
 	public void loadSpreadsheet() {
