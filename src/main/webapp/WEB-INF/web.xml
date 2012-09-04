@@ -8,7 +8,7 @@
 -->
 <web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://java.sun.com/xml/ns/javaee" xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
 	<filter>
-		<filter-name>examplePortal</filter-name>
+		<filter-name>Housing-wo-wicket</filter-name>
 		<filter-class>org.apache.wicket.protocol.http.WicketFilter</filter-class>
 		<init-param>
 			<param-name>applicationClassName</param-name>
@@ -16,7 +16,7 @@
 		</init-param>
 	</filter>
 	<filter-mapping>
-		<filter-name>examplePortal</filter-name>
-		<url-pattern>/*</url-pattern>
+		<filter-name>Housing-wo-wicket</filter-name>
+		<url-pattern>/workorders/*</url-pattern>
 	</filter-mapping>
 </web-app>
