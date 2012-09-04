@@ -22,22 +22,32 @@
 				</div>
 				<!-- Building and room select -->
 				<div>
-					Building: 
-					<select name="building" wicket:id="building"></select>
+					Building: <select name="building" wicket:id="building"></select>
 					Room: <input type="text" name="usrname" maxlength="3"/>
 					<p>Status: Loaded 1 issue(s) from test</p>
 				</div>
-				<!-- Issue Select -->
-				<div class="well well-small">
+				<!-- Issue Select template -->
+				<div class="well well-small" id="issuesBox">
 					<span><i class="icon-question-sign"></i></span>
-					Issue:
-					<select wicket:id="issues"></select>
-					Notes: <input type="text" name="notes1"/>
+					Issue: <select wicket:id="issues" name="issue" id="issue"></select>
+					Notes: <input type="text" name="note" id="note"/>
 				</div>
-				
+				<button id="plus" class="btn btn-info"><i class="icon-plus"></i>Add Issue</button>
+				<button id="minus" class="btn btn-warning"><i class="icon-search"></i>Remove Issue</button>
+				<button type="Submit" name="Submit" value="Submit" class="btn btn-success"><i class=" icon-ok-sign"></i>Submit</button>
 			</div>
 			<div class="span6 well" wicket:id="hello">Part 2</div>
 		</div>
 
+
+		<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.8.0/jquery.min.js"></script>
+		<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jqueryui/1.8.23/jquery-ui.min.js"></script>
+		<script type="text/javascript" src="js/jquery-dynamic-form.js"></script>
+		<script type="text/javascript">
+			$(document).ready(function(){
+				//Issue Duplication
+				$("#issuesBox").dynamicForm("#plus", "#minus", {limit:3, createColor:'yellow',	removeColor: 'red'});
+			});
+		</script>
 	</body>
 </html>
