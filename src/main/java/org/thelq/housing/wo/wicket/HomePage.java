@@ -38,6 +38,13 @@ public class HomePage extends WebPage {
 		loadSpreadsheet();
 		add(new Label("hello", "Hello World"));
 		add(new DropDownChoice("building", buildings));
+
+		//Generate issue drop down
+		List<String> combinedIssues = new ArrayList();
+		for (Map.Entry<String, List<String>> curEntry : issueMap.entrySet())
+			for (String curIssue : curEntry.getValue())
+				combinedIssues.add(curEntry.getKey() + " - " + curIssue);
+		add(new DropDownChoice("issues", combinedIssues));
 	}
 
 	public void loadSpreadsheet() {
@@ -55,7 +62,9 @@ public class HomePage extends WebPage {
 
 				//Parse each column in row
 				for (String columnName : rowData.getTags())
-					if (columnName.equalsIgnoreCase("Buildings"))
+					if (rowData.getValue(columnName) == null)
+						continue;
+					else if (columnName.equalsIgnoreCase("Buildings"))
 						buildings.add(rowData.getValue(columnName));
 					else {
 						//Must be issue ui data
