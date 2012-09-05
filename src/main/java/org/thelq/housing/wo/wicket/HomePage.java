@@ -19,12 +19,15 @@ import java.util.Set;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.DropDownChoice;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /** Page is responsible of
  * @author rhansen@kindleit.net
  *
  */
 public class HomePage extends WebPage {
+	private static final Logger log = LoggerFactory.getLogger(HomePage.class);
 	/**
 	 * Spreadsheet feed key, NOT document key
 	 */
@@ -35,6 +38,7 @@ public class HomePage extends WebPage {
 	protected List<String> buildings = new ArrayList();
 
 	public HomePage() {
+		log.debug("Started loading home page");
 		loadSpreadsheet();
 		add(new Label("hello", "Hello World"));
 		add(new DropDownChoice("building", buildings));
@@ -45,6 +49,7 @@ public class HomePage extends WebPage {
 			for (String curIssue : curEntry.getValue())
 				combinedIssues.add(curEntry.getKey() + " - " + curIssue);
 		add(new DropDownChoice("issues", combinedIssues));
+		log.debug("Finished loading page!");
 	}
 
 	public void loadSpreadsheet() {
@@ -73,6 +78,7 @@ public class HomePage extends WebPage {
 						issueMap.get(columnName).add(rowData.getValue(columnName));
 					}
 			}
+			log.debug("Loaded " + buildings.size() + " buildings and " + issueMap.size() + " issue types ");
 		} catch (Exception ex) {
 			throw new RuntimeException("Can't load spreadsheet", ex);
 		}
