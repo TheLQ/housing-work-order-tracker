@@ -15,7 +15,7 @@
 	<body style="padding-left: 4px; background-color: /*#F0F0F0*/white;">
 		<div class="row-fluid">
 			<div class="span6 form-inline" style="font-weight:bold; text-align: center">
-				<form target="transFrame" method="POST" action="/processData"  >
+				<form method="POST" action="processData" id="mainForm">
 					<!-- Header -->
 					<div class="well" style="text-align: center">
 						<h2>Housing - RATS Work Orders</h2>
@@ -35,11 +35,9 @@
 					</div>
 					<button id="plus" class="btn btn-info"><i class="icon-plus"></i>Add Issue</button>
 					<button id="minus" class="btn btn-warning"><i class="icon-search"></i>Remove Issue</button>
-					<button type="Submit" name="Submit" value="Submit" id="submit" class="btn btn-success"><i class=" icon-ok-sign"></i>Submit</button>
-					<p>Submit Status: <span id="submitStatus">Waiting</span></p>
+					<button id="submit" class="btn btn-success"><i class=" icon-ok-sign"></i>Submit</button>
+					<p>Submit Status: <span id="submitStatus">Waiting for input</span></p>
 				</form>
-				<!-- Invisible frame that the form submits to in background -->
-				<iframe style="" name="transFrame" id="transFrame"></iframe>
 			</div>
 			<div class="span6 well" wicket:id="hello">Part 2</div>
 		</div>
@@ -48,17 +46,35 @@
 		<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.8.0/jquery.min.js"></script>
 		<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jqueryui/1.8.23/jquery-ui.min.js"></script>
 		<script type="text/javascript" src="js/jquery-dynamic-form.js"></script>
+		<script type="text/javascript" src="http://malsup.github.com/jquery.form.js"></script> 
 		<script type="text/javascript">
 			$(document).ready(function(){
 				//Issue Duplication
 				$("#issuesBox").dynamicForm("#plus", "#minus", {limit:3, createColor:'yellow',	removeColor: 'red'});
-				
-				//Magic submit
-				$("#submit").bind('click', function(event) {
-					$("#submitStatus").text("Submitting...");
+ 
+				//Automagical ajax submit
+				$('#mainForm').submit(function() { 
+					// inside event callbacks 'this' is the DOM element so we first 
+					// wrap it in a jQuery object and then invoke ajaxSubmit 
+					$(this).ajaxSubmit({ 
+						target:        '#submitStatus',   // target element(s) to be updated with server response 
+						beforeSubmit:  function() {
+							$("#submitStatus").html("Submitting...");
+						}
+						//success:         // post-submit callback 
+ 
+						// other available options: 
+						//url:       url         // override for form's 'action' attribute 
+						//type:      type        // 'get' or 'post', override for form's 'method' attribute 
+						//dataType:  null        // 'xml', 'script', or 'json' (expected server response type) 
+						//clearForm: true        // clear all form fields after successful submit 
+						//resetForm: true        // reset the form after successful submit 
+					}); 
+ 
+					// !!! Important !!! 
+					// always return false to prevent standard browser submit and page navigation 
+					return false; 
 				});
-				
-				$('#transFrame').ready(function () {alert("loaded")});
 			});
 		</script>
 	</body>
