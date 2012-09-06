@@ -23,15 +23,15 @@
 					</div>
 					<!-- Building and room select -->
 					<div>
-						Building: <select name="building" wicket:id="building"></select>
-						Room: <input type="text" name="usrname" maxlength="3"/>
+						<label>Building: <select name="building" wicket:id="building"></select></label>
+						<label>Room: <input type="text" name="usrname" maxlength="3"/></label>
 						<p>Status: Loaded 1 issue(s) from test</p>
 					</div>
 					<!-- Issue Select template -->
 					<div class="well well-small" id="issuesBox">
 						<span><i class="icon-question-sign"></i></span>
-						Issue: <select wicket:id="issues" name="issue" id="issue"></select>
-						Notes: <input type="text" name="note" id="note"/>
+						<label>Issue: <select wicket:id="issues" name="issue" id="issue"></select></label>
+						<label>Notes: <input type="text" name="note" id="note"/></label>
 					</div>
 					<button id="plus" class="btn btn-info"><i class="icon-plus"></i>Add Issue</button>
 					<button id="minus" class="btn btn-warning"><i class="icon-search"></i>Remove Issue</button>
