@@ -3,10 +3,6 @@
  *
  * This file is part of Housing WorkOrder System.
  */
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package org.thelq.housing.wo.wicket;
 
 import org.apache.wicket.markup.html.WebPage;
