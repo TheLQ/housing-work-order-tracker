@@ -40,6 +40,11 @@ public class HomePage extends WebPage {
 	public HomePage() {
 		log.debug("Started loading home page");
 		loadSpreadsheet();
+		buildForm();
+		log.debug("Finished loading page!");
+	}
+	
+	public void buildForm() {
 		add(new Label("hello", "Hello World"));
 		add(new DropDownChoice("building", buildings));
 
@@ -49,7 +54,6 @@ public class HomePage extends WebPage {
 			for (String curIssue : curEntry.getValue())
 				combinedIssues.add(curEntry.getKey() + " - " + curIssue);
 		add(new DropDownChoice("issues", combinedIssues));
-		log.debug("Finished loading page!");
 	}
 
 	public void loadSpreadsheet() {
