@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Copyright (C) 2012 Leon Blakey <lord.quackstar at gmail.com>, RATS 2012
+
+    This file is part of Housing WorkOrder System.
+
+-->
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:wicket="http://wicket.apache.org/dtds.data/wicket-xhtml1.4-strict.dtd">
+	<head>
+		<title>Housing WorkOrders</title>
+		<link href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.1.0/css/bootstrap-combined.min.css" rel="stylesheet"/>
+		<link href="css/main.css" rel="stylesheet"/>
+	</head>
+	<body style="padding-left: 4px; background-color: /*#F0F0F0*/white;">
+		<div class="row-fluid">
+			<div class="span6 form-inline" style="font-weight:bold; text-align: center">
+				<form method="POST" action="processData" id="mainForm">
+					<!-- Header -->
+					<div class="well" style="text-align: center">
+						<h2>Housing - RATS Work Orders</h2>
+						<h3>Ticket Manager</h3>
+					</div>
+					<!-- Building and room select -->
+					<div>
+						<label>Building: <select name="building" wicket:id="building"></select></label>
+						<label>Room: <input type="text" name="usrname" maxlength="3"/></label>
+						<p>Status: Loaded 1 issue(s) from test</p>
+					</div>
+					<!-- Issue Select template -->
+					<div class="well well-small" id="issuesBox">
+						<span><i class="icon-question-sign"></i></span>
+						<label>Issue: <select wicket:id="issues" name="issue" id="issue"></select></label>
+						<label>Notes: <input type="text" name="note" id="note"/></label>
+					</div>
+					<button id="plus" class="btn btn-info"><i class="icon-plus"></i>Add Issue</button>
+					<button id="minus" class="btn btn-warning"><i class="icon-search"></i>Remove Issue</button>
+					<button id="submit" class="btn btn-success"><i class=" icon-ok-sign"></i>Submit</button>
+					<p>Submit Status: <span id="submitStatus">Waiting for input</span></p>
+				</form>
+			</div>
+			<div class="span6 well" wicket:id="hello">Part 2</div>
+		</div>
+
+
+		<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.8.0/jquery.min.js"></script>
+		<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jqueryui/1.8.23/jquery-ui.min.js"></script>
+		<script type="text/javascript" src="js/jquery-dynamic-form.js"></script>
+		<script type="text/javascript" src="http://malsup.github.com/jquery.form.js"></script> 
+		<script type="text/javascript">
+			$(document).ready(function(){
+				//Issue Duplication
+				$("#issuesBox").dynamicForm("#plus", "#minus", {createColor:'yellow',	removeColor: 'red'});
+ 
+				//Automagical ajax submit
+				$('#mainForm').submit(function() { 
+					// inside event callbacks 'this' is the DOM element so we first 
+					// wrap it in a jQuery object and then invoke ajaxSubmit 
+					$(this).ajaxSubmit({ 
+						target:        '#submitStatus',   // target element(s) to be updated with server response 
+						beforeSubmit:  function() {
+							$("#submitStatus").html("Submitting...");
+						}
+						//success:         // post-submit callback 
+ 
+						// other available options: 
+						//url:       url         // override for form's 'action' attribute 
+						//type:      type        // 'get' or 'post', override for form's 'method' attribute 
+						//dataType:  null        // 'xml', 'script', or 'json' (expected server response type) 
+						//clearForm: true        // clear all form fields after successful submit 
+						//resetForm: true        // reset the form after successful submit 
+					}); 
+ 
+					// !!! Important !!! 
+					// always return false to prevent standard browser submit and page navigation 
+					return false; 
+				});
+			});
+		</script>
+	</body>
+</html>
