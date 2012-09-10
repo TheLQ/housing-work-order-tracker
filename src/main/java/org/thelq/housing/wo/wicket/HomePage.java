@@ -22,9 +22,9 @@ import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/** Page is responsible of
- * @author rhansen@kindleit.net
- *
+/**
+ * Main home page with form
+ * @author Leon Blakey <lord.quackstar at gmail.com>
  */
 public class HomePage extends WebPage {
 	private static final Logger log = LoggerFactory.getLogger(HomePage.class);
