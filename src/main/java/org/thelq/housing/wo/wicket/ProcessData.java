@@ -13,8 +13,8 @@ import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
 
 /**
- *
- * @author lordquackstar
+ * Handle input
+ * @author Leon Blakey <lord.quackstar at gmail.com>
  */
 public class ProcessData extends WebPage {
 	public ProcessData() {

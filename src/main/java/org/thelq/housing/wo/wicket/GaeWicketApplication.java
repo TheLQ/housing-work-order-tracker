@@ -14,6 +14,10 @@ import org.apache.wicket.util.time.Duration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Wicket init class. Sets some settings
+ * @author Leon Blakey <lord.quackstar at gmail.com>
+ */
 public class GaeWicketApplication extends WebApplication {
 	private static final Logger log = LoggerFactory.getLogger(GaeWicketApplication.class);
 
