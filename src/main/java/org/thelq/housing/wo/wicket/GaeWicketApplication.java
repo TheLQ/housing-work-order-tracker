@@ -5,6 +5,9 @@
  */
 package org.thelq.housing.wo.wicket;
 
+import java.io.IOException;
+import java.util.logging.Level;
+import lombok.Getter;
 import org.apache.wicket.Application;
 import org.apache.wicket.Page;
 import org.apache.wicket.RuntimeConfigurationType;
@@ -20,6 +23,8 @@ import org.slf4j.LoggerFactory;
  */
 public class GaeWicketApplication extends WebApplication {
 	private static final Logger log = LoggerFactory.getLogger(GaeWicketApplication.class);
+	@Getter
+	protected Spreadsheet spreadsheet;
 
 	@Override
 	public Class<? extends Page> getHomePage() {
@@ -53,5 +58,11 @@ public class GaeWicketApplication extends WebApplication {
 
 		//Handle URL mapping
 		mountPage("/processData", ProcessData.class);
+		try {
+			//Global Spreadsheet instance
+			spreadsheet = new Spreadsheet();
+		} catch (Exception ex) {
+			throw new RuntimeException("Can't load spreadsheet", ex);
+		}
 	}
 }
