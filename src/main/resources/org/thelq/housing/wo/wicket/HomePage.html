@@ -15,7 +15,7 @@
 	<body style="padding-left: 4px; background-color: /*#F0F0F0*/white;">
 		<div class="row-fluid">
 			<div class="span6 form-inline" style="font-weight:bold; text-align: center">
-				<form method="POST" action="processData" id="mainForm">
+				<form method="POST" action="processData?mode=form" id="mainForm">
 					<!-- Header -->
 					<div class="well" style="text-align: center">
 						<h2>Housing - RATS Work Orders</h2>
@@ -24,17 +24,25 @@
 					<!-- Building and room select -->
 					<div>
 						<label>Building: <select name="building" wicket:id="building"></select></label>
-						<label>Room: <input type="text" name="usrname" maxlength="3"/></label>
+						<label>Room: <input type="text" name="room" maxlength="3"/></label>
 						<p>Status: Loaded 1 issue(s) from test</p>
 					</div>
 					<!-- Issue Select template -->
-					<div class="well well-small" id="issuesBox">
-						<span><i class="icon-question-sign"></i></span>
-						<label>Issue: <select wicket:id="issues" name="issue" id="issue"></select></label>
-						<label>Notes: <input type="text" name="note" id="note"/></label>
+					<div class="well well-small row-fluid" id="issuesBox">
+						<div class="span6">
+							<span><i class="icon-question-sign"></i></span>
+							<label>Issue: <select wicket:id="issues" name="issue" id="issue"></select></label>
+						</div>
+						<div class="span6" id="notesContainer">
+							<div id="notesBox">
+								<label>Notes: <textarea rows="3" name="note" id="note"/></label>
+							</div>
+							<button id="addNote" class="btn btn-info"><i class="icon-plus"></i>Add Note</button>
+							<button id="removeNote" class="btn btn-warning"><i class="icon-search"></i>Remove Note</button>
+						</div>
 					</div>
-					<button id="plus" class="btn btn-info"><i class="icon-plus"></i>Add Issue</button>
-					<button id="minus" class="btn btn-warning"><i class="icon-search"></i>Remove Issue</button>
+					<button id="addIssue" class="btn btn-info"><i class="icon-plus"></i>Add Issue</button>
+					<button id="removeIssue" class="btn btn-warning"><i class="icon-search"></i>Remove Issue</button>
 					<button id="submit" class="btn btn-success"><i class=" icon-ok-sign"></i>Submit</button>
 					<p>Submit Status: <span id="submitStatus">Waiting for input</span></p>
 				</form>
@@ -50,7 +58,8 @@
 		<script type="text/javascript">
 			$(document).ready(function(){
 				//Issue Duplication
-				$("#issuesBox").dynamicForm("#plus", "#minus", {createColor:'yellow',	removeColor: 'red'});
+				$("#issuesBox").dynamicForm("#addIssue", "#removeIssue", {createColor:'yellow',	removeColor: 'red'});
+				$("#notesBox").dynamicForm("#addNote", "#removeNote", {createColor:'yellow',	removeColor: 'red'});
  
 				//Automagical ajax submit
 				$('#mainForm').submit(function() { 
