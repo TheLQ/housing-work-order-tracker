@@ -15,7 +15,7 @@
 	<body style="padding-left: 4px; background-color: /*#F0F0F0*/white;">
 		<div class="row-fluid">
 			<div class="span6 form-inline" style="font-weight:bold; text-align: center">
-				<form method="POST" action="processData" id="mainForm">
+				<form method="POST" action="processData" id="mainForm" wicket:id="mainForm">
 					<!-- Header -->
 					<div class="well" style="text-align: center">
 						<h2>Housing - RATS Work Orders</h2>
@@ -24,17 +24,19 @@
 					<!-- Building and room select -->
 					<div>
 						<label>Building: <select name="building" wicket:id="building"></select></label>
-						<label>Room: <input type="text" name="usrname" maxlength="3"/></label>
+						<label>Room: <input type="text" name="room" maxlength="3" wicket:id="room"/></label>
 						<p>Status: Loaded 1 issue(s) from test</p>
 					</div>
 					<!-- Issue Select template -->
-					<div class="well well-small" id="issuesBox">
-						<span><i class="icon-question-sign"></i></span>
-						<label>Issue: <select wicket:id="issues" name="issue" id="issue"></select></label>
-						<label>Notes: <input type="text" name="note" id="note"/></label>
+					<div wicket:id="issuesPanel">
+						<div class="well well-small" id="issuesBox" wicket:id="issuesBox">
+							<span><i class="icon-question-sign"></i></span>
+							<label>Issue: <select wicket:id="issues" name="issue" id="issue"></select></label>
+							<label>Notes: <input type="text" name="note" id="note" wicket:id="note"/></label>
+						</div>
 					</div>
-					<button id="plus" class="btn btn-info"><i class="icon-plus"></i>Add Issue</button>
-					<button id="minus" class="btn btn-warning"><i class="icon-search"></i>Remove Issue</button>
+					<button id="plus" class="btn btn-info" wicket:id="addIssue"><i class="icon-plus"></i>Add Issue</button>
+					<button id="minus" class="btn btn-warning" wicket:id="removeIssue"><i class="icon-search"></i>Remove Issue</button>
 					<button id="submit" class="btn btn-success"><i class=" icon-ok-sign"></i>Submit</button>
 					<p>Submit Status: <span id="submitStatus">Waiting for input</span></p>
 				</form>
@@ -50,10 +52,10 @@
 		<script type="text/javascript">
 			$(document).ready(function(){
 				//Issue Duplication
-				$("#issuesBox").dynamicForm("#plus", "#minus", {createColor:'yellow',	removeColor: 'red'});
+				//$("#issuesBox").dynamicForm("#plus", "#minus", {createColor:'yellow',	removeColor: 'red'});
  
 				//Automagical ajax submit
-				$('#mainForm').submit(function() { 
+				/*$('#mainForm').submit(function() { 
 					// inside event callbacks 'this' is the DOM element so we first 
 					// wrap it in a jQuery object and then invoke ajaxSubmit 
 					$(this).ajaxSubmit({ 
@@ -74,7 +76,7 @@
 					// !!! Important !!! 
 					// always return false to prevent standard browser submit and page navigation 
 					return false; 
-				});
+				});*/
 			});
 		</script>
 	</body>
