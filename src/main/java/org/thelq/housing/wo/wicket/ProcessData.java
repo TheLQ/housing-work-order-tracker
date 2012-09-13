@@ -51,7 +51,7 @@ public class ProcessData extends AbstractResource {
 						responseString = new JSONObject().append("error", "Unknown mode " + mode).toString();
 					throw new RuntimeException("Oh noes!!");
 				} catch (Exception ex) {
-					String error = StringEscapeUtils.escapeHtml(ExceptionUtils.getFullStackTrace(ex));
+					String error = StringEscapeUtils.escapeJavaScript(ExceptionUtils.getFullStackTrace(ex));
 					responseString = "{\"error\": \"" + error + "\"}";
 				}
 				a.getResponse().write(responseString);
