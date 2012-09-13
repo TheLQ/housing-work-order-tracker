@@ -21,12 +21,14 @@ import java.net.URL;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import lombok.Data;
+import lombok.Getter;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,7 +47,8 @@ public class Spreadsheet {
 	protected SpreadsheetService ssService;
 	protected final String user;
 	protected final String pass;
-	protected SimpleDateFormat oldDateFormat = new SimpleDateFormat("MMMMMMMMMM FF, yyyy hh:mm:ss aa zzz");
+	@Getter
+	protected static SimpleDateFormat oldDateFormat = new SimpleDateFormat("MMMMMMMMMM FF, yyyy hh:mm:ss aa zzz");
 
 	public Spreadsheet() throws IOException, AuthenticationException {
 		Properties userProp = new Properties();
@@ -80,16 +83,16 @@ public class Spreadsheet {
 		log.debug("Loaded " + data.getBuildings().size() + " buildings and " + data.getIssues().size() + " issue types ");
 		return data;
 	}
-	
+
 	public List<RawDataEntry> loadRaw() throws MalformedURLException, ServiceException, IOException, ParseException {
 		List<RawDataEntry> enteries = new ArrayList();
-		
+
 		//Load entire sheet into list
 		ListFeed listFeed = ssService.getFeed(new URL(url_raw), ListFeed.class);
 		for (ListEntry row : listFeed.getEntries()) {
 			CustomElementCollection rowData = row.getCustomElements();
 			RawDataEntry curEntry = new RawDataEntry();
-			
+
 			//Parse each column in row
 			for (String columnName : rowData.getTags()) {
 				String value = rowData.getValue(columnName);
@@ -120,10 +123,29 @@ public class Spreadsheet {
 			}
 			enteries.add(curEntry);
 		}
-		
+
 		return enteries;
 	}
-	
+
+	public void insertData(Collection<RawDataEntry> enteries) throws IOException, ServiceException {
+		for (RawDataEntry curEntry : enteries) {
+			ListEntry row = new ListEntry();
+			row.getCustomElements().setValueLocal("opened", oldDateFormat.format(curEntry.getOpenedDate()));
+			row.getCustomElements().setValueLocal("wt", curEntry.isOpenedWalkthrough() ? "Y" : "N");
+			row.getCustomElements().setValueLocal("building", curEntry.getBuilding());
+			row.getCustomElements().setValueLocal("room", curEntry.getRoom());
+			row.getCustomElements().setValueLocal("type", curEntry.getType());
+			row.getCustomElements().setValueLocal("issue", curEntry.getIssue());
+			row.getCustomElements().setValueLocal("status", curEntry.getStatus().name());
+			row.getCustomElements().setValueLocal("closed", oldDateFormat.format(curEntry.getClosedDate()));
+			row.getCustomElements().setValueLocal("cwt", curEntry.isOpenedWalkthrough() ? "Y" : "N");
+			int counter = 0;
+			for(String curNote : curEntry.getNotes())
+				row.getCustomElements().setValueLocal("notes" + (++counter), curNote);
+			ssService.insert(new URL(url_raw), row);
+		}
+	}
+
 	@Data
 	public static class RawDataEntry {
 		protected Date openedDate;
@@ -137,7 +159,7 @@ public class Spreadsheet {
 		protected boolean closedWalkthrough;
 		protected List<String> notes = new ArrayList();
 	}
-	
+
 	public static enum Status {
 		OPEN,
 		CLOSED,
