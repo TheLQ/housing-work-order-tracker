@@ -140,10 +140,14 @@ public class Spreadsheet {
 			row.getCustomElements().setValueLocal("closed", oldDateFormat.format(curEntry.getClosedDate()));
 			row.getCustomElements().setValueLocal("cwt", curEntry.isOpenedWalkthrough() ? "Y" : "N");
 			int counter = 0;
-			for(String curNote : curEntry.getNotes())
+			for (String curNote : curEntry.getNotes())
 				row.getCustomElements().setValueLocal("notes" + (++counter), curNote);
 			ssService.insert(new URL(url_raw), row);
 		}
+	}
+
+	public static Spreadsheet get() {
+		return ((GaeWicketApplication) GaeWicketApplication.get()).getSpreadsheet();
 	}
 
 	@Data
