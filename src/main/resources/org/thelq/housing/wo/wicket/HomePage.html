@@ -43,8 +43,7 @@
 					</div>
 					<button id="addIssue" class="btn btn-info"><i class="icon-plus"></i>Add Issue</button>
 					<button id="removeIssue" class="btn btn-warning"><i class="icon-remove"></i>Remove Issue</button>
-					<button id="submit" class="btn btn-success"><i class=" icon-ok-sign"></i>Submit</button>
-					<p>Submit Status: <span id="submitStatus">Waiting for input</span></p>
+					<button id="submit" type="submit" class="btn btn-success"><i class=" icon-ok-sign"></i>Submit</button>
 				</form>
 			</div>
 			<div class="span6 well" wicket:id="hello">Part 2</div>
@@ -54,35 +53,34 @@
 		<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.8.0/jquery.min.js"></script>
 		<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jqueryui/1.8.23/jquery-ui.min.js"></script>
 		<script type="text/javascript" src="js/jquery-dynamic-form.js"></script>
-		<script type="text/javascript" src="http://malsup.github.com/jquery.form.js"></script> 
+		<script type="text/javascript" src="http://malsup.github.com/jquery.form.js"></script>
+		<script type="text/javascript" src="//netdna.bootstrapcdn.com/twitter-bootstrap/2.1.1/js/bootstrap.min.js"></script>
 		<script type="text/javascript">
 			$(document).ready(function(){
 				//Issue Duplication
 				$("#issueBox").dynamicForm("#addIssue", "#removeIssue", {createColor:'yellow',	removeColor: 'red'});
 				$("#notesBox").dynamicForm("#addNote", "#removeNote", {createColor:'yellow',	removeColor: 'red'});
  
-				//Automagical ajax submit
-				$('#mainForm').submit(function() { 
-					// inside event callbacks 'this' is the DOM element so we first 
-					// wrap it in a jQuery object and then invoke ajaxSubmit 
-					$(this).ajaxSubmit({ 
-						target:        '#submitStatus',   // target element(s) to be updated with server response 
-						beforeSubmit:  function() {
-							$("#submitStatus").html("Submitting...");
-						}
-						//success:         // post-submit callback 
+				//Automagical AJAX submit
+				$("#mainForm").ajaxForm({
+					//target:        '#submitStatus',   // target element(s) to be updated with server response 
+					beforeSubmit: function() {
+						$("#submitStatus").html("Submitting...");
+					},
+					success: function(data) {
+						if(typeof data.error != 'undefined')
+							$("#submitStatus").html("Server Error! " + data.error);
+					},
+					error: function(data) {
+						$("#submitStatus").html("Javascript Error! " + data.responseText);
+					},
  
-						// other available options: 
-						//url:       url         // override for form's 'action' attribute 
-						//type:      type        // 'get' or 'post', override for form's 'method' attribute 
-						//dataType:  null        // 'xml', 'script', or 'json' (expected server response type) 
-						//clearForm: true        // clear all form fields after successful submit 
-						//resetForm: true        // reset the form after successful submit 
-					}); 
- 
-					// !!! Important !!! 
-					// always return false to prevent standard browser submit and page navigation 
-					return false; 
+					// other available options: 
+					//url:       "processData?mode=form",         // override for form's 'action' attribute 
+					//type:      "POST",        // 'get' or 'post', override for form's 'method' attribute 
+					dataType:  'json'        // 'xml', 'script', or 'json' (expected server response type) 
+					//clearForm: true        // clear all form fields after successful submit 
+					//resetForm: true        // reset the form after successful submit 
 				});
 			});
 		</script>
