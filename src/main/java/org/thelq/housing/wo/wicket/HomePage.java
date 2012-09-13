@@ -14,6 +14,7 @@ import java.util.Map;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.DropDownChoice;
+import org.apache.wicket.markup.html.form.IChoiceRenderer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,13 +34,28 @@ public class HomePage extends WebPage {
 	public void buildForm() throws MalformedURLException, ServiceException, IOException {
 		Spreadsheet.UIData uidata = ((GaeWicketApplication)GaeWicketApplication.get()).getSpreadsheet().loadUI();
 		add(new Label("hello", "Hello World"));
-		add(new DropDownChoice("building", uidata.getBuildings()));
+		add(new DropDownChoice("building", uidata.getBuildings(), new SameChoiceRenderer()));
 
 		//Generate issue drop down
 		List<String> combinedIssues = new ArrayList();
 		for (Map.Entry<String, List<String>> curEntry : uidata.getIssues().entrySet())
 			for (String curIssue : curEntry.getValue())
 				combinedIssues.add(curEntry.getKey() + " - " + curIssue);
-		add(new DropDownChoice("issue", combinedIssues));
+		add(new DropDownChoice("issue", combinedIssues, new SameChoiceRenderer()));
 	}
+	
+	/**
+	 * Have both the option value and the displayed value be the same
+	 */
+	public static class SameChoiceRenderer implements IChoiceRenderer<String> {
+            @Override
+            public String getIdValue(String object, int index) {
+                return object;
+            }
+
+            @Override
+            public Object getDisplayValue(String object) {
+                return object;
+            }
+        }
 }
