@@ -28,7 +28,7 @@
 						<p>Status: Loaded 1 issue(s) from test</p>
 					</div>
 					<!-- Issue Select template -->
-					<div class="well well-small row-fluid" id="issuesBox">
+					<div class="well well-small row-fluid" id="issueBox">
 						<div class="span6">
 							<span><i class="icon-question-sign"></i></span>
 							<label>Issue: <select wicket:id="issue" name="issue" id="issue"></select></label>
@@ -58,7 +58,7 @@
 		<script type="text/javascript">
 			$(document).ready(function(){
 				//Issue Duplication
-				$("#issuesBox").dynamicForm("#addIssue", "#removeIssue", {createColor:'yellow',	removeColor: 'red'});
+				$("#issueBox").dynamicForm("#addIssue", "#removeIssue", {createColor:'yellow',	removeColor: 'red'});
 				$("#notesBox").dynamicForm("#addNote", "#removeNote", {createColor:'yellow',	removeColor: 'red'});
  
 				//Automagical ajax submit
