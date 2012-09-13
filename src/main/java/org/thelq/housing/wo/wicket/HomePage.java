@@ -40,6 +40,6 @@ public class HomePage extends WebPage {
 		for (Map.Entry<String, List<String>> curEntry : uidata.getIssues().entrySet())
 			for (String curIssue : curEntry.getValue())
 				combinedIssues.add(curEntry.getKey() + " - " + curIssue);
-		add(new DropDownChoice("issues", combinedIssues));
+		add(new DropDownChoice("issue", combinedIssues));
 	}
 }
