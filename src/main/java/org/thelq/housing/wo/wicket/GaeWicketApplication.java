@@ -12,6 +12,8 @@ import org.apache.wicket.Application;
 import org.apache.wicket.Page;
 import org.apache.wicket.RuntimeConfigurationType;
 import org.apache.wicket.protocol.http.WebApplication;
+import org.apache.wicket.request.resource.IResource;
+import org.apache.wicket.request.resource.ResourceReference;
 import org.apache.wicket.settings.IExceptionSettings;
 import org.apache.wicket.util.time.Duration;
 import org.slf4j.Logger;
@@ -19,6 +21,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Wicket init class. Sets some settings
+ *
  * @author Leon Blakey <lord.quackstar at gmail.com>
  */
 public class GaeWicketApplication extends WebApplication {
@@ -57,7 +60,13 @@ public class GaeWicketApplication extends WebApplication {
 		}
 
 		//Handle URL mapping
-		mountPage("/processData", ProcessData.class);
+		mountResource("/processData", new ResourceReference(ProcessData.class, "processData") {
+			@Override
+			public IResource getResource() {
+				return new ProcessData();
+			}
+		});
+
 		try {
 			//Global Spreadsheet instance
 			spreadsheet = new Spreadsheet();
