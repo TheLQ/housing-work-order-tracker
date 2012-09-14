@@ -5,8 +5,6 @@
  */
 package org.thelq.housing.wo.wicket;
 
-import java.io.IOException;
-import java.util.logging.Level;
 import lombok.Getter;
 import org.apache.wicket.Application;
 import org.apache.wicket.Page;

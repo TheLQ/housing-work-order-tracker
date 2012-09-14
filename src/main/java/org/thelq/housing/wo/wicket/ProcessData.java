@@ -12,9 +12,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import lombok.Data;
-import org.apache.commons.lang.StringEscapeUtils;
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.exception.ExceptionUtils;
+import org.apache.commons.lang3.StringEscapeUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.wicket.ajax.json.JSONException;
 import org.apache.wicket.ajax.json.JSONObject;
 import org.apache.wicket.request.IRequestParameters;
@@ -51,7 +51,7 @@ public class ProcessData extends AbstractResource {
 					else
 						responseString = new JSONObject().append("error", "Unknown mode " + mode).toString();
 				} catch (Exception ex) {
-					String error = StringEscapeUtils.escapeJavaScript(ExceptionUtils.getFullStackTrace(ex));
+					String error = StringEscapeUtils.escapeEcmaScript(ExceptionUtils.getStackTrace(ex));
 					responseString = "{\"error\": \"" + error + "\"}";
 				}
 				a.getResponse().write(responseString);
