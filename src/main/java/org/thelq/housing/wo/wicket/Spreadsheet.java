@@ -137,7 +137,8 @@ public class Spreadsheet {
 			row.getCustomElements().setValueLocal("type", curEntry.getType());
 			row.getCustomElements().setValueLocal("issue", curEntry.getIssue());
 			row.getCustomElements().setValueLocal("status", curEntry.getStatus().name());
-			row.getCustomElements().setValueLocal("closed", oldDateFormat.format(curEntry.getClosedDate()));
+			String date = (curEntry.getClosedDate() != null ) ? oldDateFormat.format(curEntry.getClosedDate()) : "";
+			row.getCustomElements().setValueLocal("closed", date);
 			row.getCustomElements().setValueLocal("cwt", curEntry.isOpenedWalkthrough() ? "Y" : "N");
 			int counter = 0;
 			for (String curNote : curEntry.getNotes())
