@@ -27,6 +27,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.TimeZone;
 import lombok.Data;
 import lombok.Getter;
 import org.apache.commons.lang3.StringUtils;
@@ -47,10 +48,9 @@ public class Spreadsheet {
 	protected SpreadsheetService ssService;
 	protected final String user;
 	protected final String pass;
-	@Getter
-	protected static SimpleDateFormat oldDateFormat = new SimpleDateFormat("MMMMMMMMMM FF, yyyy hh:mm:ss aa zzz");
 
 	public Spreadsheet() throws IOException, AuthenticationException {
+		//Load username and password and login to Spreadsheet API
 		Properties userProp = new Properties();
 		userProp.load(this.getClass().getClassLoader().getResourceAsStream("creds.properties"));
 		user = userProp.getProperty("user");
@@ -99,7 +99,7 @@ public class Spreadsheet {
 				if (rowData.getValue(columnName) == null)
 					continue;
 				else if (columnName.equalsIgnoreCase("Opened"))
-					curEntry.setOpenedDate(oldDateFormat.parse(value));
+					curEntry.setOpenedDate(getOldDateFormat().parse(value));
 				else if (columnName.equalsIgnoreCase("WT"))
 					curEntry.setOpenedWalkthrough(value.equals("Y"));
 				else if (columnName.equalsIgnoreCase("Building"))
@@ -113,7 +113,7 @@ public class Spreadsheet {
 				else if (columnName.equalsIgnoreCase("Status"))
 					curEntry.setStatus(Status.valueOf(value.toUpperCase()));
 				else if (columnName.equalsIgnoreCase("Closed"))
-					curEntry.setClosedDate(oldDateFormat.parse(value));
+					curEntry.setClosedDate(getOldDateFormat().parse(value));
 				else if (columnName.equalsIgnoreCase("CWT"))
 					curEntry.setClosedWalkthrough(value.equals("Y"));
 				else if (StringUtils.startsWithIgnoreCase(columnName, "Notes"))
@@ -130,14 +130,14 @@ public class Spreadsheet {
 	public void insertData(Collection<RawDataEntry> enteries) throws IOException, ServiceException {
 		for (RawDataEntry curEntry : enteries) {
 			ListEntry row = new ListEntry();
-			row.getCustomElements().setValueLocal("opened", oldDateFormat.format(curEntry.getOpenedDate()));
+			row.getCustomElements().setValueLocal("opened", getOldDateFormat().format(curEntry.getOpenedDate()));
 			row.getCustomElements().setValueLocal("wt", curEntry.isOpenedWalkthrough() ? "Y" : "N");
 			row.getCustomElements().setValueLocal("building", curEntry.getBuilding());
 			row.getCustomElements().setValueLocal("room", curEntry.getRoom());
 			row.getCustomElements().setValueLocal("type", curEntry.getType());
 			row.getCustomElements().setValueLocal("issue", StringUtils.capitalize(curEntry.getIssue()));
 			row.getCustomElements().setValueLocal("status", curEntry.getStatus().getHumanName());
-			String date = (curEntry.getClosedDate() != null ) ? oldDateFormat.format(curEntry.getClosedDate()) : "";
+			String date = (curEntry.getClosedDate() != null ) ? getOldDateFormat().format(curEntry.getClosedDate()) : "";
 			row.getCustomElements().setValueLocal("closed", date);
 			row.getCustomElements().setValueLocal("cwt", curEntry.isOpenedWalkthrough() ? "Y" : "N");
 			int counter = 0;
@@ -149,6 +149,12 @@ public class Spreadsheet {
 
 	public static Spreadsheet get() {
 		return ((GaeWicketApplication) GaeWicketApplication.get()).getSpreadsheet();
+	}
+	
+	public static SimpleDateFormat getOldDateFormat() {
+		SimpleDateFormat date = new SimpleDateFormat("MMMMMMMMMM FF, yyyy hh:mm:ss aa zzz");
+		//date.setTimeZone(TimeZone.getTimeZone("EDT"));
+		return date;
 	}
 
 	@Data
