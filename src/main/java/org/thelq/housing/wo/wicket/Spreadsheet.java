@@ -152,7 +152,7 @@ public class Spreadsheet {
 	}
 	
 	public static SimpleDateFormat getOldDateFormat() {
-		SimpleDateFormat date = new SimpleDateFormat("MMMMMMMMMM FF, yyyy hh:mm:ss aa zzz");
+		SimpleDateFormat date = new SimpleDateFormat("MMMMMMMMMM dd, yyyy hh:mm:ss aa zzz");
 		//date.setTimeZone(TimeZone.getTimeZone("EDT"));
 		return date;
 	}
