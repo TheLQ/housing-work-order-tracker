@@ -9,6 +9,7 @@ import com.google.gdata.util.ServiceException;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import org.apache.wicket.markup.html.WebPage;
@@ -42,6 +43,9 @@ public class HomePage extends WebPage {
 			for (String curIssue : curEntry.getValue())
 				combinedIssues.add(curEntry.getKey() + " - " + curIssue);
 		add(new DropDownChoice("issue", combinedIssues, new SameChoiceRenderer()));
+		
+		//Auto fix select
+		add(new DropDownChoice("autoFix", combinedIssues, new SameChoiceRenderer()));
 	}
 	
 	/**
