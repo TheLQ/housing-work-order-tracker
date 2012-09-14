@@ -80,6 +80,8 @@
 					success: function(data) {
 						if(typeof data.error != 'undefined')
 							$("#submitStatus").html("Server Error! " + data.error);
+						else
+							$("#submitStatus").html("Success! " + data.submitStatus)
 					},
 					error: function(data) {
 						$("#submitStatus").html("Javascript Error! " + data.responseText);
