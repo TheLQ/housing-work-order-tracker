@@ -20,6 +20,12 @@
 					<div class="well" style="text-align: center">
 						<h2>Housing - RATS Work Orders</h2>
 						<h3>Ticket Manager</h3>
+						Issue Mode: <select id="modeSelect">
+							<option value="Normal">Normal</option>
+							<option value="Walkthrough">Walkthrough</option>
+							<option value="AutoFix">AutoFix</option>
+						</select>
+						<select id="autoFix" wicket:id="autoFix" style="display: none;" multiple="yes"></select>
 					</div>
 					<!-- Building and room select -->
 					<div>
@@ -85,6 +91,19 @@
 					dataType:  'json'        // 'xml', 'script', or 'json' (expected server response type) 
 					//clearForm: true        // clear all form fields after successful submit 
 					//resetForm: true        // reset the form after successful submit 
+				});
+				
+				//Auto Fix it select toggle
+				function toggleAutoFix() {
+					if($("#modeSelect").val() == "Normal")
+						$("#autoFix").hide();
+					else
+						$("#autoFix").show();
+				}
+				//Show or hide based on preselected value
+				toggleAutoFix();
+				$('#modeSelect').change(function (e) {
+					toggleAutoFix();
 				});
 			});
 		</script>
