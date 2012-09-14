@@ -27,7 +27,23 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Handle input
+ * Handle input. 
+ * <p>
+ * NOTE TO FUTURE MAINTAINERS
+ * <p>
+ * This is not how your supposed to use Wicket. Wicket says that everything should be a 
+ * listener to the many different components that your supposed to have wicket manage.
+ * However this form is not your typical wicket form: There is a set of fields that
+ * gets duplicated and another set of fields inside of that box that gets duplicated
+ * as well. In Wicket your supposed to use a complex AJAX handler that would add
+ * the fields in a request. This plus the required complex submission logic would
+ * make this program an unmaintainable mess that would confuse anybody that thought
+ * about looking at it
+ * <p>
+ * To prevent this, I've abused Request cycle and a Wicket resource as a form processor.
+ * This gives easily maintainable code that makes sense by parsing the raw POST 
+ * data. Might look a little ugly, but it allows me to write 4x the amount of functionality
+ * in half to a quarter of the time. It works for me, and thats whats important
  *
  * @author Leon Blakey <lord.quackstar at gmail.com>
  */

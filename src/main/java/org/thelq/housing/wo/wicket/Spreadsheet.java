@@ -34,7 +34,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- *
+ * Provides utility methods to extract information from the Spreadsheet. 
  * @author Leon Blakey <lord.quackstar at gmail.com>
  */
 public class Spreadsheet {
