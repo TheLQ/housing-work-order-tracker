@@ -1,0 +1,3 @@
+syntax: glob
+target/**
+src/main/resources/creds.properties

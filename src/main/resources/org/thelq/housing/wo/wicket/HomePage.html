@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Copyright (C) 2012 Leon Blakey <lord.quackstar at gmail.com>, RATS 2012
+
+    This file is part of University of Louisville Housing WorkOrder System.
+
+-->
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:wicket="http://wicket.apache.org/dtds.data/wicket-xhtml1.4-strict.dtd">
+	<head>
+		<title>Housing WorkOrders</title>
+		<link href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.1.0/css/bootstrap-combined.min.css" rel="stylesheet"/>
+		<link href="css/main.css" rel="stylesheet"/>
+	</head>
+	<body style="padding-left: 4px; background-color: /*#F0F0F0*/white;">
+		<div class="row-fluid">
+			<div class="span6 form-inline" style="font-weight:bold; text-align: center">
+				<form method="POST" action="processData?mode=form" id="mainForm">
+					<!-- Header -->
+					<div class="well" style="text-align: center">
+						<h2>Housing - RATS Work Orders</h2>
+						<h3>Ticket Manager</h3>
+					</div>
+					<!-- Building and room select -->
+					<div>
+						<label>Building: <select name="building" wicket:id="building"></select></label>
+						<label>Room: <input type="text" name="room" maxlength="3"/></label>
+						<p>Status: Loaded 1 issue(s) from test</p>
+					</div>
+					<!-- Issue Select template -->
+					<div class="well well-small row-fluid" id="issueBox">
+						<div class="span6">
+							<label>
+								<i class="icon-question-sign"></i>Issue: 
+								<br/><select wicket:id="issue" name="issue" id="issue"></select>
+							</label>
+						</div>
+						<div class="span6" id="notesContainer">
+							Notes:
+							<div id="notesBox">
+								<textarea rows="3" name="note" id="note" class="notesArea"/>
+							</div>
+							<button id="addNote" class="btn btn-info"><i class="icon-plus"></i>Add Note</button>
+							<button id="removeNote" class="btn btn-warning"><i class="icon-remove"></i>Remove Note</button>
+						</div>
+					</div>
+					<button id="addIssue" class="btn btn-info"><i class="icon-plus"></i>Add Issue</button>
+					<button id="removeIssue" class="btn btn-warning"><i class="icon-remove"></i>Remove Issue</button>
+					<button id="submit" type="submit" class="btn btn-success"><i class=" icon-ok-sign"></i>Submit</button>
+					<br/>Submit Status: <span id="submitStatus">Waiting on input...</span>
+				</form>
+			</div>
+			<div class="span6 well" wicket:id="hello">Part 2</div>
+		</div>
+
+
+		<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.8.0/jquery.min.js"></script>
+		<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jqueryui/1.8.23/jquery-ui.min.js"></script>
+		<script type="text/javascript" src="js/jquery-dynamic-form.js"></script>
+		<script type="text/javascript" src="http://malsup.github.com/jquery.form.js"></script>
+		<script type="text/javascript" src="//netdna.bootstrapcdn.com/twitter-bootstrap/2.1.1/js/bootstrap.min.js"></script>
+		<script type="text/javascript">
+			$(document).ready(function(){
+				//Issue Duplication
+				$("#issueBox").dynamicForm("#addIssue", "#removeIssue", {createColor:'yellow',	removeColor: 'red'});
+				$("#notesBox").dynamicForm("#addNote", "#removeNote", {createColor:'yellow',	removeColor: 'red'});
+ 
+				//Automagical AJAX submit
+				$("#mainForm").ajaxForm({
+					//target:        '#submitStatus',   // target element(s) to be updated with server response 
+					beforeSubmit: function() {
+						$("#submitStatus").html("Submitting...");
+					},
+					success: function(data) {
+						if(typeof data.error != 'undefined')
+							$("#submitStatus").html("Server Error! " + data.error);
+					},
+					error: function(data) {
+						$("#submitStatus").html("Javascript Error! " + data.responseText);
+					},
+ 
+					// other available options: 
+					//url:       "processData?mode=form",         // override for form's 'action' attribute 
+					//type:      "POST",        // 'get' or 'post', override for form's 'method' attribute 
+					dataType:  'json'        // 'xml', 'script', or 'json' (expected server response type) 
+					//clearForm: true        // clear all form fields after successful submit 
+					//resetForm: true        // reset the form after successful submit 
+				});
+			});
+		</script>
+	</body>
+</html>
