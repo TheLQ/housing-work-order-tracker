@@ -5,8 +5,9 @@
  */
 package org.thelq.housing.wo.wicket;
 
-import com.google.gdata.util.common.base.StringUtil;
-import java.util.ArrayList;
+import com.google.gdata.util.ServiceException;
+import java.io.IOException;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -59,39 +60,54 @@ public class ProcessData extends AbstractResource {
 		return r;
 	}
 
-	public JSONObject handleFormSubmit() throws JSONException {
+	public JSONObject handleFormSubmit() throws JSONException, IOException, ServiceException {
 		JSONObject response = new JSONObject();
 		IRequestParameters params = RequestCycle.get().getRequest().getRequestParameters();
 
 		//Get our basic values
-		FormData data = new FormData();
-		data.setBuilding(params.getParameterValue("building").toString());
+		String building = params.getParameterValue("building").toString();
 		//Note: room is a string since some buildings (IE Louisville) have suites with letters
-		data.setRoom(params.getParameterValue("room").toString());
+		String room = params.getParameterValue("room").toString();
+		
+		log.info("Building: " + building + " | room: " + room);
 
+		//Parse out POST data
+		Date date = new Date();
+		Map<Integer, Spreadsheet.RawDataEntry> enteries = new HashMap();
 		for (String curField : params.getParameterNames()) {
 			if (!curField.startsWith("issueBox"))
 				//Must be another field
 				continue;
-
-			//Setup
 			String[] fieldParts = StringUtils.split(curField, "[]");
 			int curIssueNum = Integer.parseInt(fieldParts[2]);
 
-			if (fieldParts[3].equals("issue"))
-				//This is specifying the issue
-				data.getIssueMap().put(curIssueNum, params.getParameterValue(curField).toString());
-			else {
-				//This is a note
-				if (data.getNotesMap().get(curIssueNum) == null)
-					data.getNotesMap().put(curIssueNum, new ArrayList());
-				data.getNotesMap().get(curIssueNum).add(params.getParameterValue(curField).toString());
+			//Make sure our entry exists
+			Spreadsheet.RawDataEntry entry = enteries.get(curIssueNum);
+			if (entry == null) {
+				entry = new Spreadsheet.RawDataEntry();
+				entry.setBuilding(building);
+				entry.setRoom(room);
+				entry.setOpenedDate(date);
+				enteries.put(curIssueNum, entry);
 			}
-		}
 
-		response.put("submitStatus", "Building " + data.getBuilding() + " | Room: " + data.getRoom());
-		response.put("issues", data.getIssueMap());
-		response.put("notes", data.getNotesMap());
+			String value = params.getParameterValue(curField).toString();
+			if (fieldParts[3].equals("issue")) {
+				//This is specifying the issue
+				log.info("Value: " + value);
+				String[] parts = value.split(" - ");
+				entry.setType(parts[0]);
+				entry.setIssue(parts[1]);
+				entry.setStatus(Spreadsheet.Status.OPEN);
+			} else
+				//This is a note
+				entry.getNotes().add(value);
+		}
+		
+		Spreadsheet.get().insertData(enteries.values());
+		
+		response.put("submitStatus", "Added " + enteries.size() + " issues for " + building + " " + room + " on " 
+				+ Spreadsheet.getOldDateFormat().format(date));
 
 		return response;
 	}
