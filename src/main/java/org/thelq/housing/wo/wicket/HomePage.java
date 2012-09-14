@@ -21,6 +21,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Main home page with form
+ *
  * @author Leon Blakey <lord.quackstar at gmail.com>
  */
 public class HomePage extends WebPage {
@@ -31,9 +32,9 @@ public class HomePage extends WebPage {
 		buildForm();
 		log.debug("Finished loading page!");
 	}
-	
+
 	public void buildForm() throws MalformedURLException, ServiceException, IOException {
-		Spreadsheet.UIData uidata = ((GaeWicketApplication)GaeWicketApplication.get()).getSpreadsheet().loadUI();
+		Spreadsheet.UIData uidata = ((GaeWicketApplication) GaeWicketApplication.get()).getSpreadsheet().loadUI();
 		add(new Label("hello", "Hello World"));
 		add(new DropDownChoice("building", uidata.getBuildings(), new SameChoiceRenderer()));
 
@@ -43,23 +44,28 @@ public class HomePage extends WebPage {
 			for (String curIssue : curEntry.getValue())
 				combinedIssues.add(curEntry.getKey() + " - " + curIssue);
 		add(new DropDownChoice("issue", combinedIssues, new SameChoiceRenderer()));
-		
+
 		//Auto fix select
-		add(new DropDownChoice("autoFix", combinedIssues, new SameChoiceRenderer()));
+		add(new DropDownChoice("autoFix", combinedIssues, new SameChoiceRenderer()) {
+			@Override
+			protected CharSequence getDefaultChoice(String arg0) {
+				return "";
+			}
+		}.setNullValid(true));
 	}
-	
+
 	/**
 	 * Have both the option value and the displayed value be the same
 	 */
 	public static class SameChoiceRenderer implements IChoiceRenderer<String> {
-            @Override
-            public String getIdValue(String object, int index) {
-                return object;
-            }
+		@Override
+		public String getIdValue(String object, int index) {
+			return object;
+		}
 
-            @Override
-            public Object getDisplayValue(String object) {
-                return object;
-            }
-        }
+		@Override
+		public Object getDisplayValue(String object) {
+			return object;
+		}
+	}
 }
