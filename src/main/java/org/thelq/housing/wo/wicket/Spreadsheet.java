@@ -136,7 +136,7 @@ public class Spreadsheet {
 			row.getCustomElements().setValueLocal("room", curEntry.getRoom());
 			row.getCustomElements().setValueLocal("type", curEntry.getType());
 			row.getCustomElements().setValueLocal("issue", curEntry.getIssue());
-			row.getCustomElements().setValueLocal("status", curEntry.getStatus().name());
+			row.getCustomElements().setValueLocal("status", curEntry.getStatus().getHumanName());
 			String date = (curEntry.getClosedDate() != null ) ? oldDateFormat.format(curEntry.getClosedDate()) : "";
 			row.getCustomElements().setValueLocal("closed", date);
 			row.getCustomElements().setValueLocal("cwt", curEntry.isOpenedWalkthrough() ? "Y" : "N");
@@ -168,7 +168,12 @@ public class Spreadsheet {
 	public static enum Status {
 		OPEN,
 		CLOSED,
-		WAITING
+		WAITING;
+		
+		public String getHumanName() {
+			//Make it look like a normal word
+			return StringUtils.capitalize(name().toLowerCase());
+		}
 	}
 
 	@Data
