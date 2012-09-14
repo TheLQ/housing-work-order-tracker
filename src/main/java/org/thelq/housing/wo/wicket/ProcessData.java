@@ -7,6 +7,7 @@ package org.thelq.housing.wo.wicket;
 
 import com.google.gdata.util.ServiceException;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -23,6 +24,7 @@ import org.apache.wicket.request.resource.AbstractResource;
 import org.apache.wicket.request.resource.AbstractResource.ResourceResponse;
 import org.apache.wicket.request.resource.AbstractResource.WriteCallback;
 import org.apache.wicket.request.resource.IResource.Attributes;
+import org.apache.wicket.util.string.StringValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -86,6 +88,11 @@ public class ProcessData extends AbstractResource {
 		String room = params.getParameterValue("room").toString();
 		
 		log.info("Building: " + building + " | room: " + room);
+		
+		//Get autoFix values and convert to Strings
+		List<String> autoFix = new ArrayList();
+		for(StringValue curValue : params.getParameterValues("autoFix"))
+			autoFix.add(curValue.toString());
 
 		//Parse out POST data
 		Date date = new Date();
@@ -110,11 +117,16 @@ public class ProcessData extends AbstractResource {
 			String value = params.getParameterValue(curField).toString();
 			if (fieldParts[3].equals("issue")) {
 				//This is specifying the issue
-				log.info("Value: " + value);
+				log.debug("Value: " + value);
+				log.debug("Autofix contents: " + autoFix);
 				String[] parts = value.split(" - ");
 				entry.setType(parts[0]);
 				entry.setIssue(parts[1]);
-				entry.setStatus(Spreadsheet.Status.OPEN);
+				log.debug("Contains: " + autoFix.contains(value));
+				if (!params.getParameterValue("modeSelect").toString().equalsIgnoreCase("Normal") && autoFix.contains(value))
+					entry.setStatus(Spreadsheet.Status.CLOSED);
+				else
+					entry.setStatus(Spreadsheet.Status.OPEN);
 			} else
 				//This is a note
 				entry.getNotes().add(value);
