@@ -86,12 +86,12 @@ public class ProcessData extends AbstractResource {
 		String building = params.getParameterValue("building").toString();
 		//Note: room is a string since some buildings (IE Louisville) have suites with letters
 		String room = params.getParameterValue("room").toString();
-		
+
 		log.info("Building: " + building + " | room: " + room);
-		
+
 		//Get autoFix values and convert to Strings
 		List<String> autoFix = new ArrayList();
-		for(StringValue curValue : params.getParameterValues("autoFix"))
+		for (StringValue curValue : params.getParameterValues("autoFix"))
 			autoFix.add(curValue.toString());
 
 		//Parse out POST data
@@ -131,10 +131,10 @@ public class ProcessData extends AbstractResource {
 				//This is a note
 				entry.getNotes().add(value);
 		}
-		
+
 		Spreadsheet.get().insertData(enteries.values());
-		
-		response.put("submitStatus", "Added " + enteries.size() + " issues for " + building + " " + room + " on " 
+
+		response.put("submitStatus", "Added " + enteries.size() + " issues for " + building + " " + room + " on "
 				+ Spreadsheet.getOldDateFormat().format(date));
 
 		return response;
