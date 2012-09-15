@@ -137,7 +137,7 @@ public class Spreadsheet {
 			row.getCustomElements().setValueLocal("type", curEntry.getType());
 			row.getCustomElements().setValueLocal("issue", StringUtils.capitalize(curEntry.getIssue()));
 			row.getCustomElements().setValueLocal("status", curEntry.getStatus().getHumanName());
-			String date = (curEntry.getClosedDate() != null ) ? getOldDateFormat().format(curEntry.getClosedDate()) : "";
+			String date = (curEntry.getClosedDate() != null) ? getOldDateFormat().format(curEntry.getClosedDate()) : "";
 			row.getCustomElements().setValueLocal("closed", date);
 			row.getCustomElements().setValueLocal("cwt", curEntry.isOpenedWalkthrough() ? "Y" : "N");
 			int counter = 0;
@@ -150,7 +150,7 @@ public class Spreadsheet {
 	public static Spreadsheet get() {
 		return ((GaeWicketApplication) GaeWicketApplication.get()).getSpreadsheet();
 	}
-	
+
 	public static SimpleDateFormat getOldDateFormat() {
 		SimpleDateFormat date = new SimpleDateFormat("MMMMMMMMMM dd, yyyy hh:mm:ss aa zzz");
 		//date.setTimeZone(TimeZone.getTimeZone("EDT"));
@@ -175,7 +175,7 @@ public class Spreadsheet {
 		OPEN,
 		CLOSED,
 		WAITING;
-		
+
 		public String getHumanName() {
 			//Make it look like a normal word
 			return StringUtils.capitalize(name().toLowerCase());
