@@ -98,6 +98,8 @@ public class Spreadsheet {
 				String value = rowData.getValue(columnName);
 				if (rowData.getValue(columnName) == null)
 					continue;
+				else if (columnName.equalsIgnoreCase("_df9om"))
+					curEntry.setIssueNum(Integer.valueOf(value));
 				else if (columnName.equalsIgnoreCase("Opened"))
 					curEntry.setOpenedDate(getOldDateFormat().parse(value));
 				else if (columnName.equalsIgnoreCase("WT"))
@@ -130,6 +132,7 @@ public class Spreadsheet {
 	public void insertData(Collection<RawDataEntry> enteries) throws IOException, ServiceException {
 		for (RawDataEntry curEntry : enteries) {
 			ListEntry row = new ListEntry();
+			row.getCustomElements().setValueLocal("_df9om", "" + curEntry.getIssueNum());
 			row.getCustomElements().setValueLocal("opened", getOldDateFormat().format(curEntry.getOpenedDate()));
 			row.getCustomElements().setValueLocal("wt", curEntry.isOpenedWalkthrough() ? "Y" : "N");
 			row.getCustomElements().setValueLocal("building", curEntry.getBuilding());
@@ -159,6 +162,7 @@ public class Spreadsheet {
 
 	@Data
 	public static class RawDataEntry {
+		protected int issueNum;
 		protected Date openedDate;
 		protected boolean openedWalkthrough;
 		protected String building;
