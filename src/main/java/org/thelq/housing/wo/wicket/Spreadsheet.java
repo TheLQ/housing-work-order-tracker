@@ -101,7 +101,7 @@ public class Spreadsheet {
 				else if (columnName.equalsIgnoreCase("_df9om"))
 					curEntry.setIssueNum(Integer.valueOf(value));
 				else if (columnName.equalsIgnoreCase("Opened"))
-					curEntry.setOpenedDate(getOldDateFormat().parse(value));
+					curEntry.setOpenedDate(getNewDateFormat().parse(value));
 				else if (columnName.equalsIgnoreCase("WT"))
 					curEntry.setOpenedWalkthrough(value.equals("Y"));
 				else if (columnName.equalsIgnoreCase("Building"))
@@ -115,7 +115,7 @@ public class Spreadsheet {
 				else if (columnName.equalsIgnoreCase("Status"))
 					curEntry.setStatus(Status.valueOf(value.toUpperCase()));
 				else if (columnName.equalsIgnoreCase("Closed"))
-					curEntry.setClosedDate(getOldDateFormat().parse(value));
+					curEntry.setClosedDate(getNewDateFormat().parse(value));
 				else if (columnName.equalsIgnoreCase("CWT"))
 					curEntry.setClosedWalkthrough(value.equals("Y"));
 				else if (StringUtils.startsWithIgnoreCase(columnName, "Notes"))
@@ -133,14 +133,14 @@ public class Spreadsheet {
 		for (RawDataEntry curEntry : enteries) {
 			ListEntry row = new ListEntry();
 			row.getCustomElements().setValueLocal("_df9om", "" + curEntry.getIssueNum());
-			row.getCustomElements().setValueLocal("opened", getOldDateFormat().format(curEntry.getOpenedDate()));
+			row.getCustomElements().setValueLocal("opened", getNewDateFormat().format(curEntry.getOpenedDate()));
 			row.getCustomElements().setValueLocal("wt", curEntry.isOpenedWalkthrough() ? "Y" : "N");
 			row.getCustomElements().setValueLocal("building", curEntry.getBuilding());
 			row.getCustomElements().setValueLocal("room", curEntry.getRoom());
 			row.getCustomElements().setValueLocal("type", curEntry.getType());
 			row.getCustomElements().setValueLocal("issue", StringUtils.capitalize(curEntry.getIssue()));
 			row.getCustomElements().setValueLocal("status", curEntry.getStatus().getHumanName());
-			String date = (curEntry.getClosedDate() != null) ? getOldDateFormat().format(curEntry.getClosedDate()) : "";
+			String date = (curEntry.getClosedDate() != null) ? getNewDateFormat().format(curEntry.getClosedDate()) : "";
 			row.getCustomElements().setValueLocal("closed", date);
 			row.getCustomElements().setValueLocal("cwt", curEntry.isOpenedWalkthrough() ? "Y" : "N");
 			int counter = 0;
@@ -154,8 +154,15 @@ public class Spreadsheet {
 		return ((GaeWicketApplication) GaeWicketApplication.get()).getSpreadsheet();
 	}
 
+	@Deprecated
 	public static SimpleDateFormat getOldDateFormat() {
 		SimpleDateFormat date = new SimpleDateFormat("MMMMMMMMMM dd, yyyy hh:mm:ss aa zzz");
+		//date.setTimeZone(TimeZone.getTimeZone("EDT"));
+		return date;
+	}
+	
+	public static SimpleDateFormat getNewDateFormat() {
+		SimpleDateFormat date = new SimpleDateFormat("MMM dd yyyy, hh:mm aa");
 		//date.setTimeZone(TimeZone.getTimeZone("EDT"));
 		return date;
 	}
