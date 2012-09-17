@@ -7,6 +7,8 @@ package org.thelq.housing.wo.wicket;
 
 import com.google.gdata.util.ServiceException;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -27,6 +29,7 @@ import org.apache.wicket.request.resource.IResource.Attributes;
 import org.apache.wicket.util.string.StringValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.thelq.housing.wo.wicket.Spreadsheet.RawDataEntry;
 
 /**
  * Handle input. 
@@ -89,7 +92,7 @@ public class ProcessData extends AbstractResource {
 
 		log.info("Building: " + building + " | room: " + room);
 
-		//Get autoFix values and convert to Strings
+		//Get all the selected auto-fixed issues
 		List<String> autoFix = new ArrayList();
 		for (StringValue curValue : params.getParameterValues("autoFix"))
 			autoFix.add(curValue.toString());
@@ -124,8 +127,10 @@ public class ProcessData extends AbstractResource {
 				entry.setIssue(parts[1]);
 				log.debug("Contains: " + autoFix.contains(value));
 				if (!params.getParameterValue("modeSelect").toString().equalsIgnoreCase("Normal") && autoFix.contains(value))
+					//Issue is going to be autofixed
 					entry.setStatus(Spreadsheet.Status.CLOSED);
 				else
+					//New issue
 					entry.setStatus(Spreadsheet.Status.OPEN);
 			} else
 				//This is a note
