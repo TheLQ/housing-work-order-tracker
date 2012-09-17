@@ -1,6 +1,7 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+/**
+ * Copyright (C) 2012 Leon Blakey <lord.quackstar at gmail.com>, RATS 2012
+ *
+ * This file is part of University of Louisville Housing WorkOrder System.
  */
 package org.thelq.housing.wo.wicket;
 
