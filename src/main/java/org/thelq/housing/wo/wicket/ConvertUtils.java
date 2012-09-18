@@ -32,6 +32,7 @@ public class ConvertUtils {
 	private static Logger log = LoggerFactory.getLogger(ConvertUtils.class);
 
 	public static void main(String[] args) throws MalformedURLException, ParseException, IOException, ServiceException {
+		convertDateToNew();
 		convertDateToNumber();
 	}
 
@@ -48,21 +49,24 @@ public class ConvertUtils {
 			//Convert dates
 			SimpleDateFormat formatterOld = new SimpleDateFormat("MMMMMMMMMM dd, yyyy hh:mm:ss aa zzz");
 			SimpleDateFormat formatterNew = new SimpleDateFormat("MMM dd yyyy, hh:mm aa");
-			Date oldOpenDate = null;
-			try {
-				oldOpenDate = formatterOld.parse(rowData.getValue("opened"));
-			} catch (ParseException e) {
-				oldOpenDate = formatterNew.parse(rowData.getValue("opened"));
-			}
+			Date oldOpenDate = getDateFromFormat(formatterNew, formatterOld, rowData.getValue("opened"));
 			rowData.setValueLocal("opened", formatterNew.format(oldOpenDate));
 			String oldClosedString = rowData.getValue("closed");
 			if (StringUtils.isNotEmpty(oldClosedString)) {
-				Date oldClosedDate = formatterOld.parse(rowData.getValue("closed"));
+				Date oldClosedDate = getDateFromFormat(formatterNew, formatterOld, rowData.getValue("closed"));
 				rowData.setValueLocal("closed", formatterNew.format(oldClosedDate));
 			}
 
 			//Update
 			row.update();
+		}
+	}
+
+	protected static Date getDateFromFormat(SimpleDateFormat format1, SimpleDateFormat format2, String dateSTring) throws ParseException {
+		try {
+			return format1.parse(dateSTring);
+		} catch (ParseException e) {
+			return format2.parse(dateSTring);
 		}
 	}
 
