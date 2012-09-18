@@ -32,23 +32,32 @@ public class ConvertUtils {
 	private static Logger log = LoggerFactory.getLogger(ConvertUtils.class);
 
 	public static void main(String[] args) throws MalformedURLException, ParseException, IOException, ServiceException {
-		convertDateToNew();
-		convertDateToNumber();
-	}
-
-	public static void convertDateToNew() throws MalformedURLException, ParseException, IOException, ServiceException {
 		log.info("Logging in...");
 		Spreadsheet spreadsheet = new Spreadsheet();
 		log.info("Grabbing feed...");
 		ListFeed listFeed = spreadsheet.ssService.getFeed(new URL(Spreadsheet.url_raw), ListFeed.class);
+
+		//Pass to different methods to work on data
+		List<ListEntry> enteries = new ArrayList(listFeed.getEntries());
+		convertDateToNew(enteries);
+		convertDateToCounter(enteries);
+		
+		//Update
 		int counter = 0;
-		for (ListEntry row : listFeed.getEntries()) {
+		for(ListEntry curEntry : enteries) {
+			System.out.println("Updating row " + (++counter) + " of " + enteries.size());
+			curEntry.update();
+		}
+	}
+
+	public static void convertDateToNew(List<ListEntry> enteries) throws MalformedURLException, ParseException, IOException, ServiceException {
+		System.out.println("Converting dates to new format...");
+		for (ListEntry row : enteries) {
 			CustomElementCollection rowData = row.getCustomElements();
-			log.info("Current row: " + ++counter);
 
 			//Convert dates
-			SimpleDateFormat formatterOld = new SimpleDateFormat("MMMMMMMMMM dd, yyyy hh:mm:ss aa zzz");
-			SimpleDateFormat formatterNew = new SimpleDateFormat("MMM dd yyyy, hh:mm aa");
+			SimpleDateFormat formatterOld = Spreadsheet.getOldDateFormat(); //new SimpleDateFormat("MMMMMMMMMM dd, yyyy hh:mm:ss aa zzz");
+			SimpleDateFormat formatterNew = Spreadsheet.getNewDateFormat(); //new SimpleDateFormat("MMM dd yyyy, hh:mm aa");
 			Date oldOpenDate = getDateFromFormat(formatterNew, formatterOld, rowData.getValue("opened"));
 			rowData.setValueLocal("opened", formatterNew.format(oldOpenDate));
 			String oldClosedString = rowData.getValue("closed");
@@ -56,9 +65,6 @@ public class ConvertUtils {
 				Date oldClosedDate = getDateFromFormat(formatterNew, formatterOld, rowData.getValue("closed"));
 				rowData.setValueLocal("closed", formatterNew.format(oldClosedDate));
 			}
-
-			//Update
-			row.update();
 		}
 	}
 
@@ -70,44 +76,31 @@ public class ConvertUtils {
 		}
 	}
 
-	public static void convertDateToNumber() throws IOException, AuthenticationException, ServiceException, ParseException {
-		log.info("Logging in...");
-		Spreadsheet spreadsheet = new Spreadsheet();
-		log.info("Grabbing feed...");
-		ListFeed listFeed = spreadsheet.ssService.getFeed(new URL(Spreadsheet.url_raw), ListFeed.class);
-
+	public static void convertDateToCounter(List<ListEntry> rows) throws IOException, AuthenticationException, ServiceException, ParseException {
+		System.out.println("Converting dates to counter");
 		//Load rows into map
-		int counter = 0;
-		Map<Long, List<ListEntry>> rows = new TreeMap();
-		for (ListEntry row : listFeed.getEntries()) {
+		Map<Long, List<ListEntry>> counterMap = new TreeMap();
+		for (ListEntry row : rows) {
 			CustomElementCollection rowData = row.getCustomElements();
-			log.info("Current initial parse row: " + ++counter);
 
 			//Convert dates
-			SimpleDateFormat formatterOld = new SimpleDateFormat("MMMMMMMMMM dd, yyyy hh:mm:ss aa zzz");
-			SimpleDateFormat formatterNew = new SimpleDateFormat("MMM dd yyyy, hh:mm aa");
-			Date openDate = null;
-			try {
-				openDate = formatterOld.parse(rowData.getValue("opened"));
-			} catch (ParseException e) {
-				openDate = formatterNew.parse(rowData.getValue("opened"));
-			}
+			SimpleDateFormat formatterOld = Spreadsheet.getOldDateFormat();
+			SimpleDateFormat formatterNew = Spreadsheet.getNewDateFormat();
+			Date openDate = getDateFromFormat(formatterNew, formatterOld, rowData.getValue("opened"));
 
 			//Insert into map with timestamp for sorting
 			long time = openDate.getTime();
-			if (!rows.containsKey(time))
-				rows.put(time, new ArrayList());
-			rows.get(time).add(row);
+			if (!counterMap.containsKey(time))
+				counterMap.put(time, new ArrayList());
+			counterMap.get(time).add(row);
 		}
 
 		//Now that values are in the sorted TreeMap, add a counter value and update
-		counter = 0;
-		for (Map.Entry<Long, List<ListEntry>> curEntry : rows.entrySet())
+		int counter = 0;
+		for (Map.Entry<Long, List<ListEntry>> curEntry : counterMap.entrySet())
 			for (ListEntry curRow : curEntry.getValue()) {
 				int curIssueNum = ++counter;
-				log.info("Current update issue: " + curIssueNum);
 				curRow.getCustomElements().setValueLocal("_df9om", "" + curIssueNum);
-				curRow.update();
 			}
 	}
 }
