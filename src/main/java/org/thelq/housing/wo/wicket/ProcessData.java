@@ -29,7 +29,6 @@ import org.apache.wicket.request.resource.IResource.Attributes;
 import org.apache.wicket.util.string.StringValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.thelq.housing.wo.wicket.Spreadsheet.RawDataEntry;
 
 /**
  * Handle input. 
@@ -69,6 +68,8 @@ public class ProcessData extends AbstractResource {
 					String mode = params.getParameterValue("mode").toString();
 					if (mode.equalsIgnoreCase("form"))
 						responseString = handleFormSubmit().toString();
+					else if(mode.equalsIgnoreCase("room"))
+						responseString = handleRoomSubmit().toString();
 					else
 						responseString = new JSONObject().append("error", "Unknown mode " + mode).toString();
 				} catch (Exception ex) {
@@ -140,8 +141,33 @@ public class ProcessData extends AbstractResource {
 		Spreadsheet.get().insertData(enteries.values());
 
 		response.put("submitStatus", "Added " + enteries.size() + " issues for " + building + " " + room + " on "
-				+ Spreadsheet.getOldDateFormat().format(date));
+				+ Spreadsheet.getNewDateFormat().format(date));
 
+		return response;
+	}
+	
+	public JSONObject handleRoomSubmit() throws MalformedURLException, ServiceException, IOException, ParseException, JSONException {
+		JSONObject response = new JSONObject();
+		List<JSONObject> issues = new ArrayList();
+		IRequestParameters params = RequestCycle.get().getRequest().getRequestParameters();
+		
+		//Parse out
+		String room = params.getParameterValue("room").toString();
+		for(Spreadsheet.RawDataEntry curEntry : Spreadsheet.get().loadRaw()) {
+			//Ignore anything that isn't this room
+			if(!curEntry.getRoom().equalsIgnoreCase(room))
+				continue;
+			
+			//Generate response
+			JSONObject curNewIssue = new JSONObject();
+			curNewIssue.put("issue", curEntry.getType().toLowerCase() + " - " + curEntry.getIssue());
+			for(String curNote : curEntry.getNotes())
+				curNewIssue.append("notesBox", new JSONObject().put("note", curNote));
+			issues.add(curNewIssue);
+		}
+		
+		response.put("data", issues);
+		response.put("response", "Found " + issues.size() + " issues(s) on " + Spreadsheet.getNewDateFormat().format(new Date()));
 		return response;
 	}
 
