@@ -96,7 +96,8 @@ public class ProcessData extends AbstractResource {
 		//Get all the selected auto-fixed issues
 		List<String> autoFix = new ArrayList();
 		for (StringValue curValue : params.getParameterValues("autoFix"))
-			autoFix.add(curValue.toString());
+			if(curValue != null)
+				autoFix.add(curValue.toString());
 
 		//Parse out POST data
 		Date date = new Date();
