@@ -72,7 +72,12 @@ public class ConvertUtils {
 		try {
 			return format1.parse(dateSTring);
 		} catch (ParseException e) {
-			return format2.parse(dateSTring);
+			try {
+				return format2.parse(dateSTring);
+			} catch (ParseException ex) {
+				//Stupid format due to Javascript bug
+				return new SimpleDateFormat("MM/dd/yyyy kk:mm:ss").parse(dateSTring);
+			}
 		}
 	}
 
