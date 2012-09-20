@@ -15,7 +15,7 @@
 	<body style="padding-left: 4px; background-color: /*#F0F0F0*/white;">
 		<div class="row-fluid">
 			<div class="span6 form-inline" style="font-weight:bold; text-align: center">
-				<form method="POST" action="processData?mode=form" id="mainForm">
+				<form method="POST" action="processData?mode=form" id="mainForm"><fieldset>
 					<!-- Header -->
 					<div class="well" style="text-align: center">
 						<h2>Housing - RATS Work Orders</h2>
@@ -29,9 +29,9 @@
 					</div>
 					<!-- Building and room select -->
 					<div>
-						<label>Building: <select name="building" wicket:id="building"></select></label>
-						<label>Room: <input type="text" name="room" maxlength="3"/></label>
-						<p>Status: Loaded 1 issue(s) from test</p>
+						<label>Building: <select name="building" id="building" wicket:id="building"></select></label>
+						<label>Room: <input type="text" name="room" id="room" maxlength="3"/></label>
+						<p>Status: <span id="roomStatus">Waiting for Input</span></p>
 					</div>
 					<!-- Issue Select template -->
 					<div class="well well-small row-fluid" id="issueBox">
@@ -54,7 +54,7 @@
 					<button id="removeIssue" class="btn btn-warning"><i class="icon-remove"></i>Remove Issue</button>
 					<button id="submit" type="submit" class="btn btn-success"><i class=" icon-ok-sign"></i>Submit</button>
 					<br/>Submit Status: <span id="submitStatus">Waiting on input...</span>
-				</form>
+					</fieldset></form>
 			</div>
 			<div class="span6 well" wicket:id="hello">Part 2</div>
 		</div>
@@ -68,9 +68,37 @@
 		<script type="text/javascript">
 			$(document).ready(function(){
 				//Issue Duplication
-				$("#issueBox").dynamicForm("#addIssue", "#removeIssue", {createColor:'yellow',	removeColor: 'red'});
+				var dynamicIssue = $("#issueBox").dynamicForm("#addIssue", "#removeIssue", {createColor:'yellow',	removeColor: 'red'});
 				$("#notesBox").dynamicForm("#addNote", "#removeNote", {createColor:'yellow',	removeColor: 'red'});
- 
+				
+				//Dynamic room lookup
+				function roomLookup() {
+					room = $(this).val();
+					
+					//Ignore rooms with less than 3 characters, user is probably typing in a room
+					if(room.length < 3)
+						return;
+					
+					building = $("#building option:selected").val();
+					if(building == "")
+						$("#roomStatus").html("No building is selected!");
+					else {
+						//Need to get room info from server
+						$("#roomStatus").html("Fetching info for " + building + " " + room + "...");
+						$.ajaxSetup ({cache: false}); 
+						$.getJSON("processData?mode=room", {building: building, room: room}, function(json) {  
+							if(typeof json.error != 'undefined')
+								$("#roomStatus").html("Server Error! " + json.error);
+							else {
+								$("#roomStatus").html("Success! " + json.response)
+								dynamicIssue.inject(json.data);
+							}
+						}  
+					);  
+					}
+				}
+				$("#room").live('input', roomLookup);
+				
 				//Automagical AJAX submit
 				$("#mainForm").ajaxForm({
 					//target:        '#submitStatus',   // target element(s) to be updated with server response 
