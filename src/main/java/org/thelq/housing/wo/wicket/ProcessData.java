@@ -103,7 +103,7 @@ public class ProcessData extends AbstractResource {
 
 		//Parse out POST data
 		Date date = new Date();
-		Map<Integer, Spreadsheet.RawDataEntry> enteries = new HashMap();
+		Map<Integer, Spreadsheet.RawDataEntry> entries = new HashMap();
 		List<String> issueList = new ArrayList();
 		for (String curField : params.getParameterNames()) {
 			if (!curField.startsWith("issueBox"))
@@ -113,13 +113,13 @@ public class ProcessData extends AbstractResource {
 			int curIssueNum = Integer.parseInt(fieldParts[2]);
 
 			//Make sure our entry exists
-			Spreadsheet.RawDataEntry entry = enteries.get(curIssueNum);
+			Spreadsheet.RawDataEntry entry = entries.get(curIssueNum);
 			if (entry == null) {
 				entry = new Spreadsheet.RawDataEntry();
 				entry.setBuilding(building);
 				entry.setRoom(room);
 				entry.setOpenedDate(date);
-				enteries.put(curIssueNum, entry);
+				entries.put(curIssueNum, entry);
 			}
 
 			String value = params.getParameterValue(curField).toString();
@@ -142,21 +142,21 @@ public class ProcessData extends AbstractResource {
 				entry.getNotes().add(value);
 		}
 
-		Spreadsheet.get().insertData(enteries.values());
+		Spreadsheet.get().insertData(entries.values());
 		
 		//Now, check for any issues that are missing, meaning that they were closed
-		List<RawDataEntry> updatedEnteries = new ArrayList();
+		List<RawDataEntry> updatedEntries = new ArrayList();
 		for(RawDataEntry curEntry : Spreadsheet.get().loadRawRoom(room)) {
 			String issueName = generateIssueName(curEntry);
 			if(!issueList.contains(issueName)) {
 				curEntry.setStatus(Spreadsheet.Status.CLOSED);
-				updatedEnteries.add(curEntry);
+				updatedEntries.add(curEntry);
 			}
 		}
-		Spreadsheet.get().updateData(updatedEnteries);
+		Spreadsheet.get().updateData(updatedEntries);
 		
 
-		response.put("submitStatus", "Added " + enteries.size() + " issues for " + building + " " + room + " on "
+		response.put("submitStatus", "Added " + entries.size() + " issues for " + building + " " + room + " on "
 				+ Spreadsheet.getNewDateFormat().format(date));
 
 		return response;
