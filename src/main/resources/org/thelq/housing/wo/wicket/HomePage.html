@@ -16,44 +16,44 @@
 		<div class="row-fluid">
 			<div class="span6 form-inline" style="font-weight:bold; text-align: center">
 				<form method="POST" action="processData?mode=form" id="mainForm"><fieldset>
-					<!-- Header -->
-					<div class="well" style="text-align: center">
-						<h2>Housing - RATS Work Orders</h2>
-						<h3>Ticket Manager</h3>
-						Issue Mode: <select id="modeSelect" name="modeSelect">
-							<option value="Normal">Normal</option>
-							<option value="Walkthrough">Walkthrough</option>
-							<option value="AutoFix">AutoFix</option>
-						</select>
-						<select id="autoFix" name="autoFix" wicket:id="autoFix" style="display: none;" multiple="yes"></select>
-					</div>
-					<!-- Building and room select -->
-					<div>
-						<label>Building: <select name="building" id="building" wicket:id="building"></select></label>
-						<label>Room: <input type="text" name="room" id="room" maxlength="3"/></label>
-						<p>Status: <span id="roomStatus">Waiting for Input</span></p>
-					</div>
-					<!-- Issue Select template -->
-					<div class="well well-small row-fluid" id="issueBox">
-						<div class="span6">
-							<label>
-								<i class="icon-question-sign"></i>Issue: 
-								<br/><select wicket:id="issue" name="issue" id="issue"></select>
-							</label>
+						<!-- Header -->
+						<div class="well" style="text-align: center">
+							<h2>Housing - RATS Work Orders</h2>
+							<h3>Ticket Manager</h3>
+							Issue Mode: <select id="modeSelect" name="modeSelect">
+								<option value="Normal">Normal</option>
+								<option value="Walkthrough">Walkthrough</option>
+								<option value="AutoFix">AutoFix</option>
+							</select>
+							<select id="autoFix" name="autoFix" wicket:id="autoFix" style="display: none;" multiple="yes"></select>
 						</div>
-						<div class="span6" id="notesContainer">
-							Notes:
-							<div id="notesBox">
-								<textarea rows="3" name="note" id="note" class="notesArea"/>
+						<!-- Building and room select -->
+						<div>
+							<label>Building: <select name="building" id="building" wicket:id="building"></select></label>
+							<label>Room: <input type="text" name="room" id="room" maxlength="3"/></label>
+							<p>Status: <span id="roomStatus">Waiting for Input</span></p>
+						</div>
+						<!-- Issue Select template -->
+						<div class="well well-small row-fluid" id="issueBox">
+							<div class="span6">
+								<label>
+									<i class="icon-question-sign"></i>Issue: 
+									<br/><select wicket:id="issue" name="issue" id="issue"></select>
+								</label>
 							</div>
-							<button id="addNote" class="btn btn-info"><i class="icon-plus"></i>Add Note</button>
-							<button id="removeNote" class="btn btn-warning"><i class="icon-remove"></i>Remove Note</button>
+							<div class="span6" id="notesContainer">
+								Notes:
+								<div id="notesBox">
+									<textarea rows="3" name="note" id="note" class="notesArea"/>
+								</div>
+								<button id="addNote" class="btn btn-info"><i class="icon-plus"></i>Add Note</button>
+								<button id="removeNote" class="btn btn-warning"><i class="icon-remove"></i>Remove Note</button>
+							</div>
 						</div>
-					</div>
-					<button id="addIssue" class="btn btn-info"><i class="icon-plus"></i>Add Issue</button>
-					<button id="removeIssue" class="btn btn-warning"><i class="icon-remove"></i>Remove Issue</button>
-					<button id="submit" type="submit" class="btn btn-success"><i class=" icon-ok-sign"></i>Submit</button>
-					<br/>Submit Status: <span id="submitStatus">Waiting on input...</span>
+						<button id="addIssue" class="btn btn-info"><i class="icon-plus"></i>Add Issue</button>
+						<button id="removeIssue" class="btn btn-warning"><i class="icon-remove"></i>Remove Issue</button>
+						<button id="submit" type="submit" class="btn btn-success"><i class=" icon-ok-sign"></i>Submit</button>
+						<br/>Submit Status: <span id="submitStatus">Waiting on input...</span>
 					</fieldset></form>
 			</div>
 			<div class="span6 well" wicket:id="hello">Part 2</div>
