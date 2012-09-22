@@ -154,7 +154,7 @@ public class ProcessData extends AbstractResource {
 
 		//Parse out
 		String room = params.getParameterValue("room").toString();
-		for (Spreadsheet.RawDataEntry curEntry : Spreadsheet.get().loadRaw()) {
+		for (Spreadsheet.RawDataEntry curEntry : Spreadsheet.get().loadRawAll()) {
 			//Ignore anything that isn't this room
 			if (!curEntry.getRoom().equalsIgnoreCase(room))
 				continue;
