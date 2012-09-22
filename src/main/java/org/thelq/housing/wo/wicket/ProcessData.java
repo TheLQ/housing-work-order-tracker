@@ -5,7 +5,6 @@
  */
 package org.thelq.housing.wo.wicket;
 
-import com.google.gdata.data.spreadsheet.ListEntry;
 import com.google.gdata.util.ServiceException;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -61,8 +60,9 @@ public class ProcessData extends AbstractResource {
 		ResourceResponse r = new ResourceResponse();
 		r.setContentType("application/json");
 		r.setWriteCallback(new WriteCallback() {
+			@Override
 			public void writeData(Attributes a) {
-				String responseString = "EMPTY!!";
+				String responseString;
 				try {
 					//Figure out what method to use
 					IRequestParameters params = RequestCycle.get().getRequest().getRequestParameters();
