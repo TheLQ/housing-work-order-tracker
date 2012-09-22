@@ -137,8 +137,13 @@ public class Spreadsheet {
 	}
 
 	public void insertData(Collection<RawDataEntry> entries) throws IOException, ServiceException {
-		for(ListEntry curRawEntry : convertData(entries))
+		for (ListEntry curRawEntry : convertData(entries))
 			ssService.insert(new URL(url_raw), curRawEntry);
+	}
+
+	public void updateData(Collection<RawDataEntry> entries) throws IOException, ServiceException {
+		for (ListEntry curRawEntry : convertData(entries))
+			curRawEntry.update();
 	}
 
 	protected List<ListEntry> convertData(Collection<RawDataEntry> rawEntries) {
