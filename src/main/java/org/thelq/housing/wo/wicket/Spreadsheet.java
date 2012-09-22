@@ -18,6 +18,7 @@ import com.google.gdata.util.ServiceException;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -27,9 +28,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.TimeZone;
 import lombok.Data;
-import lombok.Getter;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -84,11 +83,19 @@ public class Spreadsheet {
 		return data;
 	}
 
-	public List<RawDataEntry> loadRawAll() throws MalformedURLException, ServiceException, IOException, ParseException {
-		List<RawDataEntry> enteries = new ArrayList();
+	public List<RawDataEntry> loadRawRoom(String room) throws MalformedURLException, IOException, ServiceException, ParseException {
+		ListFeed listFeed = ssService.getFeed(new URL(url_raw + URLEncoder.encode("room = " + room, "UTF-8")), ListFeed.class);
+		return loadRaw(listFeed);
+	}
 
+	public List<RawDataEntry> loadRawAll() throws MalformedURLException, ServiceException, IOException, ParseException {
 		//Load entire sheet into list
 		ListFeed listFeed = ssService.getFeed(new URL(url_raw), ListFeed.class);
+		return loadRaw(listFeed);
+	}
+
+	protected List<RawDataEntry> loadRaw(ListFeed listFeed) throws ParseException {
+		List<RawDataEntry> enteries = new ArrayList();
 		for (ListEntry row : listFeed.getEntries()) {
 			CustomElementCollection rowData = row.getCustomElements();
 			RawDataEntry curEntry = new RawDataEntry();
