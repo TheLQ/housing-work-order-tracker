@@ -84,7 +84,7 @@ public class Spreadsheet {
 		return data;
 	}
 
-	public List<RawDataEntry> loadRaw() throws MalformedURLException, ServiceException, IOException, ParseException {
+	public List<RawDataEntry> loadRawAll() throws MalformedURLException, ServiceException, IOException, ParseException {
 		List<RawDataEntry> enteries = new ArrayList();
 
 		//Load entire sheet into list
