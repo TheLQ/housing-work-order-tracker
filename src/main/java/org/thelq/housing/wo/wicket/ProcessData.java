@@ -5,6 +5,7 @@
  */
 package org.thelq.housing.wo.wicket;
 
+import com.google.gdata.data.spreadsheet.ListEntry;
 import com.google.gdata.util.ServiceException;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -29,6 +30,7 @@ import org.apache.wicket.request.resource.IResource.Attributes;
 import org.apache.wicket.util.string.StringValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.thelq.housing.wo.wicket.Spreadsheet.RawDataEntry;
 
 /**
  * Handle input. 
@@ -82,7 +84,7 @@ public class ProcessData extends AbstractResource {
 		return r;
 	}
 
-	public JSONObject handleFormSubmit() throws JSONException, IOException, ServiceException {
+	public JSONObject handleFormSubmit() throws JSONException, IOException, ServiceException, MalformedURLException, ParseException {
 		JSONObject response = new JSONObject();
 		IRequestParameters params = RequestCycle.get().getRequest().getRequestParameters();
 
@@ -102,6 +104,7 @@ public class ProcessData extends AbstractResource {
 		//Parse out POST data
 		Date date = new Date();
 		Map<Integer, Spreadsheet.RawDataEntry> enteries = new HashMap();
+		List<String> issueList = new ArrayList();
 		for (String curField : params.getParameterNames()) {
 			if (!curField.startsWith("issueBox"))
 				//Must be another field
@@ -140,6 +143,18 @@ public class ProcessData extends AbstractResource {
 		}
 
 		Spreadsheet.get().insertData(enteries.values());
+		
+		//Now, check for any issues that are missing, meaning that they were closed
+		List<RawDataEntry> updatedEnteries = new ArrayList();
+		for(RawDataEntry curEntry : Spreadsheet.get().loadRawRoom(room)) {
+			String issueName = generateIssueName(curEntry);
+			if(!issueList.contains(issueName)) {
+				curEntry.setStatus(Spreadsheet.Status.CLOSED);
+				updatedEnteries.add(curEntry);
+			}
+		}
+		Spreadsheet.get().updateData(updatedEnteries);
+		
 
 		response.put("submitStatus", "Added " + enteries.size() + " issues for " + building + " " + room + " on "
 				+ Spreadsheet.getNewDateFormat().format(date));
@@ -161,7 +176,7 @@ public class ProcessData extends AbstractResource {
 
 			//Generate response
 			JSONObject curNewIssue = new JSONObject();
-			curNewIssue.put("issue", curEntry.getType().toLowerCase() + " - " + curEntry.getIssue());
+			curNewIssue.put("issue", generateIssueName(curEntry));
 			for (String curNote : curEntry.getNotes())
 				curNewIssue.append("notesBox", new JSONObject().put("note", curNote));
 			issues.add(curNewIssue);
@@ -170,6 +185,10 @@ public class ProcessData extends AbstractResource {
 		response.put("data", issues);
 		response.put("response", "Found " + issues.size() + " issues(s) on " + Spreadsheet.getNewDateFormat().format(new Date()));
 		return response;
+	}
+	
+	protected String generateIssueName(RawDataEntry entry) {
+		return entry.getType().toLowerCase() + " - " + entry.getIssue();
 	}
 
 	@Data
