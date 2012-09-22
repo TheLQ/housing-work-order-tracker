@@ -130,6 +130,7 @@ public class ProcessData extends AbstractResource {
 				String[] parts = value.split(" - ");
 				entry.setType(parts[0]);
 				entry.setIssue(parts[1]);
+				issueList.add(generateIssueName(entry));
 				log.debug("Contains: " + autoFix.contains(value));
 				if (!params.getParameterValue("modeSelect").toString().equalsIgnoreCase("Normal") && autoFix.contains(value))
 					//Issue is going to be autofixed
