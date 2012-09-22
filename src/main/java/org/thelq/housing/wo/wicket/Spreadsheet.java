@@ -136,8 +136,14 @@ public class Spreadsheet {
 		return enteries;
 	}
 
-	public void insertData(Collection<RawDataEntry> enteries) throws IOException, ServiceException {
-		for (RawDataEntry curEntry : enteries) {
+	public void insertData(Collection<RawDataEntry> entries) throws IOException, ServiceException {
+		for(ListEntry curRawEntry : convertData(entries))
+			ssService.insert(new URL(url_raw), curRawEntry);
+	}
+
+	protected List<ListEntry> convertData(Collection<RawDataEntry> rawEntries) {
+		List<ListEntry> listEntries = new ArrayList();
+		for (RawDataEntry curEntry : rawEntries) {
 			ListEntry row = new ListEntry();
 			row.getCustomElements().setValueLocal("_df9om", "" + curEntry.getIssueNum());
 			row.getCustomElements().setValueLocal("opened", getNewDateFormat().format(curEntry.getOpenedDate()));
@@ -153,8 +159,9 @@ public class Spreadsheet {
 			int counter = 0;
 			for (String curNote : curEntry.getNotes())
 				row.getCustomElements().setValueLocal("notes" + (++counter), curNote);
-			ssService.insert(new URL(url_raw), row);
+			listEntries.add(row);
 		}
+		return listEntries;
 	}
 
 	public static Spreadsheet get() {
