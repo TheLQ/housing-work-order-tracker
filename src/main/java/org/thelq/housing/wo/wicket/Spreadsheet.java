@@ -95,7 +95,7 @@ public class Spreadsheet {
 	}
 
 	protected List<RawDataEntry> loadRaw(ListFeed listFeed) throws ParseException {
-		List<RawDataEntry> enteries = new ArrayList();
+		List<RawDataEntry> entries = new ArrayList();
 		for (ListEntry row : listFeed.getEntries()) {
 			CustomElementCollection rowData = row.getCustomElements();
 			RawDataEntry curEntry = new RawDataEntry();
@@ -130,10 +130,10 @@ public class Spreadsheet {
 				else
 					throw new RuntimeException("Unknown column " + columnName);
 			}
-			enteries.add(curEntry);
+			entries.add(curEntry);
 		}
 
-		return enteries;
+		return entries;
 	}
 
 	public void insertData(Collection<RawDataEntry> entries) throws IOException, ServiceException {
