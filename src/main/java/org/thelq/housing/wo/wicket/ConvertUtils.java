@@ -41,10 +41,10 @@ public class ConvertUtils {
 		List<ListEntry> enteries = new ArrayList(listFeed.getEntries());
 		convertDateToNew(enteries);
 		convertDateToCounter(enteries);
-		
+
 		//Update
 		int counter = 0;
-		for(ListEntry curEntry : enteries) {
+		for (ListEntry curEntry : enteries) {
 			System.out.println("Updating row " + (++counter) + " of " + enteries.size());
 			curEntry.update();
 		}

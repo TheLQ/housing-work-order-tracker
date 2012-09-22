@@ -160,7 +160,7 @@ public class Spreadsheet {
 		//date.setTimeZone(TimeZone.getTimeZone("EDT"));
 		return date;
 	}
-	
+
 	public static SimpleDateFormat getNewDateFormat() {
 		SimpleDateFormat date = new SimpleDateFormat("MMM dd yyyy, hh:mm aa");
 		//date.setTimeZone(TimeZone.getTimeZone("EDT"));
