@@ -34,7 +34,7 @@
 							<p>Status: <span id="roomStatus">Waiting for Input</span></p>
 						</div>
 						<!-- Issue Select template -->
-						<div class="well well-small row-fluid" id="issueBox">
+						<div class="well well-small row-fluid issueBox" id="issueBox">
 							<div class="span6">
 								<!--Status Dropdown-->
 								Issue #xx: <div class="btn-group">
@@ -79,7 +79,7 @@
 			$(document).ready(function(){
 				//Issue Duplication
 				var dynamicIssue = $("#issueBox").dynamicForm("#addIssue", "#removeIssue", 
-					{createColor:'yellow',	removeColor: 'red', afterClone: postIssueClone});
+				{createColor:'yellow',	removeColor: 'red', afterClone: postIssueClone});
 				$("#notesBox").dynamicForm("#addNote", "#removeNote", {createColor:'yellow',	removeColor: 'red'});
 				
 				//Dynamic room lookup
@@ -148,11 +148,8 @@
 				});
 				
 				//Status Message
-				function addStatusListener() {
-					//Set the displayed value to the current value
-					val = $(this).html();
-					console.log("test",$(this).closest(".btn-group"))
-					button = $(this).closest(".btn-group").find("button");
+				function setStatus(issueBox, val) {
+					button = issueBox.find("button");
 					button.find(".statusName").text(val)
 					
 					//Set color based on value
@@ -163,11 +160,15 @@
 					else if(val == "Closed")
 						button.removeClass("btn-danger btn-warning btn-success").addClass("btn-success")
 				}
-				$(".statusOption").click(addStatusListener);
+				$(".statusOption").click(function() {
+					setStatus($(this).closest(".issueBox"), $(this).html())
+				});
 				
 				//Since the issues elements get duplicated, readd any listeners
 				function postIssueClone(clone) {
-					$(".statusOption", clone).click(addStatusListener);
+					$(".statusOption", clone).click(function() {
+						setStatus($(this).closest(".issueBox"), $(this).html())
+					});
 				}
 				
 			});
