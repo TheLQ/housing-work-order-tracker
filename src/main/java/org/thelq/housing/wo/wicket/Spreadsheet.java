@@ -130,6 +130,7 @@ public class Spreadsheet {
 				else
 					throw new RuntimeException("Unknown column " + columnName);
 			}
+			curEntry.setListEntry(row);
 			entries.add(curEntry);
 		}
 
@@ -199,6 +200,7 @@ public class Spreadsheet {
 		protected Date closedDate;
 		protected boolean closedWalkthrough;
 		protected List<String> notes = new ArrayList();
+		protected ListEntry listEntry;
 
 		public boolean isSameIssue(RawDataEntry otherEntry) {
 			return getBuilding().equals(otherEntry.getBuilding())
