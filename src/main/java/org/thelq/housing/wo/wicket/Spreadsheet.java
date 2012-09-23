@@ -199,6 +199,13 @@ public class Spreadsheet {
 		protected Date closedDate;
 		protected boolean closedWalkthrough;
 		protected List<String> notes = new ArrayList();
+
+		public boolean isSameIssue(RawDataEntry otherEntry) {
+			return getBuilding().equals(otherEntry.getBuilding())
+					&& getRoom().equals(otherEntry.getRoom())
+					&& getType().equals(otherEntry.getType())
+					&& getIssue().equals(otherEntry.getIssue());
+		}
 	}
 
 	public static enum Status {
