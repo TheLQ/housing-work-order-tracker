@@ -36,10 +36,20 @@
 						<!-- Issue Select template -->
 						<div class="well well-small row-fluid" id="issueBox">
 							<div class="span6">
-								<label>
-									<i class="icon-question-sign"></i>Issue: 
-									<br/><select wicket:id="issue" name="issue" id="issue"></select>
-								</label>
+								<!--Status Dropdown-->
+								Issue #xx: <div class="btn-group">
+									<button class="btn btn-danger dropdown-toggle" data-toggle="dropdown">
+										<span class="statusName">Open</span>
+										<span class="caret"></span>
+									</button>
+									<ul class="dropdown-menu">
+										<li><a href="#" class="statusOption">Open</a></li>
+										<li><a href="#" class="statusOption">Waiting</a></li>
+										<li><a href="#" class="statusOption">Closed</a></li>
+									</ul>
+								</div>
+								<!--Issue Select Dropdown-->
+								<p/><select wicket:id="issue" name="issue" id="issue"></select>
 							</div>
 							<div class="span6" id="notesContainer">
 								Notes:
@@ -68,7 +78,8 @@
 		<script type="text/javascript">
 			$(document).ready(function(){
 				//Issue Duplication
-				var dynamicIssue = $("#issueBox").dynamicForm("#addIssue", "#removeIssue", {createColor:'yellow',	removeColor: 'red'});
+				var dynamicIssue = $("#issueBox").dynamicForm("#addIssue", "#removeIssue", 
+					{createColor:'yellow',	removeColor: 'red', afterClone: postIssueClone});
 				$("#notesBox").dynamicForm("#addNote", "#removeNote", {createColor:'yellow',	removeColor: 'red'});
 				
 				//Dynamic room lookup
@@ -135,6 +146,30 @@
 				$('#modeSelect').change(function (e) {
 					toggleAutoFix();
 				});
+				
+				//Status Message
+				function addStatusListener() {
+					//Set the displayed value to the current value
+					val = $(this).html();
+					console.log("test",$(this).closest(".btn-group"))
+					button = $(this).closest(".btn-group").find("button");
+					button.find(".statusName").text(val)
+					
+					//Set color based on value
+					if(val == "Open")
+						button.removeClass("btn-danger btn-warning btn-success").addClass("btn-danger");
+					else if(val == "Waiting")
+						button.removeClass("btn-danger btn-warning btn-success").addClass("btn-warning");
+					else if(val == "Closed")
+						button.removeClass("btn-danger btn-warning btn-success").addClass("btn-success")
+				}
+				$(".statusOption").click(addStatusListener);
+				
+				//Since the issues elements get duplicated, readd any listeners
+				function postIssueClone(clone) {
+					$(".statusOption", clone).click(addStatusListener);
+				}
+				
 			});
 		</script>
 	</body>
