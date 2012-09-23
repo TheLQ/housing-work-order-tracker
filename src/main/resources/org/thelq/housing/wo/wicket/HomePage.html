@@ -62,7 +62,6 @@
 							</div>
 						</div>
 						<button id="addIssue" class="btn btn-info"><i class="icon-plus"></i>Add Issue</button>
-						<button id="removeIssue" class="btn btn-warning"><i class="icon-remove"></i>Remove Issue</button>
 						<button id="submit" type="submit" class="btn btn-success"><i class=" icon-ok-sign"></i>Submit</button>
 						<br/>Submit Status: <span id="submitStatus">Waiting on input...</span>
 					</fieldset></form>
@@ -81,7 +80,7 @@
 				//Issue Duplication
 				var dynamicIssue = $("#issueBox").dynamicForm("#addIssue", "#removeIssue", 
 				{createColor:'yellow',	removeColor: 'red', afterClone: postIssueClone});
-				$("#notesBox").dynamicForm("#addNote", "#removeNote", {createColor:'yellow',	removeColor: 'red'});
+				$("#notesBox").dynamicForm("#addNote", "", {createColor:'yellow',	removeColor: 'red'});
 				
 				//Dynamic room lookup
 				function roomLookup() {
