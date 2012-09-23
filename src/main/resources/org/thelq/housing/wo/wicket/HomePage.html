@@ -37,7 +37,8 @@
 						<div class="well well-small row-fluid issueBox" id="issueBox">
 							<div class="span6">
 								<!--Status Dropdown-->
-								Issue #xx: <div class="btn-group">
+								Issue #xx: <span class="issueStatus"></span>
+								<div class="btn-group">
 									<button class="btn btn-danger dropdown-toggle" data-toggle="dropdown">
 										<span class="statusName">Open</span>
 										<span class="caret"></span>
@@ -49,7 +50,7 @@
 									</ul>
 								</div>
 								<!--Issue Select Dropdown-->
-								<p/><select wicket:id="issue" name="issue" id="issue"></select>
+								<p/><select wicket:id="issue" name="issue" id="issue" class="issueSelect"></select>
 							</div>
 							<div class="span6" id="notesContainer">
 								Notes:
@@ -134,7 +135,7 @@
 					//resetForm: true        // reset the form after successful submit 
 				});
 				
-				//Auto Fix it select toggle
+				//AutoFixIt display toggle
 				function toggleAutoFix() {
 					if($("#modeSelect").val() == "Normal")
 						$("#autoFix").hide();
@@ -146,6 +147,25 @@
 				$('#modeSelect').change(function (e) {
 					toggleAutoFix();
 				});
+				
+				//AutoFixIt autoclosing issues
+				function autoCloseIssues() {
+					selectedIssues = $("#autoFix").val();
+					$(".issueBox").each(function() {
+						//Find any issues that should be autofixed
+						if($.inArray($(this).find(".issueSelect").val(), selectedIssues) != -1) {
+							setStatus($(this), "Closed");
+							$(this).find(".issueStatus").html("(autofixed)")
+						}
+						//Find any issues that should no longer be autofixed
+						else if($(this).find(".issueStatus").html() == "(autofixed)") {
+							setStatus($(this), "Open")
+							$(this).find(".issueStatus").html("")
+						}
+					})
+				}
+				$('#autoFix').change(autoCloseIssues);
+				$(".issueSelect").change(autoCloseIssues);
 				
 				//Status Message
 				function setStatus(issueBox, val) {
@@ -169,6 +189,7 @@
 					$(".statusOption", clone).click(function() {
 						setStatus($(this).closest(".issueBox"), $(this).html())
 					});
+					$(".issueSelect").change(autoCloseIssues);
 				}
 				
 			});
