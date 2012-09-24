@@ -12,6 +12,7 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import lombok.Data;
@@ -103,8 +104,7 @@ public class ProcessData extends AbstractResource {
 
 		//Parse out POST data
 		Date date = new Date();
-		Map<Integer, Spreadsheet.RawDataEntry> entries = new HashMap();
-		List<String> issueList = new ArrayList();
+		Map<Integer, Spreadsheet.RawDataEntry> entriesByNum = new HashMap();
 		for (String curField : params.getParameterNames()) {
 			if (!curField.startsWith("issueBox"))
 				//Must be another field
@@ -113,13 +113,13 @@ public class ProcessData extends AbstractResource {
 			int curIssueNum = Integer.parseInt(fieldParts[2]);
 
 			//Make sure our entry exists
-			Spreadsheet.RawDataEntry entry = entries.get(curIssueNum);
+			Spreadsheet.RawDataEntry entry = entriesByNum.get(curIssueNum);
 			if (entry == null) {
 				entry = new Spreadsheet.RawDataEntry();
 				entry.setBuilding(building);
 				entry.setRoom(room);
 				entry.setOpenedDate(date);
-				entries.put(curIssueNum, entry);
+				entriesByNum.put(curIssueNum, entry);
 			}
 
 			String value = params.getParameterValue(curField).toString();
@@ -130,7 +130,6 @@ public class ProcessData extends AbstractResource {
 				String[] parts = value.split(" - ");
 				entry.setType(parts[0]);
 				entry.setIssue(parts[1]);
-				issueList.add(generateIssueName(entry));
 				log.debug("Contains: " + autoFix.contains(value));
 				if (!params.getParameterValue("modeSelect").toString().equalsIgnoreCase("Normal") && autoFix.contains(value))
 					//Issue is going to be autofixed
@@ -143,21 +142,42 @@ public class ProcessData extends AbstractResource {
 				entry.getNotes().add(value);
 		}
 
-		Spreadsheet.get().insertData(entries.values());
-		
-		//Now, check for any issues that are missing, meaning that they were closed
-		List<RawDataEntry> updatedEntries = new ArrayList();
-		for(RawDataEntry curEntry : Spreadsheet.get().loadRawRoom(room)) {
-			String issueName = generateIssueName(curEntry);
-			if(!issueList.contains(issueName)) {
-				curEntry.setStatus(Spreadsheet.Status.CLOSED);
-				updatedEntries.add(curEntry);
-			}
-		}
-		Spreadsheet.get().updateData(updatedEntries);
-		
+		//Check for notes sections that need to be updated
+		List<RawDataEntry> rawEntries = Spreadsheet.get().loadRawRoom(room);
+		for (RawDataEntry curRawEntry : rawEntries)
+			//Find this issue in input
+			for (Iterator<RawDataEntry> entriesItr = entriesByNum.values().iterator(); entriesItr.hasNext();) {
+				RawDataEntry curNewEntry = entriesItr.next();
+				if (curNewEntry.isSameIssue(curRawEntry)) {
+					//See if anything needs to be updated
+					boolean update = false;
+					if (!curRawEntry.getNotes().equals(curNewEntry.getNotes())) {
+						curRawEntry.setNotes(curNewEntry.getNotes());
+						update = true;
+					}
+					if (!curRawEntry.getStatus().equals(curNewEntry.getStatus())) {
+						//Status changed, handle seperately
+						if (curNewEntry.getStatus().equals(Spreadsheet.Status.CLOSED))
+							curRawEntry.setClosedDate(date); //TODO: Walkthrough
+						else if (curNewEntry.getStatus().equals(Spreadsheet.Status.WAITING))
+							curRawEntry.getNotes().add("Marked Waiting on " + Spreadsheet.getNewDateFormat().format(date));
+						else if (curNewEntry.getStatus().equals(Spreadsheet.Status.OPEN))
+							//Status changed back to Open, probably should note this
+							curRawEntry.getNotes().add("Remarked Open on " + Spreadsheet.getNewDateFormat().format(date));
+						curRawEntry.setStatus(curNewEntry.getStatus());
+						update = true;
+					}
 
-		response.put("submitStatus", "Added " + entries.size() + " issues for " + building + " " + room + " on "
+					//Anything got updated, update the sheet
+					if (update) {
+						curRawEntry.getListEntry().update();
+						//Remove from new entries so its not inserted as a new row
+						entriesItr.remove();
+					}
+				}
+			}
+
+		response.put("submitStatus", "Added " + entriesByNum.size() + " issues for " + building + " " + room + " on "
 				+ Spreadsheet.getNewDateFormat().format(date));
 
 		return response;
@@ -187,7 +207,7 @@ public class ProcessData extends AbstractResource {
 		response.put("response", "Found " + issues.size() + " issues(s) on " + Spreadsheet.getNewDateFormat().format(new Date()));
 		return response;
 	}
-	
+
 	protected String generateIssueName(RawDataEntry entry) {
 		return entry.getType().toLowerCase() + " - " + entry.getIssue();
 	}
