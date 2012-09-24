@@ -3,10 +3,6 @@
  *
  * This file is part of University of Louisville Housing WorkOrder System.
  */
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package org.thelq.housing.wo.wicket;
 
 import com.google.gdata.client.spreadsheet.SpreadsheetService;
