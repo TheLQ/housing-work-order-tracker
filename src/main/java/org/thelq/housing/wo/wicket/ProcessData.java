@@ -16,11 +16,11 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import lombok.Data;
+import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
-import org.apache.wicket.ajax.json.JSONException;
-import org.apache.wicket.ajax.json.JSONObject;
 import org.apache.wicket.request.IRequestParameters;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.request.resource.AbstractResource;
@@ -74,7 +74,7 @@ public class ProcessData extends AbstractResource {
 					else if (mode.equalsIgnoreCase("room"))
 						responseString = handleRoomSubmit().toString();
 					else
-						responseString = new JSONObject().append("error", "Unknown mode " + mode).toString();
+						responseString = new JSONObject().put("error", "Unknown mode " + mode).toString();
 				} catch (Exception ex) {
 					String error = StringEscapeUtils.escapeEcmaScript(ExceptionUtils.getStackTrace(ex));
 					responseString = "{\"error\": \"" + error + "\"}";
@@ -85,7 +85,7 @@ public class ProcessData extends AbstractResource {
 		return r;
 	}
 
-	public JSONObject handleFormSubmit() throws JSONException, IOException, ServiceException, MalformedURLException, ParseException {
+	public JSONObject handleFormSubmit() throws IOException, ServiceException, MalformedURLException, ParseException {
 		JSONObject response = new JSONObject();
 		IRequestParameters params = RequestCycle.get().getRequest().getRequestParameters();
 
@@ -183,7 +183,7 @@ public class ProcessData extends AbstractResource {
 		return response;
 	}
 
-	public JSONObject handleRoomSubmit() throws MalformedURLException, ServiceException, IOException, ParseException, JSONException {
+	public JSONObject handleRoomSubmit() throws MalformedURLException, ServiceException, IOException, ParseException {
 		JSONObject response = new JSONObject();
 		List<JSONObject> issues = new ArrayList();
 		IRequestParameters params = RequestCycle.get().getRequest().getRequestParameters();
@@ -199,8 +199,12 @@ public class ProcessData extends AbstractResource {
 			//Generate response
 			JSONObject curNewIssue = new JSONObject();
 			curNewIssue.put("issue", generateIssueName(curEntry));
-			for (String curNote : curEntry.getNotes())
-				curNewIssue.append("notesBox", new JSONObject().put("note", curNote));
+			curNewIssue.put("notesBox", new JSONArray());
+			for (String curNote : curEntry.getNotes()) {
+				JSONObject note = new JSONObject();
+				note.put("note", curNote);
+				curNewIssue.accumulate("notesBox", note);
+			}
 			issues.add(curNewIssue);
 		}
 
