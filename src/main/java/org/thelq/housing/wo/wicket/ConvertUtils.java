@@ -33,9 +33,9 @@ public class ConvertUtils {
 
 	public static void main(String[] args) throws MalformedURLException, ParseException, IOException, ServiceException {
 		log.info("Logging in...");
-		Spreadsheet spreadsheet = new Spreadsheet();
+		Spreadsheet spreadsheet = new Spreadsheet("dev_");
 		log.info("Grabbing feed...");
-		ListFeed listFeed = spreadsheet.ssService.getFeed(new URL(Spreadsheet.url_raw), ListFeed.class);
+		ListFeed listFeed = spreadsheet.ssService.getFeed(new URL(spreadsheet.getUrlRaw()), ListFeed.class);
 
 		//Pass to different methods to work on data
 		List<ListEntry> enteries = new ArrayList(listFeed.getEntries());

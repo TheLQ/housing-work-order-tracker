@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import lombok.Data;
+import lombok.Getter;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,18 +39,22 @@ public class Spreadsheet {
 	/**
 	 * Spreadsheet feed key, NOT document key
 	 */
-	protected static final String url_raw = "https://spreadsheets.google.com/feeds/list/t280PyPU5dOYJ_ref3fX38Q/od6/private/full";
-	protected static final String url_ui = "https://spreadsheets.google.com/feeds/list/t280PyPU5dOYJ_ref3fX38Q/od7/private/full";
+	@Getter
+	protected final String urlRaw;
+	@Getter
+	protected final String urlUi;
 	protected SpreadsheetService ssService;
 	protected final String user;
 	protected final String pass;
 
-	public Spreadsheet() throws IOException, AuthenticationException {
+	public Spreadsheet(String prefix) throws IOException, AuthenticationException {
 		//Load username and password and login to Spreadsheet API
 		Properties userProp = new Properties();
 		userProp.load(this.getClass().getClassLoader().getResourceAsStream("creds.properties"));
 		user = userProp.getProperty("user");
 		pass = userProp.getProperty("pass");
+		urlRaw = userProp.getProperty(prefix + "url_raw");
+		urlUi = userProp.getProperty(prefix + "url_ui");
 		//Load the Spreadsheet service
 		ssService = new SpreadsheetService("UofL-Workorder");
 		ssService.setUserCredentials(user, pass);
@@ -58,7 +63,7 @@ public class Spreadsheet {
 	public UIData loadUI() throws MalformedURLException, ServiceException, IOException {
 		UIData data = new UIData();
 		//Start loading stuff from the UI
-		ListFeed listFeed = ssService.getFeed(new URL(url_ui), ListFeed.class);
+		ListFeed listFeed = ssService.getFeed(new URL(urlUi), ListFeed.class);
 		for (ListEntry row : listFeed.getEntries()) {
 			CustomElementCollection rowData = row.getCustomElements();
 
@@ -82,13 +87,13 @@ public class Spreadsheet {
 	public List<RawDataEntry> loadRawRoom(String building, String room) throws MalformedURLException, IOException, ServiceException, ParseException {
 		String query = URLEncoder.encode("building = " + building + " and room = " + room + " and status != Closed", "UTF-8");
 		log.info("Querying sheet with: " + query);
-		ListFeed listFeed = ssService.getFeed(new URL(url_raw + "?sq=" + query), ListFeed.class);
+		ListFeed listFeed = ssService.getFeed(new URL(urlRaw + "?sq=" + query), ListFeed.class);
 		return loadRaw(listFeed);
 	}
 
 	public List<RawDataEntry> loadRawAll() throws MalformedURLException, ServiceException, IOException, ParseException {
 		//Load entire sheet into list
-		ListFeed listFeed = ssService.getFeed(new URL(url_raw), ListFeed.class);
+		ListFeed listFeed = ssService.getFeed(new URL(urlRaw), ListFeed.class);
 		return loadRaw(listFeed);
 	}
 
@@ -137,7 +142,7 @@ public class Spreadsheet {
 
 	public void insertData(Collection<RawDataEntry> entries) throws IOException, ServiceException {
 		for (ListEntry curRawEntry : convertData(entries))
-			ssService.insert(new URL(url_raw), curRawEntry);
+			ssService.insert(new URL(urlRaw), curRawEntry);
 	}
 
 	public void updateData(Collection<RawDataEntry> entries) throws IOException, ServiceException {
