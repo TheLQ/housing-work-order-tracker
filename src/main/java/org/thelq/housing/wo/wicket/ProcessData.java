@@ -205,7 +205,8 @@ public class ProcessData extends AbstractResource {
 		}
 
 		response.put("data", issues);
-		response.put("response", "Found " + issues.size() + " issues(s) on " + Spreadsheet.getNewDateFormat().format(new Date()));
+		response.put("response", "Found " + issues.size() + " issues(s) for " + building + " " + room
+				+ " on " + Spreadsheet.getNewDateFormat().format(new Date()));
 		return response;
 	}
 
