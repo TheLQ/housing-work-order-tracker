@@ -40,7 +40,7 @@ public class GaeWicketApplication extends WebApplication {
 			log.info("You are in DEVELOPMENT mode");
 			getResourceSettings().setResourcePollFrequency(Duration.ONE_SECOND);
 			getDebugSettings().setComponentUseCheck(true);
-			getMarkupSettings().setStripWicketTags(false);
+			getMarkupSettings().setStripWicketTags(true);
 			getExceptionSettings().setUnexpectedExceptionDisplay(IExceptionSettings.SHOW_EXCEPTION_PAGE);
 		} else if (Application.get().getConfigurationType().equals(RuntimeConfigurationType.DEPLOYMENT)) {
 			log.info("Production mode enabled");
