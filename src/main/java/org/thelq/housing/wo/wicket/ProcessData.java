@@ -95,12 +95,13 @@ public class ProcessData extends AbstractResource {
 		String room = params.getParameterValue("room").toString();
 
 		log.info("Building: " + building + " | room: " + room);
-
+		
 		//Get all the selected auto-fixed issues
 		List<String> autoFix = new ArrayList();
-		for (StringValue curValue : params.getParameterValues("autoFix"))
-			if (curValue != null)
-				autoFix.add(curValue.toString());
+		if (params.getParameterValues("autoFix") != null)
+			for (StringValue curValue : params.getParameterValues("autoFix"))
+				if (curValue != null)
+					autoFix.add(curValue.toString());
 
 		//Parse out POST data
 		Date date = new Date();
