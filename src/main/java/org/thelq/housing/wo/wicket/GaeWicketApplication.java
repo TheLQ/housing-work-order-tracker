@@ -42,12 +42,22 @@ public class GaeWicketApplication extends WebApplication {
 			getDebugSettings().setComponentUseCheck(true);
 			getMarkupSettings().setStripWicketTags(true);
 			getExceptionSettings().setUnexpectedExceptionDisplay(IExceptionSettings.SHOW_EXCEPTION_PAGE);
+			try {
+				spreadsheet = new Spreadsheet("dev_");
+			} catch (Exception ex) {
+				throw new RuntimeException("Can't load spreadsheet", ex);
+			}
 		} else if (Application.get().getConfigurationType().equals(RuntimeConfigurationType.DEPLOYMENT)) {
 			log.info("Production mode enabled");
 			getResourceSettings().setResourcePollFrequency(null);
 			getDebugSettings().setComponentUseCheck(false);
 			getMarkupSettings().setStripWicketTags(true);
 			getExceptionSettings().setUnexpectedExceptionDisplay(IExceptionSettings.SHOW_EXCEPTION_PAGE);
+			try {
+				spreadsheet = new Spreadsheet("prod_");
+			} catch (Exception ex) {
+				throw new RuntimeException("Can't load spreadsheet", ex);
+			}
 		} else
 			throw new RuntimeException("Unknown application config " + Application.get().getConfigurationType());
 
@@ -64,12 +74,5 @@ public class GaeWicketApplication extends WebApplication {
 				return new ProcessData();
 			}
 		});
-
-		try {
-			//Global Spreadsheet instance
-			spreadsheet = new Spreadsheet();
-		} catch (Exception ex) {
-			throw new RuntimeException("Can't load spreadsheet", ex);
-		}
 	}
 }
