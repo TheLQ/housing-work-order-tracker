@@ -143,7 +143,7 @@ public class ProcessData extends AbstractResource {
 		}
 
 		//Check for notes sections that need to be updated
-		List<RawDataEntry> rawEntries = Spreadsheet.get().loadRawRoom(room);
+		List<RawDataEntry> rawEntries = Spreadsheet.get().loadRawRoom(building, room);
 		for (RawDataEntry curRawEntry : rawEntries)
 			//Find this issue in input
 			for (Iterator<RawDataEntry> entriesItr = entriesByNum.values().iterator(); entriesItr.hasNext();) {
@@ -189,8 +189,9 @@ public class ProcessData extends AbstractResource {
 		IRequestParameters params = RequestCycle.get().getRequest().getRequestParameters();
 
 		//Parse out
+		String building = params.getParameterValue("building").toString();
 		String room = params.getParameterValue("room").toString();
-		for (Spreadsheet.RawDataEntry curEntry : Spreadsheet.get().loadRawAll()) {
+		for (Spreadsheet.RawDataEntry curEntry : Spreadsheet.get().loadRawRoom(building, room)) {
 			//Ignore anything that isn't this room
 			if (!curEntry.getRoom().equalsIgnoreCase(room))
 				continue;
