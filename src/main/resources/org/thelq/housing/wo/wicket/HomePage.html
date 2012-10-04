@@ -15,56 +15,58 @@
 	<body style="padding-left: 4px; background-color: /*#F0F0F0*/white;">
 		<div class="row-fluid">
 			<div class="span6 form-inline" style="font-weight:bold; text-align: center">
-				<form method="POST" action="processData?mode=form" id="mainForm"><fieldset>
-						<!-- Header -->
-						<div class="well" style="text-align: center">
-							<h2>Housing - RATS Work Orders</h2>
-							<h3>Ticket Manager</h3>
-							Issue Mode: <select id="modeSelect" name="modeSelect">
-								<option value="Normal">Normal</option>
-								<option value="Walkthrough">Walkthrough</option>
-								<option value="AutoFix">AutoFix</option>
-							</select>
-							<select id="autoFix" name="autoFix" wicket:id="autoFix" style="display: none;" multiple="yes"></select>
-						</div>
-						<!-- Building and room select -->
-						<div>
-							<label>Building: <select name="building" id="building" wicket:id="building"></select></label>
-							<label>Room: <input type="text" name="room" id="room" maxlength="3"/></label>
-							<p>Status: <span id="roomStatus">Waiting for Input</span></p>
-						</div>
-						<!-- Issue Select template -->
-						<div class="well well-small row-fluid issueBox" id="issueBox">
-							<div class="span6">
-								<!--Status Dropdown-->
-								Issue #xx: <span class="issueStatus"></span>
-								<div class="btn-group">
-									<button class="btn btn-danger dropdown-toggle" data-toggle="dropdown">
-										<span class="statusName">Open</span>
-										<span class="caret"></span>
-									</button>
-									<ul class="dropdown-menu">
-										<li><a href="#" class="statusOption">Open</a></li>
-										<li><a href="#" class="statusOption">Waiting</a></li>
-										<li><a href="#" class="statusOption">Closed</a></li>
-									</ul>
-								</div>
-								<!--Issue Select Dropdown-->
-								<p/><select wicket:id="issue" name="issue" id="issue" class="issueSelect"></select>
+				<form method="POST" action="processData?mode=form" id="mainForm">
+					<!-- Header -->
+					<div class="well" style="text-align: center">
+						<h2>Housing - RATS Work Orders</h2>
+						<h3>Ticket Manager</h3>
+						Issue Mode: <select id="modeSelect" name="modeSelect">
+							<option value="Normal">Normal</option>
+							<option value="Walkthrough">Walkthrough</option>
+							<option value="AutoFix">AutoFix</option>
+						</select>
+						<select id="autoFix" name="autoFix" wicket:id="autoFix" style="display: none;" multiple="yes"></select>
+					</div>
+					<!-- Building and room select -->
+					<div>
+						<label>Building: <select name="building" id="building" wicket:id="building"></select></label>
+						<label>Room: <input type="text" name="room" id="room" maxlength="3"/></label>
+						<p>Status: <span id="roomStatus">Waiting for Input</span></p>
+					</div>
+					<!-- Issue Select template -->
+					<div class="well well-small row-fluid issueBox" id="issueBox">
+						<div class="span6">
+							<input type="hidden" name="sheetNum" id="sheetNum" value="-1" style="display: none"/>
+							<!--Status Dropdown-->
+							Issue #xx: <span class="issueStatus"></span>
+							<div class="btn-group">
+								<button class="btn btn-danger dropdown-toggle" data-toggle="dropdown">
+									<span class="statusName">Open</span>
+									<span class="caret"></span>
+								</button>
+								<ul class="dropdown-menu">
+									<li><a href="#" class="statusOption">Open</a></li>
+									<li><a href="#" class="statusOption">Waiting</a></li>
+									<li><a href="#" class="statusOption">Closed</a></li>
+								</ul>
 							</div>
-							<div class="span6" id="notesContainer">
-								Notes:
-								<div id="notesBox">
-									<textarea rows="3" name="note" id="note" class="notesArea"/>
-								</div>
-								<button id="addNote" class="btn btn-info"><i class="icon-plus"></i>Add Note</button>
-								<button id="removeNote" class="btn btn-warning"><i class="icon-remove"></i>Remove Note</button>
-							</div>
+							<!--Issue Select Dropdown-->
+							<p/><select wicket:id="issue" name="issue" id="issue" class="issueSelect"></select>
 						</div>
-						<button id="addIssue" class="btn btn-info"><i class="icon-plus"></i>Add Issue</button>
-						<button id="submit" type="submit" class="btn btn-success"><i class=" icon-ok-sign"></i>Submit</button>
-						<br/>Submit Status: <span id="submitStatus">Waiting on input...</span>
-					</fieldset></form>
+						<div class="span6" id="notesContainer">
+							Notes:
+							<div id="notesBox" style="padding: 5px">
+								<textarea rows="3" name="note" id="note" class="notesArea"/>
+							</div>
+							<button id="addNote" class="btn btn-info"><i class="icon-plus"></i>Add Note</button>
+							<button id="removeNote" class="btn btn-warning"><i class="icon-remove"></i>Remove Note</button>
+						</div>
+					</div>
+					<button id="addIssue" class="btn btn-info"><i class="icon-plus"></i>Add Issue</button>
+					<button id="removeIssue" class="btn btn-info" style="display: none;"><i class="icon-plus"></i>Remove Issue</button>
+					<button id="submit" type="submit" class="btn btn-success"><i class=" icon-ok-sign"></i>Submit</button>
+					<br/>Submit Status: <span id="submitStatus">Waiting on input...</span>
+				</form>
 			</div>
 			<div class="span6 well" wicket:id="hello">Part 2</div>
 		</div>
@@ -81,6 +83,22 @@
 				var dynamicIssue = $("#issueBox").dynamicForm("#addIssue", "#removeIssue", 
 				{createColor:'yellow',	removeColor: 'red', afterClone: postIssueClone});
 				$("#notesBox").dynamicForm("#addNote", "", {createColor:'yellow',	removeColor: 'red'});
+				
+				//Form resetting
+				function resetForm() {
+					//Remove all other issue boxes
+					console.log("About to reset form")
+					totalIssues = $(".issueBox").length;
+					if(totalIssues > 1)
+						for(i = 1; i < totalIssues; i++)
+							$("#removeIssue").click();
+					
+					//Remove extra notes in first box
+					totalNotes = $(".notesArea").length
+					if(totalNotes > 1)
+						for(i = 1; i < totalNotes; i++)
+							$("#removeNote").click()
+				}
 				
 				//Dynamic room lookup
 				function roomLookup() {
@@ -101,97 +119,101 @@
 							if(typeof json.error != 'undefined')
 								$("#roomStatus").html("Server Error! " + json.error);
 							else {
+								console.log("Finished looking up room")
 								$("#roomStatus").html("Success! " + json.response)
+								resetForm();
 								dynamicIssue.inject(json.data);
 							}
 						}  
 					);  
 					}
-				}
-				$("#room").live('input', roomLookup);
+			}
+			$("#room").live('input', roomLookup);
 				
-				//Automagical AJAX submit
-				$("#mainForm").ajaxForm({
-					//target:        '#submitStatus',   // target element(s) to be updated with server response 
-					beforeSubmit: function() {
-						$("#submitStatus").html("Submitting...");
-					},
-					success: function(data) {
-						if(typeof data.error != 'undefined')
-							$("#submitStatus").html("Server Error! " + data.error);
-						else
-							$("#submitStatus").html("Success! " + data.submitStatus)
-					},
-					error: function(data) {
-						$("#submitStatus").html("Javascript Error! " + data.responseText);
-					},
+			//Automagical AJAX submit
+			$("#mainForm").ajaxForm({
+				//target:        '#submitStatus',   // target element(s) to be updated with server response 
+				beforeSubmit: function() {
+					$("#submitStatus").html("Submitting...");
+				},
+				success: function(data) {
+					if(typeof data.error != 'undefined')
+						$("#submitStatus").html("Server Error! " + data.error);
+					else {
+						console.log("Finished submitting form")
+						$("#submitStatus").html("Success! " + data.submitStatus);
+						resetForm();
+					}
+				},
+				error: function(data) {
+					$("#submitStatus").html("Javascript Error! " + data.responseText);
+				},
  
-					// other available options: 
-					//url:       "processData?mode=form",         // override for form's 'action' attribute 
-					//type:      "POST",        // 'get' or 'post', override for form's 'method' attribute 
-					dataType:  'json'        // 'xml', 'script', or 'json' (expected server response type) 
-					//clearForm: true        // clear all form fields after successful submit 
-					//resetForm: true        // reset the form after successful submit 
-				});
+				// other available options: 
+				//url:       "processData?mode=form",         // override for form's 'action' attribute 
+				//type:      "POST",        // 'get' or 'post', override for form's 'method' attribute 
+				dataType:  'json',        // 'xml', 'script', or 'json' (expected server response type) 
+				clearForm: true,        // clear all form fields after successful submit 
+				resetForm: true        // reset the form after successful submit 
+			});
 				
-				//AutoFixIt display toggle
-				function toggleAutoFix() {
-					if($("#modeSelect").val() == "Normal")
-						$("#autoFix").hide();
-					else
-						$("#autoFix").show();
-				}
-				//Show or hide based on preselected value
+			//AutoFixIt display toggle
+			function toggleAutoFix() {
+				if($("#modeSelect").val() == "Normal")
+					$("#autoFix").hide();
+				else
+					$("#autoFix").show();
+			}
+			//Show or hide based on preselected value
+			toggleAutoFix();
+			$('#modeSelect').change(function (e) {
 				toggleAutoFix();
-				$('#modeSelect').change(function (e) {
-					toggleAutoFix();
-				});
+			});
 				
-				//AutoFixIt autoclosing issues
-				function autoCloseIssues() {
-					selectedIssues = $("#autoFix").val();
-					$(".issueBox").each(function() {
-						//Find any issues that should be autofixed
-						if($.inArray($(this).find(".issueSelect").val(), selectedIssues) != -1) {
-							setStatus($(this), "Closed");
-							$(this).find(".issueStatus").html("(autofixed)")
-						}
-						//Find any issues that should no longer be autofixed
-						else if($(this).find(".issueStatus").html() == "(autofixed)") {
-							setStatus($(this), "Open")
-							$(this).find(".issueStatus").html("")
-						}
-					})
-				}
-				$('#autoFix').change(autoCloseIssues);
-				$(".issueSelect").change(autoCloseIssues);
+			//AutoFixIt autoclosing issues
+			function autoCloseIssues() {
+				selectedIssues = $("#autoFix").val();
+				$(".issueBox").each(function() {
+					//Find any issues that should be autofixed
+					if($.inArray($(this).find(".issueSelect").val(), selectedIssues) != -1) {
+						setStatus($(this), "Closed");
+						$(this).find(".issueStatus").html("(autofixed)")
+					}
+					//Find any issues that should no longer be autofixed
+					else if($(this).find(".issueStatus").html() == "(autofixed)") {
+						setStatus($(this), "Open")
+						$(this).find(".issueStatus").html("")
+					}
+				})
+			}
+			$('#autoFix').change(autoCloseIssues);
+			$(".issueSelect").change(autoCloseIssues);
 				
-				//Status Message
-				function setStatus(issueBox, val) {
-					button = issueBox.find("button");
-					button.find(".statusName").text(val)
+			//Status Message
+			function setStatus(issueBox, val) {
+				button = issueBox.find("button");
+				button.find(".statusName").text(val)
 					
-					//Set color based on value
-					if(val == "Open")
-						button.removeClass("btn-danger btn-warning btn-success").addClass("btn-danger");
-					else if(val == "Waiting")
-						button.removeClass("btn-danger btn-warning btn-success").addClass("btn-warning");
-					else if(val == "Closed")
-						button.removeClass("btn-danger btn-warning btn-success").addClass("btn-success")
-				}
-				$(".statusOption").click(function() {
+				//Set color based on value
+				if(val == "Open")
+					button.removeClass("btn-danger btn-warning btn-success").addClass("btn-danger");
+				else if(val == "Waiting")
+					button.removeClass("btn-danger btn-warning btn-success").addClass("btn-warning");
+				else if(val == "Closed")
+					button.removeClass("btn-danger btn-warning btn-success").addClass("btn-success")
+			}
+			$(".statusOption").click(function() {
+				setStatus($(this).closest(".issueBox"), $(this).html())
+			});
+				
+			//Since the issues elements get duplicated, readd any listeners
+			function postIssueClone(clone) {
+				$(".statusOption", clone).click(function() {
 					setStatus($(this).closest(".issueBox"), $(this).html())
 				});
-				
-				//Since the issues elements get duplicated, readd any listeners
-				function postIssueClone(clone) {
-					$(".statusOption", clone).click(function() {
-						setStatus($(this).closest(".issueBox"), $(this).html())
-					});
-					$(".issueSelect").change(autoCloseIssues);
-				}
-				
-			});
+				$(".issueSelect").change(autoCloseIssues);
+			}
+		});
 		</script>
 	</body>
 </html>
