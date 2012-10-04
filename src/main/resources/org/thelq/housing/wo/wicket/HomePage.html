@@ -82,7 +82,7 @@
 				//Issue Duplication
 				var dynamicIssue = $("#issueBox").dynamicForm("#addIssue", "#removeIssue", 
 				{createColor:'yellow',	removeColor: 'red', afterClone: postIssueClone});
-				$("#notesBox").dynamicForm("#addNote", "", {createColor:'yellow',	removeColor: 'red'});
+				$("#notesBox").dynamicForm("#addNote", "#removeNote", {createColor:'yellow',	removeColor: 'red'});
 				
 				//Form resetting
 				function resetForm() {
@@ -208,10 +208,12 @@
 				
 			//Since the issues elements get duplicated, readd any listeners
 			function postIssueClone(clone) {
+				console.log("Readding listeners to new cloned element");
 				$(".statusOption", clone).click(function() {
 					setStatus($(this).closest(".issueBox"), $(this).html())
 				});
 				$(".issueSelect").change(autoCloseIssues);
+				$("#issueBox", clone).dynamicForm("#addNote", "#removeNote", {createColor:'yellow',	removeColor: 'red'});
 			}
 		});
 		</script>
