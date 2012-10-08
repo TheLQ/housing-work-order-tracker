@@ -199,6 +199,7 @@ public class ProcessData extends AbstractResource {
 
 			//Generate response
 			JSONObject curNewIssue = new JSONObject();
+			curNewIssue.put("sheetId", curEntry.getSheetId());
 			curNewIssue.put("issue", generateIssueName(curEntry));
 			curNewIssue.put("notesBox", new JSONArray());
 			Iterator<String> notesItr = curEntry.getNotes().iterator();
