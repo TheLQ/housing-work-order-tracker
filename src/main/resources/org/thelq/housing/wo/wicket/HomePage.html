@@ -95,9 +95,15 @@
 					
 					//Remove extra notes in first box
 					counter = 0;
-					$(".notesBox", $(".issueBox").first()).each(function(index) {
-						if(index != 0)
-							$(this).remove();
+					firstIssueBox = $(".issueBox").first();
+					$(".notesBox", firstIssueBox).each(function(index) {
+						if(index != 0) {
+							try {
+								$("#removeNote", firstIssueBox).click();
+							} catch(err) {
+								console.log("Resetting form - Ignoring error: " + err);
+							}
+						}
 					});
 				}
 				
