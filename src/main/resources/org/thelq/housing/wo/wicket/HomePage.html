@@ -55,7 +55,7 @@
 						</div>
 						<div class="span6" id="notesContainer">
 							Notes:
-							<div id="notesBox" style="padding: 5px">
+							<div id="notesBox" style="padding: 5px" class="notesBox">
 								<textarea rows="3" name="note" id="note" class="notesArea"/>
 							</div>
 							<button id="addNote" class="btn btn-info"><i class="icon-plus"></i>Add Note</button>
@@ -94,10 +94,11 @@
 							$("#removeIssue").click();
 					
 					//Remove extra notes in first box
-					totalNotes = $(".notesArea").length
-					if(totalNotes > 1)
-						for(i = 1; i < totalNotes; i++)
-							$("#removeNote").click()
+					counter = 0;
+					$(".notesBox", $(".issueBox").first()).each(function(index) {
+						if(index != 0)
+							$(this).remove();
+					});
 				}
 				
 				//Dynamic room lookup
@@ -127,95 +128,95 @@
 						}  
 					);  
 					}
-			}
-			$("#room").live('input', roomLookup);
+				}
+				$("#room").live('input', roomLookup);
 				
-			//Automagical AJAX submit
-			$("#mainForm").ajaxForm({
-				//target:        '#submitStatus',   // target element(s) to be updated with server response 
-				beforeSubmit: function() {
-					$("#submitStatus").html("Submitting...");
-				},
-				success: function(data) {
-					if(typeof data.error != 'undefined')
-						$("#submitStatus").html("Server Error! " + data.error);
-					else {
-						console.log("Finished submitting form")
-						$("#submitStatus").html("Success! " + data.submitStatus);
-						resetForm();
-					}
-				},
-				error: function(data) {
-					$("#submitStatus").html("Javascript Error! " + data.responseText);
-				},
+				//Automagical AJAX submit
+				$("#mainForm").ajaxForm({
+					//target:        '#submitStatus',   // target element(s) to be updated with server response 
+					beforeSubmit: function() {
+						$("#submitStatus").html("Submitting...");
+					},
+					success: function(data) {
+						if(typeof data.error != 'undefined')
+							$("#submitStatus").html("Server Error! " + data.error);
+						else {
+							console.log("Finished submitting form")
+							$("#submitStatus").html("Success! " + data.submitStatus);
+							resetForm();
+						}
+					},
+					error: function(data) {
+						$("#submitStatus").html("Javascript Error! " + data.responseText);
+					},
  
-				// other available options: 
-				//url:       "processData?mode=form",         // override for form's 'action' attribute 
-				//type:      "POST",        // 'get' or 'post', override for form's 'method' attribute 
-				dataType:  'json',        // 'xml', 'script', or 'json' (expected server response type) 
-				clearForm: true,        // clear all form fields after successful submit 
-				resetForm: true        // reset the form after successful submit 
-			});
+					// other available options: 
+					//url:       "processData?mode=form",         // override for form's 'action' attribute 
+					//type:      "POST",        // 'get' or 'post', override for form's 'method' attribute 
+					dataType:  'json',        // 'xml', 'script', or 'json' (expected server response type) 
+					clearForm: true,        // clear all form fields after successful submit 
+					resetForm: true        // reset the form after successful submit 
+				});
 				
-			//AutoFixIt display toggle
-			function toggleAutoFix() {
-				if($("#modeSelect").val() == "Normal")
-					$("#autoFix").hide();
-				else
-					$("#autoFix").show();
-			}
-			//Show or hide based on preselected value
-			toggleAutoFix();
-			$('#modeSelect').change(function (e) {
+				//AutoFixIt display toggle
+				function toggleAutoFix() {
+					if($("#modeSelect").val() == "Normal")
+						$("#autoFix").hide();
+					else
+						$("#autoFix").show();
+				}
+				//Show or hide based on preselected value
 				toggleAutoFix();
-			});
+				$('#modeSelect').change(function (e) {
+					toggleAutoFix();
+				});
 				
-			//AutoFixIt autoclosing issues
-			function autoCloseIssues() {
-				selectedIssues = $("#autoFix").val();
-				$(".issueBox").each(function() {
-					//Find any issues that should be autofixed
-					if($.inArray($(this).find(".issueSelect").val(), selectedIssues) != -1) {
-						setStatus($(this), "Closed");
-						$(this).find(".issueStatus").html("(autofixed)")
-					}
-					//Find any issues that should no longer be autofixed
-					else if($(this).find(".issueStatus").html() == "(autofixed)") {
-						setStatus($(this), "Open")
-						$(this).find(".issueStatus").html("")
-					}
-				})
-			}
-			$('#autoFix').change(autoCloseIssues);
-			$(".issueSelect").change(autoCloseIssues);
+				//AutoFixIt autoclosing issues
+				function autoCloseIssues() {
+					selectedIssues = $("#autoFix").val();
+					$(".issueBox").each(function() {
+						//Find any issues that should be autofixed
+						if($.inArray($(this).find(".issueSelect").val(), selectedIssues) != -1) {
+							setStatus($(this), "Closed");
+							$(this).find(".issueStatus").html("(autofixed)")
+						}
+						//Find any issues that should no longer be autofixed
+						else if($(this).find(".issueStatus").html() == "(autofixed)") {
+							setStatus($(this), "Open")
+							$(this).find(".issueStatus").html("")
+						}
+					})
+				}
+				$('#autoFix').change(autoCloseIssues);
+				$(".issueSelect").change(autoCloseIssues);
 				
-			//Status Message
-			function setStatus(issueBox, val) {
-				button = issueBox.find("button");
-				button.find(".statusName").text(val)
+				//Status Message
+				function setStatus(issueBox, val) {
+					button = issueBox.find("button");
+					button.find(".statusName").text(val)
 					
-				//Set color based on value
-				if(val == "Open")
-					button.removeClass("btn-danger btn-warning btn-success").addClass("btn-danger");
-				else if(val == "Waiting")
-					button.removeClass("btn-danger btn-warning btn-success").addClass("btn-warning");
-				else if(val == "Closed")
-					button.removeClass("btn-danger btn-warning btn-success").addClass("btn-success")
-			}
-			$(".statusOption").click(function() {
-				setStatus($(this).closest(".issueBox"), $(this).html())
-			});
-				
-			//Since the issues elements get duplicated, readd any listeners
-			function postIssueClone(clone) {
-				console.log("Readding listeners to new cloned element");
-				$(".statusOption", clone).click(function() {
+					//Set color based on value
+					if(val == "Open")
+						button.removeClass("btn-danger btn-warning btn-success").addClass("btn-danger");
+					else if(val == "Waiting")
+						button.removeClass("btn-danger btn-warning btn-success").addClass("btn-warning");
+					else if(val == "Closed")
+						button.removeClass("btn-danger btn-warning btn-success").addClass("btn-success")
+				}
+				$(".statusOption").click(function() {
 					setStatus($(this).closest(".issueBox"), $(this).html())
 				});
-				$(".issueSelect").change(autoCloseIssues);
-				$("#issueBox", clone).dynamicForm("#addNote", "#removeNote", {createColor:'yellow',	removeColor: 'red'});
-			}
-		});
+				
+				//Since the issues elements get duplicated, readd any listeners
+				function postIssueClone(clone) {
+					console.log("Readding listeners to new cloned element");
+					$(".statusOption", clone).click(function() {
+						setStatus($(this).closest(".issueBox"), $(this).html())
+					});
+					$(".issueSelect").change(autoCloseIssues);
+					$("#issueBox", clone).dynamicForm("#addNote", "#removeNote", {createColor:'yellow',	removeColor: 'red'});
+				}
+			});
 		</script>
 	</body>
 </html>
