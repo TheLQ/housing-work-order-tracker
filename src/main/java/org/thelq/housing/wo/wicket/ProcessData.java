@@ -138,6 +138,9 @@ public class ProcessData extends AbstractResource {
 				else
 					//New issue
 					entry.setStatus(Spreadsheet.Status.OPEN);
+			} else if(fieldParts[3].equalsIgnoreCase("sheetId")) {
+				entry.setSheetId(Integer.parseInt(value));
+				log.info("New sheet id " + value);
 			} else
 				//This is a note
 				entry.getNotes().add(value);
