@@ -112,7 +112,7 @@ public class ProcessData extends AbstractResource {
 				continue;
 			String[] fieldParts = StringUtils.split(curField, "[]");
 			int curIssueNum = Integer.parseInt(fieldParts[2]);
-
+			
 			//Make sure our entry exists
 			Spreadsheet.RawDataEntry entry = entriesByNum.get(curIssueNum);
 			if (entry == null) {
@@ -201,11 +201,14 @@ public class ProcessData extends AbstractResource {
 			JSONObject curNewIssue = new JSONObject();
 			curNewIssue.put("issue", generateIssueName(curEntry));
 			curNewIssue.put("notesBox", new JSONArray());
-			for (String curNote : curEntry.getNotes()) {
+			Iterator<String> notesItr = curEntry.getNotes().iterator();
+			do {
+				//Make sure this collection is never empty, should have at least an empty string in it
+				String curNote = notesItr.hasNext() ? notesItr.next() : "";
 				JSONObject note = new JSONObject();
 				note.put("note", curNote);
 				curNewIssue.accumulate("notesBox", note);
-			}
+			} while(notesItr.hasNext());
 			issues.add(curNewIssue);
 		}
 
