@@ -105,7 +105,7 @@ public class ConvertUtils {
 		for (Map.Entry<Long, List<ListEntry>> curEntry : counterMap.entrySet())
 			for (ListEntry curRow : curEntry.getValue()) {
 				int curIssueNum = ++counter;
-				curRow.getCustomElements().setValueLocal("_df9om", "" + curIssueNum);
+				curRow.getCustomElements().setValueLocal("id", "" + curIssueNum);
 			}
 	}
 }
