@@ -108,7 +108,7 @@ public class Spreadsheet {
 				String value = rowData.getValue(columnName);
 				if (rowData.getValue(columnName) == null)
 					continue;
-				else if (columnName.equalsIgnoreCase("_df9om"))
+				else if (columnName.equalsIgnoreCase("id"))
 					curEntry.setSheetId(Integer.valueOf(value));
 				else if (columnName.equalsIgnoreCase("Opened"))
 					curEntry.setOpenedDate(getNewDateFormat().parse(value));
@@ -154,7 +154,7 @@ public class Spreadsheet {
 		List<ListEntry> listEntries = new ArrayList();
 		for (RawDataEntry curEntry : rawEntries) {
 			ListEntry row = new ListEntry();
-			row.getCustomElements().setValueLocal("_df9om", "" + curEntry.getSheetId());
+			row.getCustomElements().setValueLocal("id", "" + curEntry.getSheetId());
 			row.getCustomElements().setValueLocal("opened", getNewDateFormat().format(curEntry.getOpenedDate()));
 			row.getCustomElements().setValueLocal("wt", curEntry.isOpenedWalkthrough() ? "Y" : "N");
 			row.getCustomElements().setValueLocal("building", curEntry.getBuilding());
