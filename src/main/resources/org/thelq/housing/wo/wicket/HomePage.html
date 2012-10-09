@@ -36,22 +36,23 @@
 					<!-- Issue Select template -->
 					<div class="well well-small row-fluid issueBox" id="issueBox">
 						<div class="span6">
-							<input type="hidden" name="sheetId" id="sheetId" value="-1" style="display: none"/>
+							<input type="hidden" name="sheetId" id="sheetId" value="-1"/>
 							<!--Status Dropdown-->
-							Issue #xx: <span class="issueStatus"></span>
-							<div class="btn-group">
-								<button class="btn btn-danger dropdown-toggle" data-toggle="dropdown">
-									<span class="statusName">Open</span>
-									<span class="caret"></span>
-								</button>
-								<ul class="dropdown-menu">
-									<li><a href="#" class="statusOption">Open</a></li>
-									<li><a href="#" class="statusOption">Waiting</a></li>
-									<li><a href="#" class="statusOption">Closed</a></li>
-								</ul>
-							</div>
-							<!--Issue Select Dropdown-->
-							<p/><select wicket:id="issue" name="issue" id="issue" class="issueSelect"></select>
+							<input type="hidden" name="statusSelect" id="statusSelect" value="empty" class="statusSelect"/ >
+								   Issue #xx: <span class="issueStatus"></span>
+								<div class="btn-group">
+									<button class="btn btn-danger dropdown-toggle" data-toggle="dropdown">
+										<span class="statusName">Open</span>
+										<span class="caret"></span>
+									</button>
+									<ul class="dropdown-menu">
+										<li><a href="#" class="statusOption">Open</a></li>
+										<li><a href="#" class="statusOption">Waiting</a></li>
+										<li><a href="#" class="statusOption">Closed</a></li>
+									</ul>
+								</div>
+								<!--Issue Select Dropdown-->
+								<p/><select wicket:id="issue" name="issue" id="issue" class="issueSelect"></select>
 						</div>
 						<div class="span6" id="notesContainer">
 							Notes:
@@ -140,6 +141,12 @@
 				//Automagical AJAX submit
 				$("#mainForm").ajaxForm({
 					//target:        '#submitStatus',   // target element(s) to be updated with server response 
+					beforeSerialize: function() {
+						$(".issueBox").each(function() {
+							curStatus = $(".statusName", $(this)).html();
+							$(".statusSelect", $(this)).val(curStatus);
+						});
+					},
 					beforeSubmit: function() {
 						$("#submitStatus").html("Submitting...");
 					},
