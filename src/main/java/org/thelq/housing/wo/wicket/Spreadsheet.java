@@ -128,7 +128,7 @@ public class Spreadsheet {
 					curEntry.setClosedDate(getNewDateFormat().parse(value));
 				else if (columnName.equalsIgnoreCase("CWT"))
 					curEntry.setClosedWalkthrough(value.equals("Y"));
-				else if (StringUtils.startsWithIgnoreCase(columnName, "Notes"))
+				else if (StringUtils.startsWithIgnoreCase(columnName, "Notes") && !StringUtils.endsWithIgnoreCase(columnName, "Date"))
 					curEntry.getNotes().add(value);
 				else
 					throw new RuntimeException("Unknown column " + columnName);
