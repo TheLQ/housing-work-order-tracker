@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -95,7 +96,7 @@ public class ProcessData extends AbstractResource {
 		String room = params.getParameterValue("room").toString();
 
 		log.info("Building: " + building + " | room: " + room);
-		
+
 		//Get all the selected auto-fixed issues
 		List<String> autoFix = new ArrayList();
 		if (params.getParameterValues("autoFix") != null)
@@ -105,6 +106,7 @@ public class ProcessData extends AbstractResource {
 
 		//Parse out POST data
 		Date date = new Date();
+		List<RawDataEntry> rawEntries = Spreadsheet.get().loadRawRoom(building, room);
 		Map<Integer, Spreadsheet.RawDataEntry> entriesByNum = new HashMap();
 		for (String curField : params.getParameterNames()) {
 			if (!curField.startsWith("issueBox"))
@@ -112,76 +114,77 @@ public class ProcessData extends AbstractResource {
 				continue;
 			String[] fieldParts = StringUtils.split(curField, "[]");
 			int curIssueNum = Integer.parseInt(fieldParts[2]);
-			
-			//Make sure our entry exists
-			Spreadsheet.RawDataEntry entry = entriesByNum.get(curIssueNum);
-			if (entry == null) {
+			String prefix = "issueBox[issueBox][" + curIssueNum + "]";
+
+			//Skip parameter if we've already dealt with the entry
+			if (entriesByNum.containsKey(curIssueNum))
+				continue;
+
+			//Get the correct RawDataEntry
+			int sheetId = params.getParameterValue(prefix + "[sheetId]").toInt();
+			Spreadsheet.RawDataEntry entry = null;
+			if (sheetId > 0) {
+				//Has a sheet id, this is updating an existing issue
+				for (RawDataEntry curEntry : rawEntries)
+					if (curEntry.getSheetId() == sheetId) {
+						entry = curEntry;
+						break;
+					}
+
+				//Make sure we got an issue out of it
+				if (entry == null)
+					throw new RuntimeException("Given sheet id " + sheetId + " but can't find a matching issue!");
+			} else {
 				entry = new Spreadsheet.RawDataEntry();
+
+				//Start populating fields that only a new issue needs
 				entry.setBuilding(building);
 				entry.setRoom(room);
 				entry.setOpenedDate(date);
-				entriesByNum.put(curIssueNum, entry);
+
+				String[] issueParts = params.getParameterValue(prefix + "[issue]").toString().split(" - ");
+				entry.setType(issueParts[0]);
+				entry.setIssue(issueParts[1]);
 			}
+			
+			//Insert all entries into entriesByNum so they can be referenced later
+			entriesByNum.put(curIssueNum, entry);
 
-			String value = params.getParameterValue(curField).toString();
-			if (fieldParts[3].equals("issue")) {
-				//This is specifying the issue
-				log.debug("Value: " + value);
-				log.debug("Autofix contents: " + autoFix);
-				String[] parts = value.split(" - ");
-				entry.setType(parts[0]);
-				entry.setIssue(parts[1]);
-				log.debug("Contains: " + autoFix.contains(value));
-				if (!params.getParameterValue("modeSelect").toString().equalsIgnoreCase("Normal") && autoFix.contains(value))
-					//Issue is going to be autofixed
-					entry.setStatus(Spreadsheet.Status.CLOSED);
-				else
-					//New issue
-					entry.setStatus(Spreadsheet.Status.OPEN);
-			} else if(fieldParts[3].equalsIgnoreCase("sheetId")) {
-				entry.setSheetId(Integer.parseInt(value));
-				log.info("New sheet id " + value);
-			} else
-				//This is a note
-				entry.getNotes().add(value);
-		}
+			//Handle status appropriately
+			String status = params.getParameterValue(prefix + "[statusSelect]").toString();
+			if (status.equalsIgnoreCase("open"))
+				entry.setStatus(Spreadsheet.Status.OPEN);
+			else if (status.equalsIgnoreCase("closed")) {
+				entry.setStatus(Spreadsheet.Status.CLOSED);
+				entry.setClosedDate(date);
+				entry.setClosedWalkthrough(!params.getParameterValue("modeSelect").toString().equalsIgnoreCase("Normal"));
+			} else if (status.equalsIgnoreCase("waiting"))
+				entry.setStatus(Spreadsheet.Status.WAITING);
 
-		//Check for notes sections that need to be updated
-		List<RawDataEntry> rawEntries = Spreadsheet.get().loadRawRoom(building, room);
-		for (RawDataEntry curRawEntry : rawEntries)
-			//Find this issue in input
-			for (Iterator<RawDataEntry> entriesItr = entriesByNum.values().iterator(); entriesItr.hasNext();) {
-				RawDataEntry curNewEntry = entriesItr.next();
-				if (curNewEntry.isSameIssue(curRawEntry)) {
-					//See if anything needs to be updated
-					boolean update = false;
-					if (!curRawEntry.getNotes().equals(curNewEntry.getNotes())) {
-						curRawEntry.setNotes(curNewEntry.getNotes());
-						update = true;
-					}
-					if (!curRawEntry.getStatus().equals(curNewEntry.getStatus())) {
-						//Status changed, handle seperately
-						if (curNewEntry.getStatus().equals(Spreadsheet.Status.CLOSED))
-							curRawEntry.setClosedDate(date); //TODO: Walkthrough
-						else if (curNewEntry.getStatus().equals(Spreadsheet.Status.WAITING))
-							curRawEntry.getNotes().add("Marked Waiting on " + Spreadsheet.getNewDateFormat().format(date));
-						else if (curNewEntry.getStatus().equals(Spreadsheet.Status.OPEN))
-							//Status changed back to Open, probably should note this
-							curRawEntry.getNotes().add("Remarked Open on " + Spreadsheet.getNewDateFormat().format(date));
-						curRawEntry.setStatus(curNewEntry.getStatus());
-						update = true;
-					}
-
-					//Anything got updated, update the sheet
-					if (update) {
-						curRawEntry.getListEntry().update();
-						//Remove from new entries so its not inserted as a new row
-						entriesItr.remove();
-					}
+			//Load notes
+			int curNoteId = -1;
+			String value;
+			while ((value = params.getParameterValue(prefix + "[notesBox][" + (++curNoteId) + "][note]").toString()) != null)
+				if (!entry.getNotes().contains(value)) {
+					entry.getNotes().add(value);
+					log.info("Added note " + value);
 				}
-			}
+			
+			//Insert or update entry into sheet appropiatly
+			if (rawEntries.contains(entry))
+				entry.getListEntry().update();
+		}
+		
+		//Remove remove all non-ListEntry entries from entryByNum
+		List<RawDataEntry> newEntries = new ArrayList(entriesByNum.values());
+		for(RawDataEntry curNewEntry : newEntries)
+			if(curNewEntry.getListEntry() != null)
+				newEntries.remove(curNewEntry);
+		
+		//Insert all new entries
+		Spreadsheet.get().insertData(newEntries);
 
-		response.put("submitStatus", "Added " + entriesByNum.size() + " issues for " + building + " " + room + " on "
+		response.put("submitStatus", "Added " + newEntries.size() + " issues for " + building + " " + room + " on "
 				+ Spreadsheet.getNewDateFormat().format(date));
 
 		return response;
@@ -212,7 +215,7 @@ public class ProcessData extends AbstractResource {
 				JSONObject note = new JSONObject();
 				note.put("note", curNote);
 				curNewIssue.accumulate("notesBox", note);
-			} while(notesItr.hasNext());
+			} while (notesItr.hasNext());
 			issues.add(curNewIssue);
 		}
 
