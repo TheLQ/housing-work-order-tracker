@@ -85,6 +85,10 @@ public class Spreadsheet {
 	}
 
 	public List<RawDataEntry> loadRawRoom(String building, String room) throws MalformedURLException, IOException, ServiceException, ParseException {
+		if (StringUtils.isBlank(building))
+			throw new NullPointerException("Attempting to load raw room with null building");
+		if (StringUtils.isBlank(room))
+			throw new NullPointerException("Attempting to load raw room with null room");
 		String query = URLEncoder.encode("building = " + building + " and room = \"" + room + "\" and status != Closed", "UTF-8");
 		log.info("Querying sheet with: " + query);
 		ListFeed listFeed = ssService.getFeed(new URL(urlRaw + "?sq=" + query), ListFeed.class);
