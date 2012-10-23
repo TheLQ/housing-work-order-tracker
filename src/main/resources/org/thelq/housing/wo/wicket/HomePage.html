@@ -133,7 +133,8 @@
 							console.log("Finished submitting form")
 							$("#submitStatus").html("Success! " + data.submitStatus);
 							curURL = [location.protocol, '//', location.host, location.pathname].join('');
-							window.location = curURL + "?submitstatus=" + data.submitstatus;
+							newURL = curURL + "?submitstatus=" + data.submitStatus;
+							window.location = newURL;
 						}
 					},
 					error: function(data) {
