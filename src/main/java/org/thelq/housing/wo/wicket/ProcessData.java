@@ -177,9 +177,9 @@ public class ProcessData extends AbstractResource {
 		
 		//Remove remove all non-ListEntry entries from entryByNum
 		List<RawDataEntry> newEntries = new ArrayList(entriesByNum.values());
-		for(RawDataEntry curNewEntry : newEntries)
-			if(curNewEntry.getListEntry() != null)
-				newEntries.remove(curNewEntry);
+		for(Iterator itr = newEntries.iterator(); itr.hasNext(); )
+			if(itr.next() != null)
+				itr.remove();
 		
 		//Insert all new entries
 		Spreadsheet.get().insertData(newEntries);
