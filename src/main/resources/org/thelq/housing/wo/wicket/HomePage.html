@@ -85,29 +85,6 @@
 				{createColor:'yellow',	removeColor: 'red', afterClone: postIssueClone});
 				$("#notesBox").dynamicForm("#addNote", "#removeNote", {limit: 10, createColor:'yellow', removeColor: 'red'});
 				
-				//Form resetting
-				function resetForm() {
-					//Remove all other issue boxes
-					console.log("About to reset form")
-					totalIssues = $(".issueBox").length;
-					if(totalIssues > 1)
-						for(i = 1; i < totalIssues; i++)
-							$("#removeIssue").click();
-					
-					//Remove extra notes in first box
-					counter = 0;
-					firstIssueBox = $(".issueBox").first();
-					$(".notesBox", firstIssueBox).each(function(index) {
-						if(index != 0) {
-							try {
-								$("#removeNote", firstIssueBox).click();
-							} catch(err) {
-								console.log("Resetting form - Ignoring error: " + err);
-							}
-						}
-					});
-				}
-				
 				//Dynamic room lookup
 				function roomLookup() {
 					room = $(this).val();
@@ -129,7 +106,6 @@
 							else {
 								console.log("Finished looking up room")
 								$("#roomStatus").html("Success! " + json.response)
-								resetForm();
 								dynamicIssue.inject(json.data);
 							}
 						}  
@@ -156,7 +132,8 @@
 						else {
 							console.log("Finished submitting form")
 							$("#submitStatus").html("Success! " + data.submitStatus);
-							resetForm();
+							curURL = [location.protocol, '//', location.host, location.pathname].join('');
+							window.location = curURL + "?submitstatus=" + data.submitstatus;
 						}
 					},
 					error: function(data) {
@@ -166,9 +143,9 @@
 					// other available options: 
 					//url:       "processData?mode=form",         // override for form's 'action' attribute 
 					//type:      "POST",        // 'get' or 'post', override for form's 'method' attribute 
-					dataType:  'json',        // 'xml', 'script', or 'json' (expected server response type) 
-					clearForm: true,        // clear all form fields after successful submit 
-					resetForm: true        // reset the form after successful submit 
+					dataType:  'json'        // 'xml', 'script', or 'json' (expected server response type) 
+					//clearForm: true,        // clear all form fields after successful submit 
+					//resetForm: true        // reset the form after successful submit 
 				});
 				
 				//AutoFixIt display toggle
