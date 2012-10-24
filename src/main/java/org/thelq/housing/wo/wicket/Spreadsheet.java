@@ -150,8 +150,11 @@ public class Spreadsheet {
 	}
 
 	public void updateData(Collection<RawDataEntry> entries) throws IOException, ServiceException {
-		for (ListEntry curRawEntry : convertData(entries))
-			curRawEntry.update();
+		for (RawDataEntry curEntry : entries) {
+			if (curEntry.getListEntry() == null)
+				throw new NullPointerException("No ListEntry defined for " + curEntry);
+			curEntry.getListEntry().update();
+		}
 	}
 
 	protected List<ListEntry> convertData(Collection<RawDataEntry> rawEntries) {
