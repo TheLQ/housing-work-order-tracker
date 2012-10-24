@@ -97,13 +97,6 @@ public class ProcessData extends AbstractResource {
 
 		log.info("Building: " + building + " | room: " + room);
 
-		//Get all the selected auto-fixed issues
-		List<String> autoFix = new ArrayList();
-		if (params.getParameterValues("autoFix") != null)
-			for (StringValue curValue : params.getParameterValues("autoFix"))
-				if (curValue != null)
-					autoFix.add(curValue.toString());
-
 		//Parse out POST data
 		Date date = new Date();
 		List<RawDataEntry> entriesRaw = Spreadsheet.get().loadRawRoom(building, room);
