@@ -26,6 +26,10 @@
 							<option value="AutoFix">AutoFix</option>
 						</select>
 						<select id="autoFix" name="autoFix" wicket:id="autoFix" style="display: none;" multiple="yes"></select>
+						<div class="alert alert-success" style="margin-bottom: 0; display: none;" id="topStatusBox">
+							<button type="button" class="close" data-dismiss="alert">×</button>
+							<span id="topStatus"></span>
+						</div>
 					</div>
 					<!-- Building and room select -->
 					<div>
@@ -39,20 +43,20 @@
 							<input type="hidden" name="sheetId" id="sheetId" value="-1"/>
 							<!--Status Dropdown-->
 							<input type="hidden" name="statusSelect" id="statusSelect" value="empty" class="statusSelect" />
-								   Issue #xx: <span class="issueStatus"></span>
-								<div class="btn-group">
-									<button class="btn btn-danger dropdown-toggle" data-toggle="dropdown">
-										<span class="statusName">Open</span>
-										<span class="caret"></span>
-									</button>
-									<ul class="dropdown-menu">
-										<li><a href="#" class="statusOption">Open</a></li>
-										<li><a href="#" class="statusOption">Waiting</a></li>
-										<li><a href="#" class="statusOption">Closed</a></li>
-									</ul>
-								</div>
-								<!--Issue Select Dropdown-->
-								<p/><select wicket:id="issue" name="issue" id="issue" class="issueSelect"></select>
+							Issue #xx: <span class="issueStatus"></span>
+							<div class="btn-group">
+								<button class="btn btn-danger dropdown-toggle" data-toggle="dropdown">
+									<span class="statusName">Open</span>
+									<span class="caret"></span>
+								</button>
+								<ul class="dropdown-menu">
+									<li><a href="#" class="statusOption">Open</a></li>
+									<li><a href="#" class="statusOption">Waiting</a></li>
+									<li><a href="#" class="statusOption">Closed</a></li>
+								</ul>
+							</div>
+							<!--Issue Select Dropdown-->
+							<p/><select wicket:id="issue" name="issue" id="issue" class="issueSelect"></select>
 						</div>
 						<div class="span6" id="notesContainer">
 							Notes:
@@ -84,6 +88,16 @@
 				var dynamicIssue = $("#issueBox").dynamicForm("#addIssue", "#removeIssue", 
 				{createColor:'yellow',	removeColor: 'red', afterClone: postIssueClone});
 				$("#notesBox").dynamicForm("#addNote", "#removeNote", {limit: 10, createColor:'yellow', removeColor: 'red'});
+				
+				//Load data from previous page
+				if(getParameterByName("submitStatus") != "") {
+					$("#topStatus").html(getParameterByName("submitStatus"));
+					$("#topStatusBox").toggle(true);
+					$("#modeSelect").val(getParameterByName("mode"));
+					$("#autoFix").val(getParameterByName("autoFix").split(","));
+					if(getParameterByName("building") != null)
+						$("#building").val(getParameterByName("building"))
+				}
 				
 				//Dynamic room lookup
 				function roomLookup() {
@@ -133,7 +147,11 @@
 							console.log("Finished submitting form")
 							$("#submitStatus").html("Success! " + data.submitStatus);
 							curURL = [location.protocol, '//', location.host, location.pathname].join('');
-							newURL = curURL + "?submitstatus=" + data.submitStatus;
+							newURL = curURL + "?submitStatus=" + data.submitStatus
+								+ "&mode=" + $("#modeSelect").val()
+								+ "&autoFix=" + $("#autoFix").val();
+							if($("#modeSelect").val() != "Normal")
+								newURL = newURL + "&building=" + $("#building").val()
 							window.location = newURL;
 						}
 					},
@@ -210,6 +228,16 @@
 					$("#issueBox", clone).dynamicForm("#addNote", "#removeNote", {limit: 10, createColor:'yellow',	removeColor: 'red'});
 				}
 			});
+			function getParameterByName(name) {
+				name = name.replace(/[\[]/, "\\\[").replace(/[\]]/, "\\\]");
+				var regexS = "[\\?&]" + name + "=([^&#]*)";
+				var regex = new RegExp(regexS);
+				var results = regex.exec(window.location.search);
+				if(results == null)
+					return "";
+				else
+					return decodeURIComponent(results[1].replace(/\+/g, " "));
+			}
 		</script>
 	</body>
 </html>
