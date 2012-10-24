@@ -106,7 +106,8 @@ public class ProcessData extends AbstractResource {
 
 		//Parse out POST data
 		Date date = new Date();
-		List<RawDataEntry> rawEntries = Spreadsheet.get().loadRawRoom(building, room);
+		List<RawDataEntry> entriesRaw = Spreadsheet.get().loadRawRoom(building, room);
+		List<RawDataEntry> entriesNew = new ArrayList();
 		Map<Integer, Spreadsheet.RawDataEntry> entriesByNum = new HashMap();
 		for (String curField : params.getParameterNames()) {
 			if (!curField.startsWith("issueBox"))
@@ -125,7 +126,7 @@ public class ProcessData extends AbstractResource {
 			Spreadsheet.RawDataEntry entry = null;
 			if (sheetId > 0) {
 				//Has a sheet id, this is updating an existing issue
-				for (RawDataEntry curEntry : rawEntries)
+				for (RawDataEntry curEntry : entriesRaw)
 					if (curEntry.getSheetId() == sheetId) {
 						entry = curEntry;
 						break;
@@ -136,6 +137,7 @@ public class ProcessData extends AbstractResource {
 					throw new RuntimeException("Given sheet id " + sheetId + " but can't find a matching issue!");
 			} else {
 				entry = new Spreadsheet.RawDataEntry();
+				entriesNew.add(entry);
 
 				//Start populating fields that only a new issue needs
 				entry.setBuilding(building);
@@ -169,22 +171,13 @@ public class ProcessData extends AbstractResource {
 					entry.getNotes().add(value);
 					log.info("Added note " + value);
 				}
-			
-			//Insert or update entry into sheet appropiatly
-			if (rawEntries.contains(entry))
-				entry.getListEntry().update();
 		}
 		
-		//Remove remove all non-ListEntry entries from entryByNum
-		List<RawDataEntry> newEntries = new ArrayList(entriesByNum.values());
-		for(Iterator itr = newEntries.iterator(); itr.hasNext(); )
-			if(itr.next() != null)
-				itr.remove();
-		
-		//Insert all new entries
-		Spreadsheet.get().insertData(newEntries);
+		//Insert and update our data
+		Spreadsheet.get().updateData(entriesRaw);
+		Spreadsheet.get().insertData(entriesNew);
 
-		response.put("submitStatus", "Added " + newEntries.size() + " issues for " + building + " " + room + " on "
+		response.put("submitStatus", "Added " + entriesNew.size() + " issues for " + building + " " + room + " on "
 				+ Spreadsheet.getNewDateFormat().format(date));
 
 		return response;
