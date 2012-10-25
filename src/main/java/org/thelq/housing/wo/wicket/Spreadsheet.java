@@ -150,17 +150,20 @@ public class Spreadsheet {
 	}
 
 	public void updateData(Collection<RawDataEntry> entries) throws IOException, ServiceException {
-		for (RawDataEntry curEntry : entries) {
+		//Make sure everything has a ListEntry
+		for(RawDataEntry curEntry : entries)
 			if (curEntry.getListEntry() == null)
 				throw new NullPointerException("No ListEntry defined for " + curEntry);
-			curEntry.getListEntry().update();
-		}
+		
+		//Update all ListEntries
+		for (ListEntry curEntry : convertData(entries))
+			curEntry.update();
 	}
 
 	protected List<ListEntry> convertData(Collection<RawDataEntry> rawEntries) {
 		List<ListEntry> listEntries = new ArrayList();
 		for (RawDataEntry curEntry : rawEntries) {
-			ListEntry row = new ListEntry();
+			ListEntry row = (curEntry.getListEntry() != null) ? curEntry.getListEntry() : new ListEntry();
 			row.getCustomElements().setValueLocal("id", "" + curEntry.getSheetId());
 			row.getCustomElements().setValueLocal("opened", getNewDateFormat().format(curEntry.getOpenedDate()));
 			row.getCustomElements().setValueLocal("wt", curEntry.isOpenedWalkthrough() ? "Y" : "N");
