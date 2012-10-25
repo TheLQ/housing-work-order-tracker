@@ -45,6 +45,7 @@ public class ConvertUtils {
 		convertDateToNew(enteries);
 		convertDateToCounter(enteries);
 		convertNotesToDate(enteries);
+		convertToTrimmedStrings(enteries);
 
 		//Update
 		int counter = 0;
@@ -154,6 +155,16 @@ public class ConvertUtils {
 				//Set date and value
 				rowData.setValueLocal("notes" + i + "date", Spreadsheet.getNewDateFormat().format(noteDate));
 				rowData.setValueLocal("notes" + i, note);
+			}
+		}
+	}
+	
+	public static void convertToTrimmedStrings(List<ListEntry> rows) {
+		for(ListEntry row : rows) {
+			CustomElementCollection rowData = row.getCustomElements();
+			for(String columnName : rowData.getTags()) {
+				//Trim all values
+				rowData.setValueLocal(columnName, rowData.getValue(columnName).trim());
 			}
 		}
 	}
