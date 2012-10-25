@@ -16,10 +16,13 @@ import java.net.URL;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,6 +44,7 @@ public class ConvertUtils {
 		List<ListEntry> enteries = new ArrayList(listFeed.getEntries());
 		convertDateToNew(enteries);
 		convertDateToCounter(enteries);
+		convertNotesToDate(enteries);
 
 		//Update
 		int counter = 0;
@@ -107,5 +111,50 @@ public class ConvertUtils {
 				int curIssueNum = ++counter;
 				curRow.getCustomElements().setValueLocal("id", "" + curIssueNum);
 			}
+	}
+
+	public static void convertNotesToDate(List<ListEntry> rows) {
+		System.out.println("Converting notes to notes dates");
+		for (ListEntry row : rows) {
+			CustomElementCollection rowData = row.getCustomElements();
+
+			//Loop over notes
+			Pattern dateRegex = Pattern.compile("[0-9]{1,2}");
+			Calendar cal = Calendar.getInstance();
+			for (int i = 1; i <= 10; i++) {
+				String value = rowData.getValue("notes" + i + "date");
+
+				//Get our date
+				String[] notesParts = StringUtils.split(value, " ");
+				String dateText = notesParts[0];
+				String note = value;
+				Date noteDate;
+				if (dateText.matches(".*[0-9].*")) {
+					//Extract first 2 numbers, assum first is month and second is day
+					Matcher matcher = dateRegex.matcher(dateText);
+					matcher.find();
+					int month = Integer.parseInt(matcher.group());
+					matcher.find();
+					int day = Integer.parseInt(matcher.group());
+
+					//Java is stupididly complex when it comes to dates
+					int year = cal.get(Calendar.YEAR);
+					cal.clear();
+					cal.set(year, month, day);
+					
+					//Yay
+					noteDate = cal.getTime();
+					note = notesParts[1];
+				} else {
+					//No date, give default date in 1970
+					cal.clear();
+					noteDate = cal.getTime();
+				}
+				
+				//Set date and value
+				rowData.setValueLocal("notes" + i + "date", Spreadsheet.getNewDateFormat().format(noteDate));
+				rowData.setValueLocal("notes" + i, note);
+			}
+		}
 	}
 }
