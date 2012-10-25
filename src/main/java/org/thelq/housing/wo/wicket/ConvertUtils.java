@@ -122,16 +122,16 @@ public class ConvertUtils {
 			Pattern dateRegex = Pattern.compile("[0-9]{1,2}");
 			Calendar cal = Calendar.getInstance();
 			for (int i = 1; i <= 10; i++) {
-				String value = rowData.getValue("notes" + i + "date");
-
 				//Get our date
-				String[] notesParts = StringUtils.split(value, " ");
-				String dateText = notesParts[0];
-				String note = value;
+				String note = StringUtils.defaultString(rowData.getValue("notes" + i));
+				String[] notesParts = StringUtils.split(note, " ", 2);
 				Date noteDate;
-				if (dateText.matches(".*[0-9].*")) {
+				if (StringUtils.isBlank(note))
+					//Ignore as there's no note
+					continue;
+				else if (notesParts[0].matches(".*[0-9].*")) {
 					//Extract first 2 numbers, assum first is month and second is day
-					Matcher matcher = dateRegex.matcher(dateText);
+					Matcher matcher = dateRegex.matcher(notesParts[0]);
 					matcher.find();
 					int month = Integer.parseInt(matcher.group());
 					matcher.find();
@@ -141,16 +141,16 @@ public class ConvertUtils {
 					int year = cal.get(Calendar.YEAR);
 					cal.clear();
 					cal.set(year, month, day);
-					
+
 					//Yay
 					noteDate = cal.getTime();
-					note = notesParts[1];
+					note = notesParts[1].trim();
 				} else {
 					//No date, give default date in 1970
 					cal.clear();
 					noteDate = cal.getTime();
 				}
-				
+
 				//Set date and value
 				rowData.setValueLocal("notes" + i + "date", Spreadsheet.getNewDateFormat().format(noteDate));
 				rowData.setValueLocal("notes" + i, note);
