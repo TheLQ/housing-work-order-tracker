@@ -31,6 +31,7 @@ import org.apache.wicket.request.resource.IResource.Attributes;
 import org.apache.wicket.util.string.StringValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.thelq.housing.wo.wicket.Spreadsheet.NoteEntry;
 import org.thelq.housing.wo.wicket.Spreadsheet.RawDataEntry;
 
 /**
@@ -159,11 +160,14 @@ public class ProcessData extends AbstractResource {
 			//Load notes
 			int curNoteId = -1;
 			String value;
-			while ((value = params.getParameterValue(prefix + "[notesBox][" + (++curNoteId) + "][note]").toString()) != null)
-				if (!entry.getNotes().contains(value)) {
-					entry.getNotes().add(value);
+			while ((value = params.getParameterValue(prefix + "[notesBox][" + (++curNoteId) + "][note]").toString()) != null) {
+				NoteEntry noteEntry = entry.getNotes().get(curNoteId);
+				if (noteEntry != null || !noteEntry.getNote().equals(value)) { //TODO: DATE
+					//Entry doesn't exist or is different, add a new one
+					entry.getNotes().add(new NoteEntry(value, date));
 					log.info("Added note " + value);
 				}
+			}
 		}
 		
 		//Insert and update our data
@@ -194,10 +198,11 @@ public class ProcessData extends AbstractResource {
 			curNewIssue.put("sheetId", curEntry.getSheetId());
 			curNewIssue.put("issue", generateIssueName(curEntry));
 			curNewIssue.put("notesBox", new JSONArray());
-			Iterator<String> notesItr = curEntry.getNotes().iterator();
+			Iterator<Spreadsheet.NoteEntry> notesItr = curEntry.getNotes().iterator();
 			do {
 				//Make sure this collection is never empty, should have at least an empty string in it
-				String curNote = notesItr.hasNext() ? notesItr.next() : "";
+				Spreadsheet.NoteEntry curNoteEntry = notesItr.hasNext() ? notesItr.next() : null;
+				String curNote = (curNoteEntry != null) ? StringUtils.defaultString(curNoteEntry.getNote()) : "";
 				JSONObject note = new JSONObject();
 				note.put("note", curNote);
 				curNewIssue.accumulate("notesBox", note);
