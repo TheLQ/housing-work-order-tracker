@@ -24,8 +24,10 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -132,9 +134,18 @@ public class Spreadsheet {
 					curEntry.setClosedDate(getNewDateFormat().parse(value));
 				else if (columnName.equalsIgnoreCase("CWT"))
 					curEntry.setClosedWalkthrough(value.equals("Y"));
-				else if (StringUtils.startsWithIgnoreCase(columnName, "Notes") && !StringUtils.endsWithIgnoreCase(columnName, "Date"))
-					curEntry.getNotes().add(value);
-				else
+				else if (StringUtils.startsWithIgnoreCase(columnName, "Notes")) {
+					//Get the number of this note by removing all letters and converting to int
+					int num = Integer.parseInt(columnName.replaceAll("[^\\w\\s\\.]", ""));
+					if (curEntry.getNotes().get(num) == null)
+						curEntry.getNotes().add(num, new NoteEntry());
+					
+					//Set the appropiate value based on if this is the date or not
+					if (StringUtils.endsWithIgnoreCase(columnName, "Date"))
+						curEntry.getNotes().get(num).setDate(Spreadsheet.getNewDateFormat().parse(value));
+					else 
+						curEntry.getNotes().get(num).setNote(value);
+				} else
 					throw new RuntimeException("Unknown column " + columnName);
 			}
 			curEntry.setListEntry(row);
@@ -151,10 +162,10 @@ public class Spreadsheet {
 
 	public void updateData(Collection<RawDataEntry> entries) throws IOException, ServiceException {
 		//Make sure everything has a ListEntry
-		for(RawDataEntry curEntry : entries)
+		for (RawDataEntry curEntry : entries)
 			if (curEntry.getListEntry() == null)
 				throw new NullPointerException("No ListEntry defined for " + curEntry);
-		
+
 		//Update all ListEntries
 		for (ListEntry curEntry : convertData(entries))
 			curEntry.update();
@@ -175,9 +186,15 @@ public class Spreadsheet {
 			String date = (curEntry.getClosedDate() != null) ? getNewDateFormat().format(curEntry.getClosedDate()) : "";
 			row.getCustomElements().setValueLocal("closed", date);
 			row.getCustomElements().setValueLocal("cwt", curEntry.isOpenedWalkthrough() ? "Y" : "N");
+
+			//Add notes 
 			int counter = 0;
-			for (String curNote : curEntry.getNotes())
-				row.getCustomElements().setValueLocal("notes" + (++counter), curNote);
+			for (NoteEntry noteEntry : curEntry.getNotes()) {
+				counter++;
+				if (StringUtils.isBlank(row.getCustomElements().getValue("notes" + counter + "date")))
+					row.getCustomElements().setValueLocal("notes" + counter + "date", getNewDateFormat().format(noteEntry.getDate()));
+				row.getCustomElements().setValueLocal("notes" + counter, noteEntry.getNote());
+			}
 			listEntries.add(row);
 		}
 		return listEntries;
@@ -212,7 +229,7 @@ public class Spreadsheet {
 		protected Status status;
 		protected Date closedDate;
 		protected boolean closedWalkthrough;
-		protected List<String> notes = new ArrayList();
+		protected List<NoteEntry> notes = new ArrayList();
 		protected ListEntry listEntry;
 
 		public boolean isSameIssue(RawDataEntry otherEntry) {
@@ -221,6 +238,14 @@ public class Spreadsheet {
 					&& getType().equals(otherEntry.getType())
 					&& getIssue().equals(otherEntry.getIssue());
 		}
+	}
+
+	@Data
+	@AllArgsConstructor
+	@NoArgsConstructor
+	public static class NoteEntry {
+		protected String note;
+		protected Date date;
 	}
 
 	public static enum Status {
