@@ -16,6 +16,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
+import javax.annotation.RegEx;
 import lombok.Data;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
@@ -202,9 +204,12 @@ public class ProcessData extends AbstractResource {
 			do {
 				//Make sure this collection is never empty, should have at least an empty string in it
 				Spreadsheet.NoteEntry curNoteEntry = notesItr.hasNext() ? notesItr.next() : null;
-				String curNote = (curNoteEntry != null) ? StringUtils.defaultString(curNoteEntry.getNote()) : "";
+				
 				JSONObject note = new JSONObject();
-				note.put("note", curNote);
+				if(curNoteEntry != null)
+					log.info("NoteEntry date: " + curNoteEntry.getDate() + " | Note: " + curNoteEntry.getNote());
+				note.put("noteDate", (curNoteEntry != null) ? Spreadsheet.getNewDateFormat().format(curNoteEntry.getDate()) : "");
+				note.put("note", (curNoteEntry != null) ? StringUtils.defaultString(curNoteEntry.getNote()) : "");
 				curNewIssue.accumulate("notesBox", note);
 			} while (notesItr.hasNext());
 			issues.add(curNewIssue);

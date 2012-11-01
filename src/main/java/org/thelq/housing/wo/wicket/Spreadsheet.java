@@ -136,15 +136,22 @@ public class Spreadsheet {
 					curEntry.setClosedWalkthrough(value.equals("Y"));
 				else if (StringUtils.startsWithIgnoreCase(columnName, "Notes")) {
 					//Get the number of this note by removing all letters and converting to int
-					int num = Integer.parseInt(columnName.replaceAll("[^\\w\\s\\.]", ""));
-					if (curEntry.getNotes().get(num) == null)
-						curEntry.getNotes().add(num, new NoteEntry());
+					int num = Integer.parseInt(columnName.replaceAll("[^-?\\d+]", "")) - 1;
+					log.info("Number: " + num + " | Column name: " + columnName);
+					
+					if(curEntry.getNotes().size() < num + 1)
+						//List isn't even big enough to hold our num, add to end
+						curEntry.getNotes().add(new NoteEntry());
 					
 					//Set the appropiate value based on if this is the date or not
-					if (StringUtils.endsWithIgnoreCase(columnName, "Date"))
+					if (StringUtils.endsWithIgnoreCase(columnName, "date")) {
 						curEntry.getNotes().get(num).setDate(Spreadsheet.getNewDateFormat().parse(value));
-					else 
+						log.info("Setting (" + num + ") date | Note: " + curEntry.getNotes().get(num).getNote() + " | Date: " + curEntry.getNotes().get(num).getDate());
+					}
+					else {
 						curEntry.getNotes().get(num).setNote(value);
+						log.info("Setting (" + num + ") note | Note:  " + curEntry.getNotes().get(num).getNote() + " | Date: " + curEntry.getNotes().get(num).getDate());
+					}
 				} else
 					throw new RuntimeException("Unknown column " + columnName);
 			}
