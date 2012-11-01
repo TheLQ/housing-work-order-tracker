@@ -156,8 +156,11 @@ public class ProcessData extends AbstractResource {
 				entry.setStatus(Spreadsheet.Status.CLOSED);
 				entry.setClosedDate(date);
 				entry.setClosedWalkthrough(!params.getParameterValue("modeSelect").toString().equalsIgnoreCase("Normal"));
-			} else if (status.equalsIgnoreCase("waiting"))
+			} else if (status.equalsIgnoreCase("waiting")) {
 				entry.setStatus(Spreadsheet.Status.WAITING);
+				entry.setWaitingDate(date);
+				entry.setWaitingWalkthrough(!params.getParameterValue("modeSelect").toString().equalsIgnoreCase("Normal"));
+			}
 
 			//Load notes
 			int curNoteId = -1;
