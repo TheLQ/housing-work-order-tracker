@@ -163,8 +163,7 @@ public class ProcessData extends AbstractResource {
 			int curNoteId = -1;
 			String value;
 			while ((value = params.getParameterValue(prefix + "[notesBox][" + (++curNoteId) + "][note]").toString()) != null) {
-				NoteEntry noteEntry = entry.getNotes().get(curNoteId);
-				if (noteEntry != null || !noteEntry.getNote().equals(value)) { //TODO: DATE
+				if (entry.getNotes().size() < curNoteId + 1) {
 					//Entry doesn't exist or is different, add a new one
 					entry.getNotes().add(new NoteEntry(value, date));
 					log.info("Added note " + value);
