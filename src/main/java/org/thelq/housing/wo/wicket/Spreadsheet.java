@@ -192,12 +192,11 @@ public class Spreadsheet {
 			row.getCustomElements().setValueLocal("status", curEntry.getStatus().getHumanName());
 			String closedDate = (curEntry.getClosedDate() != null) ? getNewDateFormat().format(curEntry.getClosedDate()) : "";
 			row.getCustomElements().setValueLocal("closed", closedDate);
-			row.getCustomElements().setValueLocal("cwt", curEntry.isOpenedWalkthrough() ? "Y" : "N"); //BUG
+			row.getCustomElements().setValueLocal("cwt", curEntry.isClosedWalkthrough() ? "Y" : "N");
 			String waitingDate = (curEntry.getWaitingDate() != null) ? getNewDateFormat().format(curEntry.getWaitingDate()) : "";
 			row.getCustomElements().setValueLocal("waiting", waitingDate);
 			row.getCustomElements().setValueLocal("wwt", curEntry.isWaitingWalkthrough() ? "Y" : "N");
 			
-
 			//Add notes 
 			int counter = 0;
 			for (NoteEntry noteEntry : curEntry.getNotes()) {
