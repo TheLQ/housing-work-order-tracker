@@ -134,6 +134,10 @@ public class Spreadsheet {
 					curEntry.setClosedDate(getNewDateFormat().parse(value));
 				else if (columnName.equalsIgnoreCase("CWT"))
 					curEntry.setClosedWalkthrough(value.equals("Y"));
+				else if (columnName.equalsIgnoreCase("Waiting"))
+					curEntry.setWaitingDate(getNewDateFormat().parse(value));
+				else if (columnName.equalsIgnoreCase("wwt"))
+					curEntry.setWaitingWalkthrough(value.equals("Y"));
 				else if (StringUtils.startsWithIgnoreCase(columnName, "Notes")) {
 					//Get the number of this note by removing all letters and converting to int
 					int num = Integer.parseInt(columnName.replaceAll("[^-?\\d+]", "")) - 1;
@@ -186,9 +190,13 @@ public class Spreadsheet {
 			row.getCustomElements().setValueLocal("type", curEntry.getType());
 			row.getCustomElements().setValueLocal("issue", StringUtils.capitalize(curEntry.getIssue()));
 			row.getCustomElements().setValueLocal("status", curEntry.getStatus().getHumanName());
-			String date = (curEntry.getClosedDate() != null) ? getNewDateFormat().format(curEntry.getClosedDate()) : "";
-			row.getCustomElements().setValueLocal("closed", date);
-			row.getCustomElements().setValueLocal("cwt", curEntry.isOpenedWalkthrough() ? "Y" : "N");
+			String closedDate = (curEntry.getClosedDate() != null) ? getNewDateFormat().format(curEntry.getClosedDate()) : "";
+			row.getCustomElements().setValueLocal("closed", closedDate);
+			row.getCustomElements().setValueLocal("cwt", curEntry.isOpenedWalkthrough() ? "Y" : "N"); //BUG
+			String waitingDate = (curEntry.getWaitingDate() != null) ? getNewDateFormat().format(curEntry.getWaitingDate()) : "";
+			row.getCustomElements().setValueLocal("waiting", waitingDate);
+			row.getCustomElements().setValueLocal("wwt", curEntry.isWaitingWalkthrough() ? "Y" : "N");
+			
 
 			//Add notes 
 			int counter = 0;
@@ -232,6 +240,8 @@ public class Spreadsheet {
 		protected Status status;
 		protected Date closedDate;
 		protected boolean closedWalkthrough;
+		protected Date waitingDate;
+		protected boolean waitingWalkthrough;
 		protected List<NoteEntry> notes = new ArrayList();
 		protected ListEntry listEntry;
 
