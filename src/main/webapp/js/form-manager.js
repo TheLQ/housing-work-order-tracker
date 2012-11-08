@@ -69,10 +69,15 @@
 			lastNotesBox.remove();
 	});
 	
-	
-	
-	
-	
+	//Automatically disable remove note button if text is entered into the last note
+	$("#notesContainer", mainForm).on("keyup", ".note, .noteDate", function() {
+		notesBox = $(this).parent().parent().children(".notesBox").last();
+		removeButton = $("#removeNote", $(this).parent().parent())
+		if($(".note", notesBox).val().length != 0 || $(".noteDate", notesBox).val().length != 0)
+			removeButton.attr("disabled", "disabled")
+		else
+			removeButton.removeAttr("disabled");
+	});
 	
 	function genName(issueId, issueField, noteId, noteField) {
 		name = "issues[" + issueId + "]";
