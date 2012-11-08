@@ -37,7 +37,8 @@
 	//Handlers for all add/remove buttons
 	$("#notesContainer", mainForm).on("click", "#addNote", function(event){
 		event.preventDefault();
-		allBoxes = $(".notesBox", $(this).parent());
+		notesContainer = $(this).parent();
+		allBoxes = $(".notesBox", notesContainer);
 		lastNotesBox = allBoxes.last();
 		clonedNotesBox = lastNotesBox.clone();
 		
@@ -56,27 +57,34 @@
 		//Add
 		clonedNotesBox.insertAfter(lastNotesBox);
 		
+		autoDisableNoteRemove(notesContainer);
 		return false;
 	});
 	$("#notesContainer", mainForm).on("click", "#removeNote", function(event){
 		event.preventDefault();
-		lastNotesBox = $(".notesBox", $(this).parent()).last();
+		notesContainer = $(this).parent();
+		lastNotesBox = $(".notesBox", notesContainer).last();
 		
 		//Make sure the text and date fields are empty
 		if($(".noteDate", lastNotesBox).val().length != 0 || $(".note", lastNotesBox).val().length != 0)
 			console.log("Ignoring remove, notes are not empty")
 		else
 			lastNotesBox.remove();
+		
+		autoDisableNoteRemove(notesContainer);
 	});
 	
 	//Automatically disable remove note button if text is entered into the last note
-	$("#notesContainer", mainForm).on("keyup", ".note, .noteDate", function() {
-		notesBox = $(this).parent().parent().children(".notesBox").last();
-		removeButton = $("#removeNote", $(this).parent().parent())
+	function autoDisableNoteRemove(notesContainer) {
+		notesBox = notesContainer.children(".notesBox").last();
+		removeButton = notesContainer.children("#removeNote")
 		if($(".note", notesBox).val().length != 0 || $(".noteDate", notesBox).val().length != 0)
 			removeButton.attr("disabled", "disabled")
 		else
 			removeButton.removeAttr("disabled");
+	}
+	$("#notesContainer", mainForm).on("keyup", ".note, .noteDate", function(){
+		autoDisableNoteRemove($(this).parent().parent());
 	});
 	
 	function genName(issueId, issueField, noteId, noteField) {
