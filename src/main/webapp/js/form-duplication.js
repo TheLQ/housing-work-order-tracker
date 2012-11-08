@@ -152,6 +152,16 @@
 		$(".issueSelect", issueBox).get().selectedIndex = -1;
 	}
 	
+	$.wo = {}
+	$.wo.resetForm = function() {
+		mainForm.children(".issueBox").each(function(i) {
+			if(i == 0)
+				resetIssue($(this))
+			else
+				$(this).remove();
+		});
+	}
+	
 	function genName(issueId, issueField, noteId, noteField) {
 		name = "issues[" + issueId + "]";
 		if(noteId != undefined)
