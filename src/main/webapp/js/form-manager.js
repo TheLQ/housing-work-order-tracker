@@ -50,7 +50,7 @@
 		console.log("issueId: " + issueId)
 		console.log("genName: " + genName(issueId, null, noteId, "Test"))
 		clonedNotesBox.attr("id", "notesBox" + noteId);
-		$(".notesArea", clonedNotesBox).attr("name", genName(issueId, null, noteId, "note"));
+		$(".note", clonedNotesBox).attr("name", genName(issueId, null, noteId, "note"));
 		$(".noteDate", clonedNotesBox).attr("name", genName(issueId, null, noteId, "noteDate"));
 		
 		//Add
@@ -63,7 +63,7 @@
 		lastNotesBox = $(".notesBox", $(this).parent()).last();
 		
 		//Make sure the text and date fields are empty
-		if($(".noteDate", lastNotesBox).val().length != 0 || $(".notesArea", lastNotesBox).val().length != 0)
+		if($(".noteDate", lastNotesBox).val().length != 0 || $(".note", lastNotesBox).val().length != 0)
 			console.log("Ignoring remove, notes are not empty")
 		else
 			lastNotesBox.remove();
