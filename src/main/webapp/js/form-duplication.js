@@ -169,6 +169,6 @@ $(document).ready(function(){
 			name = name + issueField
 		return name;
 	}
-})(jQuery);
+});
 
 
