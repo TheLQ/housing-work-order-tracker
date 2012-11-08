@@ -149,16 +149,6 @@
 				$(".statusOption").click(function() {
 					setStatus($(this).closest(".issueBox"), $(this).html())
 				});
-				
-				//Since the issues elements get duplicated, readd any listeners
-				function postIssueClone(clone) {
-					console.log("Readding listeners to new cloned element");
-					$(".statusOption", clone).click(function() {
-						setStatus($(this).closest(".issueBox"), $(this).html())
-					});
-					$(".issueSelect").change(autoCloseIssues);
-					$("#issueBox", clone).dynamicForm("#addNote", "#removeNote", {limit: 10, createColor:'yellow',	removeColor: 'red'});
-				}
 			});
 		</script>
 	</body>
