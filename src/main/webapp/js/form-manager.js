@@ -41,8 +41,6 @@
 		//Start setting info
 		noteId = allBoxes.length + 1
 		issueId = lastNotesBox.attr("id").replace( /^\D+/g, '');
-		if(issueId.length == 0)
-			issueId = 0;
 		clonedNotesBox.attr("id", "notesBox" + noteId);
 		clonedNotesBox.children(".note").attr("name", genName(issueId, null, noteId, "note"));
 		clonedNotesBox.children(".noteDate").attr("name", genName(issueId, null, noteId, "noteDate"));
