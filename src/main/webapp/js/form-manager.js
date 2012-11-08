@@ -102,8 +102,13 @@
 	
 	//Automatically disable remove note button if text is entered into the last note
 	function autoDisableNoteRemove(notesContainer) {
-		notesBox = notesContainer.children(".notesBox").last();
 		removeButton = notesContainer.children(".removeNote")
+		allNotes = notesContainer.children(".notesBox");
+		if(allNotes.length == 1) {
+			removeButton.hide();
+			return;
+		}
+		notesBox = allNotes.last();
 		if(notesBox.children(".note").val().length != 0 || notesBox.children(".noteDate").val().length != 0)
 			removeButton.hide();
 		else
