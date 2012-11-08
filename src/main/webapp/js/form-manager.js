@@ -105,9 +105,9 @@
 		notesBox = notesContainer.children(".notesBox").last();
 		removeButton = notesContainer.children(".removeNote")
 		if(notesBox.children(".note").val().length != 0 || notesBox.children(".noteDate").val().length != 0)
-			removeButton.attr("disabled", "disabled")
+			removeButton.hide();
 		else
-			removeButton.removeAttr("disabled");
+			removeButton.show();
 	}
 	mainForm.on("keyup", ".note, .noteDate", function(){
 		autoDisableNoteRemove($(this).parent().parent());
