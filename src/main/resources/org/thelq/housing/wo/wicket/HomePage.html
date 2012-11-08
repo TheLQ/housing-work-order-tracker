@@ -84,6 +84,7 @@
 		<script type="text/javascript" src="//netdna.bootstrapcdn.com/twitter-bootstrap/2.1.1/js/bootstrap.min.js"></script>
 		
 		<!-- Our code -->
+		<script type="text/javascript" src="js/form-utils.js"></script>
 		<script type="text/javascript" src="js/form-duplication.js"></script>
 		<script type="text/javascript">
 			$(document).ready(function(){
@@ -226,16 +227,6 @@
 					$("#issueBox", clone).dynamicForm("#addNote", "#removeNote", {limit: 10, createColor:'yellow',	removeColor: 'red'});
 				}
 			});
-			function getParameterByName(name) {
-				name = name.replace(/[\[]/, "\\\[").replace(/[\]]/, "\\\]");
-				var regexS = "[\\?&]" + name + "=([^&#]*)";
-				var regex = new RegExp(regexS);
-				var results = regex.exec(window.location.search);
-				if(results == null)
-					return "";
-				else
-					return decodeURIComponent(results[1].replace(/\+/g, " "));
-			}
 		</script>
 	</body>
 </html>
