@@ -3,7 +3,7 @@
  *
  * This file is part of University of Louisville Housing WorkOrder System.
  */
-(function($){
+$(document).ready(function(){
 	/**
 	 * Manages the backend form handling
 	 * 
