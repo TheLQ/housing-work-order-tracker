@@ -3,10 +3,6 @@
  *
  * This file is part of University of Louisville Housing WorkOrder System.
  */
-/* 
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 (function($){
 	/**
 	 * Manages the backend form handling
