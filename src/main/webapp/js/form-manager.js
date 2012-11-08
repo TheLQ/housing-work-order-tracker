@@ -96,8 +96,13 @@
 		lastNotesBox = notesContainer.children(".notesBox").last();
 		
 		//Make sure the text and date fields are empty
-		if(lastNotesBox.children(".noteDate").val().length != 0 || lastNotesBox.children(".note").val().length != 0)
-			console.log("Ignoring remove, notes are not empty")
+		if(lastNotesBox.children(".noteDate").val().length != 0)
+			console.log("Ignoring remove, note has date which means its in the spreadsheet")
+		else if(lastNotesBox.children(".note").val().length != 0)
+			if(!confirm("The last note has data in it. Are you sure you wish to remove it?"))
+				return;
+			else
+				lastNotesBox.remove();
 		else
 			lastNotesBox.remove();
 		
@@ -109,14 +114,15 @@
 		removeButton = notesContainer.children(".removeNote")
 		allNotes = notesContainer.children(".notesBox");
 		if(allNotes.length == 1) {
-			removeButton.hide();
+			removeButton.attr("disabled", "disabled");
 			return;
 		}
 		notesBox = allNotes.last();
-		if(notesBox.children(".note").val().length != 0 || notesBox.children(".noteDate").val().length != 0)
-			removeButton.hide();
+		console.log("Notes date length: " + notesBox.children(".noteDate").val().length)
+		if(notesBox.children(".noteDate").val().length != 0)
+			removeButton.attr("disabled", "disabled");
 		else
-			removeButton.show();
+			removeButton.removeAttr("disabled")
 	}
 	mainForm.on("keyup", ".note, .noteDate", function(){
 		autoDisableNoteRemove($(this).parent().parent());
