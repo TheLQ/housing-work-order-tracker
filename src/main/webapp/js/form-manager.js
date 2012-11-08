@@ -31,7 +31,7 @@
 	});
 	
 	//Handlers for all add/remove buttons
-	$("#notesContainer", mainForm).on("click", ".addNote", function(event){
+	mainForm.on("click", ".addNote", function(event){
 		event.preventDefault();
 		notesContainer = $(this).parent();
 		allBoxes = notesContainer.children(".notesBox");
@@ -53,7 +53,7 @@
 		autoDisableNoteRemove(notesContainer);
 		return false;
 	});
-	$("#notesContainer", mainForm).on("click", ".removeNote", function(event){
+	mainForm.on("click", ".removeNote", function(event){
 		event.preventDefault();
 		notesContainer = $(this).parent();
 		lastNotesBox = notesContainer.children(".notesBox").last();
@@ -76,7 +76,7 @@
 		else
 			removeButton.removeAttr("disabled");
 	}
-	$("#notesContainer", mainForm).on("keyup", ".note, .noteDate", function(){
+	mainForm.on("keyup", ".note, .noteDate", function(){
 		autoDisableNoteRemove($(this).parent().parent());
 	});
 	
