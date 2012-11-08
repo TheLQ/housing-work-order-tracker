@@ -38,21 +38,18 @@
 	$("#notesContainer", mainForm).on("click", "#addNote", function(event){
 		event.preventDefault();
 		notesContainer = $(this).parent();
-		allBoxes = $(".notesBox", notesContainer);
+		allBoxes = notesContainer.children(".notesBox");
 		lastNotesBox = allBoxes.last();
 		clonedNotesBox = lastNotesBox.clone();
 		
 		//Start setting info
 		noteId = allBoxes.length + 1
-		console.log($(this).parent().parent().attr("id"));
-		issueId = $(this).parent().parent().attr("id").replace( /^\D+/g, '');
+		issueId = lastNotesBox.attr("id").replace( /^\D+/g, '');
 		if(issueId.length == 0)
 			issueId = 0;
-		console.log("issueId: " + issueId)
-		console.log("genName: " + genName(issueId, null, noteId, "Test"))
 		clonedNotesBox.attr("id", "notesBox" + noteId);
-		$(".note", clonedNotesBox).attr("name", genName(issueId, null, noteId, "note"));
-		$(".noteDate", clonedNotesBox).attr("name", genName(issueId, null, noteId, "noteDate"));
+		clonedNotesBox.children(".note").attr("name", genName(issueId, null, noteId, "note"));
+		clonedNotesBox.children(".noteDate").attr("name", genName(issueId, null, noteId, "noteDate"));
 		
 		//Add
 		clonedNotesBox.insertAfter(lastNotesBox);
@@ -63,10 +60,10 @@
 	$("#notesContainer", mainForm).on("click", "#removeNote", function(event){
 		event.preventDefault();
 		notesContainer = $(this).parent();
-		lastNotesBox = $(".notesBox", notesContainer).last();
+		lastNotesBox = notesContainer.children(".notesBox").last();
 		
 		//Make sure the text and date fields are empty
-		if($(".noteDate", lastNotesBox).val().length != 0 || $(".note", lastNotesBox).val().length != 0)
+		if(lastNotesBox.children(".noteDate").val().length != 0 || lastNotesBox.children(".note").val().length != 0)
 			console.log("Ignoring remove, notes are not empty")
 		else
 			lastNotesBox.remove();
@@ -78,7 +75,7 @@
 	function autoDisableNoteRemove(notesContainer) {
 		notesBox = notesContainer.children(".notesBox").last();
 		removeButton = notesContainer.children("#removeNote")
-		if($(".note", notesBox).val().length != 0 || $(".noteDate", notesBox).val().length != 0)
+		if(notesBox.children(".note").val().length != 0 || notesBox.children(".noteDate").val().length != 0)
 			removeButton.attr("disabled", "disabled")
 		else
 			removeButton.removeAttr("disabled");
