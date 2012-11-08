@@ -30,7 +30,42 @@
 		$(this).attr("name", prefix + $(this).attr("name"));
 	});
 	
-	//Handlers for all add/remove buttons
+	//Handlers for add/remove issue buttons
+	mainForm.children("#addIssue").on("click", function(event) {
+		event.preventDefault();
+		lastIssueBox = mainForm.children(".issueBox").last();
+		issueId = lastIssueBox.attr("id").replace( /^\D+/g, '');
+		clonedIssueBox = lastIssueBox.clone();
+		
+		//Reset the cloned issue since it might have data in it
+		resetIssue(clonedIssueBox);
+		
+		//Finished, add to the end
+		clonedIssueBox.insertAfter(lastIssueBox)
+	});
+	mainForm.children("#removeIssue").on("click", function(event) {
+		event.preventDefault();
+		lastIssueBox = mainForm.children(".issueBox").last();
+		
+		//Check if there is data
+		isData = false;
+		if($(".statusSelect", lastIssueBox).get().selectedIndex < 1)
+			isData = true;
+		$(".note, .noteDate", lastIssueBox).each(function(){
+			if($(this).val().length != 0)
+				isData = true;
+		});
+	
+		//If there is data, prompt the user for confirmation
+		if(isData)
+			if(!confirm("The last issue has data in it. Are you sure you wish to remove it?"))
+				return;
+		
+		//All good, remove it
+		lastIssueBox.remove();
+	});
+	
+	//Handlers for add/remove note buttons
 	mainForm.on("click", ".addNote", function(event){
 		event.preventDefault();
 		notesContainer = $(this).parent();
@@ -77,6 +112,27 @@
 	mainForm.on("keyup", ".note, .noteDate", function(){
 		autoDisableNoteRemove($(this).parent().parent());
 	});
+	
+	function resetIssue(issueBox) {
+		//Remove all noteBoxes except 1
+		notesContainer = issueBox.children(".notesContainer");
+		notesContainer.children(".notesBox").each(function(i) {
+			if(i == 0)
+				return;
+			$(this).remove()
+		});
+		
+		//Reset the remaining noteBox
+		lastNotesBox = notesContainer.children(".notesBox")
+		lastNotesBox.children(".note").val("")
+		lastNotesBox.children(".noteDate").val("")
+	
+		//Reset status
+		//TODO
+		
+		//Reset issue select
+		$(".issueSelect", issueBox).get().selectedIndex = -1;
+	}
 	
 	function genName(issueId, issueField, noteId, noteField) {
 		name = "issues[" + issueId + "]";
