@@ -70,4 +70,4 @@ $(document).ready(function(){
 		//clearForm: true,        // clear all form fields after successful submit 
 		//resetForm: true        // reset the form after successful submit 
 	});
-})(jQuery);
+});
