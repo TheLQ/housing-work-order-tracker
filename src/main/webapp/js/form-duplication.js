@@ -152,7 +152,6 @@
 		$(".issueSelect", issueBox).get().selectedIndex = -1;
 	}
 	
-	$.wo = {}
 	$.wo.resetForm = function() {
 		mainForm.children(".issueBox").each(function(i) {
 			if(i == 0)
