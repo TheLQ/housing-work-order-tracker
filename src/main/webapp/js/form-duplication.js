@@ -44,6 +44,8 @@ $(document).ready(function(){
 		
 		//Finished, add to the end
 		clonedIssueBox.insertAfter(lastIssueBox)
+		
+		autoDisableIssueRemove();
 	});
 	mainForm.children("#removeIssue").on("click", function(event) {
 		event.preventDefault();
@@ -65,7 +67,24 @@ $(document).ready(function(){
 		
 		//All good, remove it
 		lastIssueBox.remove();
+		
+		autoDisableIssueRemove();
 	});
+	function autoDisableIssueRemove(){
+		console.log("test")
+		allBoxes = mainForm.children(".issueBox");
+		if(allBoxes.length == 1) {
+			$("#removeIssue").attr("disabled", "disabled");
+			return;
+		}
+		lastNotesBox = allBoxes.last();
+		if($(".sheetId", mainForm).val() > 0)
+			$("#removeIssue").attr("disabled", "disabled");
+		else
+			$("#removeIssue").removeAttr("disabled")
+	}
+	mainForm.on("change", ".issueSelect", autoDisableIssueRemove);
+	mainForm.on("keyup", ".noteDate, .note", autoDisableIssueRemove);
 	
 	/**
 	 * Handling of add/remove note buttons
