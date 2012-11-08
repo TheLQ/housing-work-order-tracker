@@ -30,7 +30,9 @@
 		$(this).attr("name", prefix + $(this).attr("name"));
 	});
 	
-	//Handlers for add/remove issue buttons
+	/**
+	 * Handling of add/remove issue buttons
+	 */
 	mainForm.children("#addIssue").on("click", function(event) {
 		event.preventDefault();
 		lastIssueBox = mainForm.children(".issueBox").last();
@@ -65,7 +67,9 @@
 		lastIssueBox.remove();
 	});
 	
-	//Handlers for add/remove note buttons
+	/**
+	 * Handling of add/remove note buttons
+	 */
 	mainForm.on("click", ".addNote", function(event){
 		event.preventDefault();
 		notesContainer = $(this).parent();
@@ -118,6 +122,9 @@
 		autoDisableNoteRemove($(this).parent().parent());
 	});
 	
+	/**
+	 * Utilities
+	 */
 	function resetIssue(issueBox) {
 		//Remove all noteBoxes except 1
 		notesContainer = issueBox.children(".notesContainer");
