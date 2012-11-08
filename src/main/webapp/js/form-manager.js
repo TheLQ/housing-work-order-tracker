@@ -31,7 +31,7 @@
 	});
 	
 	//Handlers for all add/remove buttons
-	$("#notesContainer", mainForm).on("click", "#addNote", function(event){
+	$("#notesContainer", mainForm).on("click", ".addNote", function(event){
 		event.preventDefault();
 		notesContainer = $(this).parent();
 		allBoxes = notesContainer.children(".notesBox");
@@ -53,7 +53,7 @@
 		autoDisableNoteRemove(notesContainer);
 		return false;
 	});
-	$("#notesContainer", mainForm).on("click", "#removeNote", function(event){
+	$("#notesContainer", mainForm).on("click", ".removeNote", function(event){
 		event.preventDefault();
 		notesContainer = $(this).parent();
 		lastNotesBox = notesContainer.children(".notesBox").last();
@@ -70,7 +70,7 @@
 	//Automatically disable remove note button if text is entered into the last note
 	function autoDisableNoteRemove(notesContainer) {
 		notesBox = notesContainer.children(".notesBox").last();
-		removeButton = notesContainer.children("#removeNote")
+		removeButton = notesContainer.children(".removeNote")
 		if(notesBox.children(".note").val().length != 0 || notesBox.children(".noteDate").val().length != 0)
 			removeButton.attr("disabled", "disabled")
 		else

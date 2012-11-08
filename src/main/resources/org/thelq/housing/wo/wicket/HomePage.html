@@ -40,9 +40,9 @@
 					<!-- Issue Select template -->
 					<div class="well well-small row-fluid issueBox" id="issueBox">
 						<div class="span6">
-							<input type="hidden" name="sheetId" id="sheetId" value="-1"/>
+							<input type="hidden" name="sheetId" value="-1"/>
 							<!--Status Dropdown-->
-							<input type="hidden" name="statusSelect" id="statusSelect" value="empty" class="statusSelect" />
+							<input type="hidden" name="statusSelect" value="empty" class="statusSelect" />
 							Issue #xx: <span class="issueStatus"></span>
 							<div class="btn-group">
 								<button class="btn btn-danger dropdown-toggle" data-toggle="dropdown">
@@ -56,16 +56,16 @@
 								</ul>
 							</div>
 							<!--Issue Select Dropdown-->
-							<p/><select wicket:id="issue" name="issue" id="issue" class="issueSelect"></select>
+							<p/><select wicket:id="issue" name="issue" class="issueSelect"></select>
 						</div>
-						<div class="span6" id="notesContainer">
+						<div class="span6" class="notesContainer">
 							Notes:
-							<div id="notesBox" style="padding: 5px" class="notesBox">
-								<input type="text" name="noteDate" id="noteDate" class="noteDate" disabled="disabled"/>
-								<textarea rows="3" name="note" id="note" class="note"/>
+							<div style="padding: 5px" class="notesBox">
+								<input type="text" name="noteDate" class="noteDate" disabled="disabled"/>
+								<textarea rows="3" name="note" class="note"/>
 							</div>
-							<button id="addNote" class="btn btn-info"><i class="icon-plus"></i>Add Note</button>
-							<button id="removeNote" class="btn btn-warning"><i class="icon-remove"></i>Remove Note</button>
+							<button class="addNote" class="btn btn-info"><i class="icon-plus"></i>Add Note</button>
+							<button class="removeNote" class="btn btn-warning"><i class="icon-remove"></i>Remove Note</button>
 						</div>
 					</div>
 					<button id="addIssue" class="btn btn-info"><i class="icon-plus"></i>Add Issue</button>
