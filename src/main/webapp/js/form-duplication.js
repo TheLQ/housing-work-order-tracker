@@ -23,15 +23,20 @@ $(document).ready(function(){
 	var mainForm = $("#mainForm");
 	
 	//Rename all the fields to a standard parsable format
-	$("input, select, textarea").each(function() {
-		prefix = "issues[0]";
-		if($(this).parent().attr("id") == "notesBox")
-			prefix = prefix + "[notes][0]";
-		$(this).attr("name", prefix + $(this).attr("name"));
+	function updateName(issueBox) {
+		$("input, select, textarea", issueBox).each(function() {
+			prefix = "issues[0]";
+			if($(this).parent().attr("id") == "notesBox")
+				prefix = prefix + "[notes][0]";
+			$(this).attr("name", prefix + $(this).attr("name"));
+		});
+	}
+	$(".issueBox", mainForm).each(function() {
+		updateName($(this));
 	});
 	
 	/**
-	 * Handling of add/remove issue buttons
+	 * Handling S add/remove issue buttons
 	 */
 	mainForm.children("#addIssue").on("click", function(event) {
 		event.preventDefault();
@@ -41,6 +46,9 @@ $(document).ready(function(){
 		
 		//Reset the cloned issue since it might have data in it
 		resetIssue(clonedIssueBox);
+		
+		//Update the names for it
+		updateName(clonedIssueBox);
 		
 		//Finished, add to the end
 		clonedIssueBox.insertAfter(lastIssueBox)
