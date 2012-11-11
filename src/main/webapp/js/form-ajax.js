@@ -1,3 +1,8 @@
+/*
+ * Copyright (C) 2012 Leon Blakey <lord.quackstar at gmail.com>, RATS 2012
+ *
+ * This file is part of University of Louisville Housing WorkOrder System.
+ */
 $(document).ready(function(){
 	//Dynamic room lookup
 	$("#room").live('input', function() {
