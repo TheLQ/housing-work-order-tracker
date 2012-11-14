@@ -43,7 +43,7 @@
 							<input type="hidden" name="sheetId" class="sheetId" value="-1"/>
 							<!--Status Dropdown-->
 							<input type="hidden" name="statusSelect" value="empty" class="statusSelect" />
-							Issue #xx: <span class="issueStatus"></span>
+							Issue #xx: <span class="issueInfo"></span>
 							<div class="btn-group">
 								<button class="btn btn-danger dropdown-toggle" data-toggle="dropdown">
 									<span class="statusName">Open</span>
@@ -121,12 +121,12 @@
 						//Find any issues that should be autofixed
 						if($.inArray($(this).find(".issueSelect").val(), selectedIssues) != -1) {
 							setStatus($(this), "Closed");
-							$(this).find(".issueStatus").html("(autofixed)")
+							$(this).find(".issueInfo").html("(autofixed)")
 						}
 						//Find any issues that should no longer be autofixed
-						else if($(this).find(".issueStatus").html() == "(autofixed)") {
+						else if($(this).find(".issueInfo").html() == "(autofixed)") {
 							setStatus($(this), "Open")
-							$(this).find(".issueStatus").html("")
+							$(this).find(".issueInfo").html("")
 						}
 					})
 				}
