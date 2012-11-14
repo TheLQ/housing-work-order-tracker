@@ -16,6 +16,9 @@ $(document).ready(function(){
 	 * injected values? Sorry, you can't. Want to use the form more than twice
 	 * before it becomes horribly broken? Keep dreaming. 
 	 * 
+	 * I learned something in this project: Do not always resort to libraries. This 
+	 * library is the reason this project took 2 extra months to write.
+	 * 
 	 * So here I present a wall of (probably ugly) javascript. I'm sorry.
 	 * -Leon, 11/1/12
 	 */
@@ -23,17 +26,33 @@ $(document).ready(function(){
 	var mainForm = $("#mainForm");
 	
 	//Rename all the fields to a standard parsable format
-	function updateName(issueBox) {
-		$("input, select, textarea", issueBox).each(function() {
-			prefix = "issues[0]";
-			if($(this).parent().attr("id") == "notesBox")
-				prefix = prefix + "[notes][0]";
-			$(this).attr("name", prefix + $(this).attr("name"));
+	function updateName() {
+		console.log("Updating all names in form")
+		allBoxes = $(".issueBox", mainForm)
+		allBoxes.each(function(issueId) {
+			curIssueBox = $(this)
+			allNotes = $(".notesBox", curIssueBox );
+			//Update all notesBoxes 
+			$("input, select, textarea", curIssueBox).each(function() {
+				prefix = "issues[" + issueId + "]";
+				parent = $(this).parent()
+				if(parent.hasClass("notesBox")) {
+					//Figure out the position of the note
+					noteId = allNotes.index(parent)
+					prefix = prefix + "[notes][" + noteId + "]";
+					
+					//Update notesBox id
+					parent.attr("id", "notesBox" + noteId)
+				}
+				$(this).attr("name", prefix + $(this).attr("class"));
+				
+				//Set issuebox id
+				curIssueBox.attr("id", "issueBox" + issueId)
+			});
 		});
+		
 	}
-	$(".issueBox", mainForm).each(function() {
-		updateName($(this));
-	});
+	updateName();
 	
 	/**
 	 * Handling S add/remove issue buttons
@@ -41,18 +60,15 @@ $(document).ready(function(){
 	mainForm.children("#addIssue").on("click", function(event) {
 		event.preventDefault();
 		lastIssueBox = mainForm.children(".issueBox").last();
-		issueId = lastIssueBox.attr("id").replace( /^\D+/g, '');
 		clonedIssueBox = lastIssueBox.clone();
 		
 		//Reset the cloned issue since it might have data in it
 		resetIssue(clonedIssueBox);
 		
-		//Update the names for it
-		updateName(clonedIssueBox);
-		
 		//Finished, add to the end
 		clonedIssueBox.insertAfter(lastIssueBox)
 		
+		updateName();
 		autoDisableIssueRemove();
 	});
 	mainForm.children("#removeIssue").on("click", function(event) {
@@ -104,17 +120,11 @@ $(document).ready(function(){
 		lastNotesBox = allBoxes.last();
 		clonedNotesBox = lastNotesBox.clone();
 		
-		//Start setting info
-		noteId = allBoxes.length + 1
-		issueId = lastNotesBox.attr("id").replace( /^\D+/g, '');
-		clonedNotesBox.attr("id", "notesBox" + noteId);
-		clonedNotesBox.children(".note").attr("name", genName(issueId, null, noteId, "note"));
-		clonedNotesBox.children(".noteDate").attr("name", genName(issueId, null, noteId, "noteDate"));
-		
 		//Add
 		clonedNotesBox.insertAfter(lastNotesBox);
 		
 		autoDisableNoteRemove(notesContainer);
+		updateName();
 		return false;
 	});
 	mainForm.on("click", ".removeNote", function(event){
