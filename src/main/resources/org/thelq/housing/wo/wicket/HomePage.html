@@ -141,7 +141,7 @@
 					else if(val == "Closed")
 						select.removeClass("btn-danger btn-warning btn-success").addClass("btn-success")
 				}
-				$("#mainForm").on("click", ".issueStatus", function(event) {
+				$("#mainForm").on("change", ".issueStatus", function(event) {
 					//event.preventDefault()
 					setStatus($(this).closest(".issueBox"), $(this).val())
 				});
