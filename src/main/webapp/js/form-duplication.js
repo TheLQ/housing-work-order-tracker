@@ -95,7 +95,6 @@ $(document).ready(function(){
 		autoDisableIssueRemove();
 	});
 	function autoDisableIssueRemove(){
-		console.log("test")
 		allBoxes = mainForm.children(".issueBox");
 		if(allBoxes.length == 1) {
 			$("#removeIssue").attr("disabled", "disabled");
