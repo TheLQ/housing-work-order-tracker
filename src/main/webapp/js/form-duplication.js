@@ -188,6 +188,7 @@ $(document).ready(function(){
 			
 			//Start setting data
 			$(".sheetId", lastIssueBox).val(data[i]["sheetId"])
+			$(".issueId", lastIssueBox).html("#" + data[i]["sheetId"])
 			$(".issueSelect", lastIssueBox).val(data[i]["issue"])
 			woUtils.setStatus(lastIssueBox, data[i]["status"]);
 			
