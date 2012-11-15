@@ -188,7 +188,7 @@ $(document).ready(function(){
 		$(".issueSelect", issueBox).get().selectedIndex = -1;
 	}
 	
-	$.wo.resetForm = function() {
+	woUtils.resetForm = function() {
 		mainForm.children(".issueBox").each(function(i) {
 			if(i == 0)
 				resetIssue($(this))
