@@ -57,8 +57,9 @@ $(document).ready(function(){
 	/**
 	 * Handling S add/remove issue buttons
 	 */
-	mainForm.children("#addIssue").on("click", function(event) {
-		event.preventDefault();
+	mainForm.children("#addIssue").on("click", woUtils.addIssue = function(event) {
+		if(event != undefined)
+			event.preventDefault();
 		lastIssueBox = mainForm.children(".issueBox").last();
 		clonedIssueBox = lastIssueBox.clone();
 		
@@ -106,8 +107,9 @@ $(document).ready(function(){
 	/**
 	 * Handling of add/remove note buttons
 	 */
-	mainForm.on("click", ".addNote", function(event){
-		event.preventDefault();
+	mainForm.on("click", ".addNote", woUtils.addNote = function(event){
+		if(event != undefined)
+			event.preventDefault();
 		console.log("Cliucked add note")
 		notesContainer = $(this).parent();
 		allBoxes = notesContainer.children(".notesBox");
