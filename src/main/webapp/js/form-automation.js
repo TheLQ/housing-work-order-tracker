@@ -49,7 +49,8 @@ $(document).ready(function(){
 	woUtils.setStatus = function(issueBox, val) {
 		console.log("Updating status for " + issueBox.attr("id"))
 		select = $(".issueStatus", issueBox);
-		select.val(val)
+		if(val != undefined)
+			select.val(val)
 					
 		//Set color based on value
 		if(val == "Open")
