@@ -55,13 +55,7 @@ $(document).ready(function(){
 			else {
 				console.log("Finished submitting form")
 				$("#submitStatus").html("Success! " + data.submitStatus);
-				curURL = [location.protocol, '//', location.host, location.pathname].join('');
-				newURL = curURL + "?submitStatus=" + data.submitStatus
-				+ "&mode=" + $("#modeSelect").val()
-				+ "&autoFix=" + $("#autoFix").val();
-				if($("#modeSelect").val() != "Normal")
-					newURL = newURL + "&building=" + $("#building").val()
-				window.location = newURL;
+				woUtils.resetForm()
 			}
 		},
 		error: function(data) {
