@@ -44,7 +44,7 @@ $(document).ready(function(){
 	$(".issueSelect").change(autoCloseIssues);
 				
 	//Status Message
-	function setStatus(issueBox, val) {
+	woUtils.setStatus = function(issueBox, val) {
 		console.log("Updating status for " + issueBox.attr("id"))
 		select = $(".issueStatus", issueBox);
 		select.val(val)
@@ -59,6 +59,6 @@ $(document).ready(function(){
 	}
 	$("#mainForm").on("change", ".issueStatus", function(event) {
 		//event.preventDefault()
-		setStatus($(this).closest(".issueBox"), $(this).val())
+		woUtils.setStatus($(this).closest(".issueBox"), $(this).val())
 	});
 });
