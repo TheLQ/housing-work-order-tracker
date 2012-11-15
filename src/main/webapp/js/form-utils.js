@@ -4,7 +4,7 @@
  * This file is part of University of Louisville Housing WorkOrder System.
  */
 //Create our JQuery namespace
-$.wo = {}
+woUtils = {}
 
 /**
  * Utility functions
