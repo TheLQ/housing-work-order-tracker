@@ -116,6 +116,9 @@ $(document).ready(function(){
 		lastNotesBox = allBoxes.last();
 		clonedNotesBox = lastNotesBox.clone();
 		
+		//Clear data
+		$(".noteDate", clonedNotesBox).val("")
+		
 		//Add
 		clonedNotesBox.insertAfter(lastNotesBox);
 		
