@@ -11,6 +11,7 @@ $(document).ready(function(){
 	
 	//AutoFixIt display toggle
 	function toggleAutoFix() {
+		console.log("Toggling autofix visibility based on current mode " + $("#modeSelect").val())
 		if($("#modeSelect").val() == "Normal") {
 			$("#autoFix").hide();
 			//JQuery can't do this good apparently, so old-school time
@@ -20,13 +21,14 @@ $(document).ready(function(){
 	}
 	//Show or hide based on preselected value
 	toggleAutoFix();
-	$('#modeSelect').change(function (e) {
+	$('#modeSelect').change(function () {
 		toggleAutoFix();
 	});
 				
 	//AutoFixIt autoclosing issues
 	function autoCloseIssues() {
 		selectedIssues = $("#autoFix").val();
+		console.log("AutoFixing all issues with " + selectedIssues)
 		$(".issueBox").each(function() {
 			//Find any issues that should be autofixed
 			if($.inArray($(this).find(".issueSelect").val(), selectedIssues) != -1) {

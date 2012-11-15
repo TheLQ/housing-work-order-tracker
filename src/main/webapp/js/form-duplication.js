@@ -114,6 +114,7 @@ $(document).ready(function(){
 	 */
 	mainForm.on("click", ".addNote", function(event){
 		event.preventDefault();
+		console.log("Cliucked add note")
 		notesContainer = $(this).parent();
 		allBoxes = notesContainer.children(".notesBox");
 		lastNotesBox = allBoxes.last();
@@ -128,6 +129,7 @@ $(document).ready(function(){
 	});
 	mainForm.on("click", ".removeNote", function(event){
 		event.preventDefault();
+		console.log("Clicked remove note")
 		notesContainer = $(this).parent();
 		lastNotesBox = notesContainer.children(".notesBox").last();
 		
@@ -147,6 +149,8 @@ $(document).ready(function(){
 	
 	//Automatically disable remove note button if text is entered into the last note
 	function autoDisableNoteRemove(notesContainer) {
+		console.log("Enabling/disabling Note remove button on " + notesContainer.parent().attr("id"))
+		
 		removeButton = notesContainer.children(".removeNote")
 		allNotes = notesContainer.children(".notesBox");
 		if(allNotes.length == 1) {
@@ -168,6 +172,8 @@ $(document).ready(function(){
 	 * Utilities
 	 */
 	function resetIssue(issueBox) {
+		console.log("Resetting issue " + issueBox.attr("id"))
+		
 		//Remove all noteBoxes except 1
 		notesContainer = issueBox.children(".notesContainer");
 		notesContainer.children(".notesBox").each(function(i) {
@@ -189,6 +195,7 @@ $(document).ready(function(){
 	}
 	
 	woUtils.resetForm = function() {
+		console.log("Resetting form...")
 		mainForm.children(".issueBox").each(function(i) {
 			if(i == 0)
 				resetIssue($(this))
