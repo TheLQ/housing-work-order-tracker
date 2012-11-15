@@ -37,7 +37,7 @@ import org.thelq.housing.wo.wicket.Spreadsheet.NoteEntry;
 import org.thelq.housing.wo.wicket.Spreadsheet.RawDataEntry;
 
 /**
- * Handle input. 
+ * Handle input for room issues and form submission. 
  * <p>
  * NOTE TO FUTURE MAINTAINERS
  * <p>
@@ -201,6 +201,7 @@ public class ProcessData extends AbstractResource {
 			JSONObject curNewIssue = new JSONObject();
 			curNewIssue.put("sheetId", curEntry.getSheetId());
 			curNewIssue.put("issue", generateIssueName(curEntry));
+			curNewIssue.put("status", StringUtils.capitalize(curEntry.getStatus().toString().toLowerCase()));
 			curNewIssue.put("notesBox", new JSONArray());
 			Iterator<Spreadsheet.NoteEntry> notesItr = curEntry.getNotes().iterator();
 			do {
