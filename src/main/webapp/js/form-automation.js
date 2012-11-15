@@ -30,12 +30,12 @@ $(document).ready(function(){
 		$(".issueBox").each(function() {
 			//Find any issues that should be autofixed
 			if($.inArray($(this).find(".issueSelect").val(), selectedIssues) != -1) {
-				setStatus($(this), "Closed");
+				woUtils.setStatus($(this), "Closed");
 				$(this).find(".issueInfo").html("(autofixed)")
 			}
 			//Find any issues that should no longer be autofixed
 			else if($(this).find(".issueInfo").html() == "(autofixed)") {
-				setStatus($(this), "Open")
+				woUtils.setStatus($(this), "Open")
 				$(this).find(".issueInfo").html("")
 			}
 		})
