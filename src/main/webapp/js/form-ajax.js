@@ -30,7 +30,7 @@ $(document).ready(function(){
 				else {
 					console.log("Finished looking up room")
 					$("#roomStatus").html("Success! " + json.response)
-					dynamicIssue.inject(json.data);
+					woUtils.inject(json.data);
 				}
 			}  
 			);  

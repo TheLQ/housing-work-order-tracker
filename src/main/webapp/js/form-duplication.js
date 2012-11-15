@@ -57,7 +57,7 @@ $(document).ready(function(){
 	/**
 	 * Handling add/remove issue buttons
 	 */
-	 woUtils.addIssue = function() {
+	woUtils.addIssue = function() {
 		lastIssueBox = mainForm.children(".issueBox").last();
 		clonedIssueBox = lastIssueBox.clone();
 		
@@ -110,7 +110,7 @@ $(document).ready(function(){
 	 * Handling of add/remove note buttons
 	 */
 	woUtils.addNote = function(issueBox){
-		console.log("Adding a note")
+		console.log("Adding a note on " + issueBox.attr("id"))
 		notesContainer = $(".notesContainer", issueBox);
 		allBoxes = notesContainer.children(".notesBox");
 		lastNotesBox = allBoxes.last();
@@ -139,8 +139,8 @@ $(document).ready(function(){
 		else if(lastNotesBox.children(".note").val().length != 0)
 			if(!confirm("The last note has data in it. Are you sure you wish to remove it?"))
 				return;
-		else
-			lastNotesBox.remove();
+			else
+				lastNotesBox.remove();
 		else
 			lastNotesBox.remove();
 		
@@ -171,6 +171,43 @@ $(document).ready(function(){
 	/**
 	 * Utilities
 	 */
+	woUtils.inject = function(data) {
+		woUtils.resetForm()
+		for(var i in data) {
+			console.log("Parsing issue " + i)
+			lastIssueBox = $(".issueBox", mainForm).last()
+			
+			if(issueHasData(lastIssueBox)) {
+				woUtils.addIssue()
+				lastIssueBox = $(".issueBox", mainForm).last()
+			}
+			
+			//Start setting data
+			$(".sheetId", lastIssueBox).val(data[i]["sheetId"])
+			$(".issueSelect", lastIssueBox).val(data[i]["issue"])
+			woUtils.setStatus(lastIssueBox, data[i]["status"]);
+			
+			//Special note handling
+			noteData = data[i]["notesBox"]
+			for(var j in noteData) {
+				lastNotesBox = $(".notesBox", lastIssueBox).last();
+				if($(".noteDate", lastNotesBox).val().length != 0 || $(".note", lastNotesBox).val().length != 0) {
+					//Last note has data in it, create a new one
+					console.log("Adding note #" + j)
+					woUtils.addNote(lastIssueBox)
+					lastNotesBox = $(".notesBox", lastIssueBox).last();
+				}
+				
+				//Set data
+				$(".noteDate", lastNotesBox).val(noteData[j]["noteDate"])
+				$(".note", lastNotesBox).val(noteData[j]["note"])
+			}
+		}
+		
+		//Update status based on current autoclose settings
+		woUtils.autoCloseIssues();
+	}
+	
 	function issueHasData(issueBox) {
 		isData = false;
 		if($(".statusSelect", issueBox).get().selectedIndex < 1)
