@@ -255,7 +255,7 @@ $(document).ready(function(){
 		$(".issueInfo", issueBox).html("")
 		
 		//Reset issue select
-		$(".issueSelect", issueBox).get().selectedIndex = -1;
+		$(".issueSelect", issueBox)[0].selectedIndex = 0;
 	}
 	
 	woUtils.resetForm = function() {
