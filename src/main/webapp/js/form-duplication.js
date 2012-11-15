@@ -250,6 +250,9 @@ $(document).ready(function(){
 		//Reset sheet id
 		$(".sheetId", issueBox).val("")
 		
+		//Remove any issue status message
+		$(".issueInfo", issueBox).html("")
+		
 		//Reset issue select
 		$(".issueSelect", issueBox).get().selectedIndex = -1;
 	}
