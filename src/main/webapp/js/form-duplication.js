@@ -92,13 +92,14 @@ $(document).ready(function(){
 		autoDisableIssueRemove();
 	});
 	function autoDisableIssueRemove(){
+		console.log("Enabling/disable issue remove button")
 		allBoxes = mainForm.children(".issueBox");
 		if(allBoxes.length == 1) {
 			$("#removeIssue").attr("disabled", "disabled");
 			return;
 		}
-		lastNotesBox = allBoxes.last();
-		if($(".sheetId", mainForm).val() > 0)
+		lastIssueBox = allBoxes.last();
+		if($(".sheetId", lastIssueBox).val() > 0)
 			$("#removeIssue").attr("disabled", "disabled");
 		else
 			$("#removeIssue").removeAttr("disabled")
@@ -245,6 +246,9 @@ $(document).ready(function(){
 	
 		//Reset status
 		woUtils.setStatus(issueBox, "Open")
+		
+		//Reset sheet id
+		$(".sheetId", issueBox).val("")
 		
 		//Reset issue select
 		$(".issueSelect", issueBox).get().selectedIndex = -1;
