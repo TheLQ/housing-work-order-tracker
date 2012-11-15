@@ -250,6 +250,7 @@ $(document).ready(function(){
 		
 		//Reset sheet id
 		$(".sheetId", issueBox).val("")
+		$(".issueId", issueBox).html("New")
 		
 		//Remove any issue status message
 		$(".issueInfo", issueBox).html("")
