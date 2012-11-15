@@ -44,7 +44,15 @@ $(document).ready(function(){
 					//Update notesBox id
 					parent.attr("id", "notesBox" + noteId)
 				}
-				$(this).attr("name", prefix + $(this).attr("class"));
+				//Workaround so that button classes don't get into names
+				classes = $.grep($(this).attr("class").split(" "), function(val) {
+					//Does it start with btn-? Remove it
+					return (val.indexOf('btn-') != 0);
+				})
+				if(classes.length > 1)
+					alert("ERROR: Too many classes when trying to update name: " + $(this).attr("class"))
+				
+				$(this).attr("name", prefix + classes[0]);
 				
 				//Set issuebox id
 				curIssueBox.attr("id", "issueBox" + issueId)
