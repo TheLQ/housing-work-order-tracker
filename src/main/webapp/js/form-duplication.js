@@ -77,18 +77,9 @@ $(document).ready(function(){
 	mainForm.children("#removeIssue").on("click", function(event) {
 		event.preventDefault();
 		lastIssueBox = mainForm.children(".issueBox").last();
-		
-		//Check if there is data
-		isData = false;
-		if($(".statusSelect", lastIssueBox).get().selectedIndex < 1)
-			isData = true;
-		$(".note, .noteDate", lastIssueBox).each(function(){
-			if($(this).val().length != 0)
-				isData = true;
-		});
 	
 		//If there is data, prompt the user for confirmation
-		if(isData)
+		if(issueHasData(lastIssueBox))
 			if(!confirm("The last issue has data in it. Are you sure you wish to remove it?"))
 				return;
 		
@@ -174,6 +165,18 @@ $(document).ready(function(){
 	/**
 	 * Utilities
 	 */
+	function issueHasData(issueBox) {
+		isData = false;
+		if($(".statusSelect", issueBox).get().selectedIndex < 1)
+			isData = true;
+		$(".note, .noteDate", issueBox).each(function(){
+			if($(this).val().length != 0)
+				isData = true;
+		});
+		
+		return isData;
+	}
+	
 	function resetIssue(issueBox) {
 		console.log("Resetting issue " + issueBox.attr("id"))
 		
