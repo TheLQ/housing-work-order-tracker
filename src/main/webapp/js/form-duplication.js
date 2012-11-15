@@ -243,7 +243,7 @@ $(document).ready(function(){
 		lastNotesBox.children(".noteDate").val("")
 	
 		//Reset status
-		//TODO
+		woUtils.setStatus(issueBox, "Open")
 		
 		//Reset issue select
 		$(".issueSelect", issueBox).get().selectedIndex = -1;
