@@ -55,11 +55,9 @@ $(document).ready(function(){
 	updateName();
 	
 	/**
-	 * Handling S add/remove issue buttons
+	 * Handling add/remove issue buttons
 	 */
-	mainForm.children("#addIssue").on("click", woUtils.addIssue = function(event) {
-		if(event != undefined)
-			event.preventDefault();
+	 woUtils.addIssue = function() {
 		lastIssueBox = mainForm.children(".issueBox").last();
 		clonedIssueBox = lastIssueBox.clone();
 		
@@ -74,6 +72,10 @@ $(document).ready(function(){
 		
 		updateName();
 		autoDisableIssueRemove();
+	}
+	mainForm.children("#addIssue").on("click", function(event) {
+		event.preventDefault()
+		woUtils.addIssue()
 	});
 	mainForm.children("#removeIssue").on("click", function(event) {
 		event.preventDefault();
@@ -107,11 +109,9 @@ $(document).ready(function(){
 	/**
 	 * Handling of add/remove note buttons
 	 */
-	mainForm.on("click", ".addNote", woUtils.addNote = function(event){
-		if(event != undefined)
-			event.preventDefault();
-		console.log("Cliucked add note")
-		notesContainer = $(this).parent();
+	woUtils.addNote = function(issueBox){
+		console.log("Adding a note")
+		notesContainer = $(".notesContainer", issueBox);
 		allBoxes = notesContainer.children(".notesBox");
 		lastNotesBox = allBoxes.last();
 		clonedNotesBox = lastNotesBox.clone();
@@ -122,6 +122,10 @@ $(document).ready(function(){
 		autoDisableNoteRemove(notesContainer);
 		updateName();
 		return false;
+	}
+	mainForm.on("click", ".addNote", function(event) {
+		event.preventDefault();
+		woUtils.addNote($(this).closest(".issueBox"))
 	});
 	mainForm.on("click", ".removeNote", function(event){
 		event.preventDefault();
@@ -135,8 +139,8 @@ $(document).ready(function(){
 		else if(lastNotesBox.children(".note").val().length != 0)
 			if(!confirm("The last note has data in it. Are you sure you wish to remove it?"))
 				return;
-			else
-				lastNotesBox.remove();
+		else
+			lastNotesBox.remove();
 		else
 			lastNotesBox.remove();
 		
