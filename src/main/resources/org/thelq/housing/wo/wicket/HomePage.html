@@ -32,10 +32,6 @@
 								AutoFixed Issues:
 								<select id="autoFix" name="autoFix" wicket:id="autoFix" multiple="multiple"></select>
 							</div>
-							<div class="alert alert-success" style="margin-bottom: 0; display: none;" id="topStatusBox">
-								<button type="button" class="close" data-dismiss="alert">×</button>
-								<span id="topStatus"></span>
-							</div>
 						</div>
 					</div>
 					<!-- Building and room select -->
@@ -88,18 +84,5 @@
 		<script type="text/javascript" src="js/form-duplication.js"></script>
 		<script type="text/javascript" src="js/form-automation.js"></script>
 		<script type="text/javascript" src="js/form-ajax.js"></script>
-		<script type="text/javascript">
-			$(document).ready(function(){
-				//Load data from previous page
-				if(getParameterByName("submitStatus") != "") {
-					$("#topStatus").html(getParameterByName("submitStatus"));
-					$("#topStatusBox").toggle(true);
-					$("#modeSelect").val(getParameterByName("mode"));
-					$("#autoFix").val(getParameterByName("autoFix").split(","));
-					if(getParameterByName("building") != null)
-						$("#building").val(getParameterByName("building"))
-				}
-			});
-		</script>
 	</body>
 </html>
