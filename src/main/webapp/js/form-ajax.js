@@ -29,7 +29,7 @@ $(document).ready(function(){
 					$("#roomStatus").html("Server Error! " + json.error);
 				else {
 					console.log("Finished looking up room")
-					$("#roomStatus").html("Success! " + json.response)
+					$("#roomStatus").html(json.response)
 					woUtils.inject(json.data);
 				}
 			}  
