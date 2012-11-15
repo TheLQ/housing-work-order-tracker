@@ -13,13 +13,13 @@ $(document).ready(function(){
 	function toggleAutoFix() {
 		console.log("Toggling autofix visibility based on current mode " + $("#modeSelect").val())
 		if($("#modeSelect").val() == "Normal") {
-			$("#autoFix").hide();
+			$("#autoFixContainer").hide();
 			if(!$("#modeContainer").hasClass("offset3"))
 				$("#modeContainer").addClass("offset3")
 			//JQuery can't do this good apparently, so old-school time
 			document.getElementById("autoFix").selectedIndex = -1;
 		} else {
-			$("#autoFix").show();
+			$("#autoFixContainer").show();
 			$("#modeContainer").removeClass("offset3")
 		}
 	}
