@@ -68,6 +68,9 @@ $(document).ready(function(){
 		//Finished, add to the end
 		clonedIssueBox.insertAfter(lastIssueBox)
 		
+		//Change the status to open with correct color
+		woUtils.setStatus(clonedIssueBox, "Open")
+		
 		updateName();
 		autoDisableIssueRemove();
 	});
