@@ -57,8 +57,7 @@ $(document).ready(function(){
 		else if(val == "Closed")
 			select.removeClass("btn-danger btn-warning btn-success").addClass("btn-success")
 	}
-	$("#mainForm").on("change", ".issueStatus", function(event) {
-		//event.preventDefault()
+	$("#mainForm").on("change", ".issueStatus", function() {
 		woUtils.setStatus($(this).closest(".issueBox"), $(this).val())
 	});
 });
