@@ -26,7 +26,7 @@ $(document).ready(function(){
 	});
 				
 	//AutoFixIt autoclosing issues
-	function autoCloseIssues() {
+	woUtils.autoCloseIssues = function() {
 		selectedIssues = $("#autoFix").val();
 		console.log("AutoFixing all issues with " + selectedIssues)
 		$(".issueBox").each(function() {
@@ -42,8 +42,8 @@ $(document).ready(function(){
 			}
 		})
 	}
-	$('#autoFix').change(autoCloseIssues);
-	$(".issueSelect").change(autoCloseIssues);
+	$('#autoFix').change(woUtils.autoCloseIssues);
+	$(".issueSelect").change(woUtils.autoCloseIssues);
 				
 	//Status Message
 	woUtils.setStatus = function(issueBox, val) {
