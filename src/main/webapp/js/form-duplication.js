@@ -206,8 +206,9 @@ $(document).ready(function(){
 				$(".note", lastNotesBox).val(noteData[j]["note"])
 			}
 			
-			//Set remove note button
+			//Update remove button visibility
 			autoDisableNoteRemove($(".notesContainer", lastIssueBox))
+			autoDisableIssueRemove()
 		}
 		
 		//Update status based on current autoclose settings
