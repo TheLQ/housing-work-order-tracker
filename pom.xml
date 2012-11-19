@@ -61,7 +61,7 @@
 
 			<!--
 				Upload application to the appspot automatically, during release:perform
-			-->	
+			-->
 			<plugin>
 				<artifactId>maven-release-plugin</artifactId>
 				<version>2.3.2</version>
@@ -167,7 +167,7 @@
 			<classifier>jdk15</classifier>
 		</dependency>
 	</dependencies>
-  
+
 	<properties>
 		<!-- Sets the project's default encoding.
 		http://docs.codehaus.org/display/MAVENUSER/POM+Element+for+Source+File+Encoding -->
@@ -177,7 +177,7 @@
 			Specify AppEngine version for your project. It should match SDK version pointed to
 			by ${gae.home} property (Typically, one used by your Eclipse plug-in)
 		-->
-		<gae.version>1.7.1</gae.version>
+		<gae.version>1.7.2</gae.version>
 
 		<!-- Upload to http://test.latest.<applicationName>.appspot.com by default -->
 		<gae.application.version>test</gae.application.version>
