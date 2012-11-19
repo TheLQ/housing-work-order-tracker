@@ -12,6 +12,7 @@ import com.google.gdata.data.spreadsheet.ListFeed;
 import com.google.gdata.util.AuthenticationException;
 import com.google.gdata.util.ServiceException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
@@ -33,7 +34,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Provides utility methods to extract information from the Spreadsheet. 
+ * Provides utility methods to extract information from the Spreadsheet.
  * @author Leon Blakey <lord.quackstar at gmail.com>
  */
 public class Spreadsheet {
@@ -52,6 +53,8 @@ public class Spreadsheet {
 	public Spreadsheet(String prefix) throws IOException, AuthenticationException {
 		//Load username and password and login to Spreadsheet API
 		Properties userProp = new Properties();
+		if(this.getClass().getClassLoader().getResource("creds.properties") == null)
+			throw new RuntimeException("Cannot load creds.properties, does it exist?");
 		userProp.load(this.getClass().getClassLoader().getResourceAsStream("creds.properties"));
 		user = userProp.getProperty("user");
 		pass = userProp.getProperty("pass");
@@ -142,15 +145,15 @@ public class Spreadsheet {
 					//Get the number of this note by removing all letters and converting to int
 					int num = Integer.parseInt(columnName.replaceAll("[^-?\\d+]", "")) - 1;
 					List<NoteEntry> notes = curEntry.getNotes();
-					
+
 					if(notes.size() < num + 1)
 						//List isn't even big enough to hold our num, add to end
 						notes.add(new NoteEntry());
-					
+
 					//Set the appropiate value based on if this is the date or not
 					if (StringUtils.endsWithIgnoreCase(columnName, "date"))
 						notes.get(num).setDate(Spreadsheet.getNewDateFormat().parse(value));
-					else 
+					else
 						notes.get(num).setNote(value);
 				} else
 					throw new RuntimeException("Unknown column " + columnName);
@@ -196,8 +199,8 @@ public class Spreadsheet {
 			String waitingDate = (curEntry.getWaitingDate() != null) ? getNewDateFormat().format(curEntry.getWaitingDate()) : "";
 			row.getCustomElements().setValueLocal("waiting", waitingDate);
 			row.getCustomElements().setValueLocal("wwt", curEntry.isWaitingWalkthrough() ? "Y" : "N");
-			
-			//Add notes 
+
+			//Add notes
 			int counter = 0;
 			for (NoteEntry noteEntry : curEntry.getNotes()) {
 				counter++;
