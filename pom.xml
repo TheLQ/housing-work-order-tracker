@@ -54,9 +54,6 @@
 				<groupId>net.kindleit</groupId>
 				<artifactId>maven-gae-plugin</artifactId>
 				<version>0.9.4</version>
-				<configuration>
-					<sdkDir>${gae.home}</sdkDir>
-				</configuration>
 			</plugin>
 
 			<!--
