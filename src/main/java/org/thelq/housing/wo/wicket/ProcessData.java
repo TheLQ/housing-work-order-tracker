@@ -104,6 +104,8 @@ public class ProcessData extends AbstractResource {
 		Date date = new Date();
 		List<RawDataEntry> entriesRaw = Spreadsheet.get().loadRawRoom(building, room);
 		List<RawDataEntry> entriesNew = new ArrayList();
+		final int totalRawRows = Spreadsheet.get().loadTotalRawRows() ;
+		int lastSheetId = totalRawRows - 1;
 		int curIssueNum = -1;
 		while (true) {
 			curIssueNum++;
@@ -137,6 +139,8 @@ public class ProcessData extends AbstractResource {
 				entry.setBuilding(building);
 				entry.setRoom(room);
 				entry.setOpenedDate(date);
+				entry.setSheetId(++lastSheetId);
+				log.info("Created new issue with sheet id " + entry.getSheetId());
 
 				String[] issueParts = params.getParameterValue(prefix + "issueSelect").toString().split(" - ");
 				entry.setType(issueParts[0]);
