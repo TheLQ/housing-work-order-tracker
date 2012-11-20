@@ -9,6 +9,8 @@ import com.google.gdata.client.spreadsheet.SpreadsheetService;
 import com.google.gdata.data.spreadsheet.CustomElementCollection;
 import com.google.gdata.data.spreadsheet.ListEntry;
 import com.google.gdata.data.spreadsheet.ListFeed;
+import com.google.gdata.data.spreadsheet.WorksheetEntry;
+import com.google.gdata.data.spreadsheet.WorksheetFeed;
 import com.google.gdata.util.AuthenticationException;
 import com.google.gdata.util.ServiceException;
 import java.io.IOException;
@@ -42,10 +44,9 @@ public class Spreadsheet {
 	/**
 	 * Spreadsheet feed key, NOT document key
 	 */
-	@Getter
-	protected final String urlRaw;
-	@Getter
-	protected final String urlUi;
+	protected final String ssKey;
+	protected final String ssRawId;
+	protected final String ssUiId;
 	protected SpreadsheetService ssService;
 	protected final String user;
 	protected final String pass;
@@ -53,13 +54,16 @@ public class Spreadsheet {
 	public Spreadsheet(String prefix) throws IOException, AuthenticationException {
 		//Load username and password and login to Spreadsheet API
 		Properties userProp = new Properties();
-		if(this.getClass().getClassLoader().getResource("creds.properties") == null)
+		if (this.getClass().getClassLoader().getResource("creds.properties") == null)
 			throw new RuntimeException("Cannot load creds.properties, does it exist?");
 		userProp.load(this.getClass().getClassLoader().getResourceAsStream("creds.properties"));
 		user = userProp.getProperty("user");
 		pass = userProp.getProperty("pass");
-		urlRaw = userProp.getProperty(prefix + "url_raw");
-		urlUi = userProp.getProperty(prefix + "url_ui");
+
+		ssKey = userProp.getProperty(prefix + "key");
+		ssRawId = userProp.getProperty(prefix + "raw");
+		ssUiId = userProp.getProperty(prefix + "ui");
+
 		//Load the Spreadsheet service
 		ssService = new SpreadsheetService("UofL-Workorder");
 		ssService.setUserCredentials(user, pass);
@@ -68,7 +72,7 @@ public class Spreadsheet {
 	public UIData loadUI() throws MalformedURLException, ServiceException, IOException {
 		UIData data = new UIData();
 		//Start loading stuff from the UI
-		ListFeed listFeed = ssService.getFeed(new URL(urlUi), ListFeed.class);
+		ListFeed listFeed = ssService.getFeed(new URL(genUiAddress()), ListFeed.class);
 		for (ListEntry row : listFeed.getEntries()) {
 			CustomElementCollection rowData = row.getCustomElements();
 
@@ -96,13 +100,13 @@ public class Spreadsheet {
 			throw new NullPointerException("Attempting to load raw room with null room");
 		String query = URLEncoder.encode("building = " + building + " and room = \"" + room + "\" and status != Closed", "UTF-8");
 		log.info("Querying sheet with: " + query);
-		ListFeed listFeed = ssService.getFeed(new URL(urlRaw + "?sq=" + query), ListFeed.class);
+		ListFeed listFeed = ssService.getFeed(new URL(genRawAddress() + "?sq=" + query), ListFeed.class);
 		return loadRaw(listFeed);
 	}
 
 	public List<RawDataEntry> loadRawAll() throws MalformedURLException, ServiceException, IOException, ParseException {
 		//Load entire sheet into list
-		ListFeed listFeed = ssService.getFeed(new URL(urlRaw), ListFeed.class);
+		ListFeed listFeed = ssService.getFeed(new URL(genRawAddress()), ListFeed.class);
 		return loadRaw(listFeed);
 	}
 
@@ -146,7 +150,7 @@ public class Spreadsheet {
 					int num = Integer.parseInt(columnName.replaceAll("[^-?\\d+]", "")) - 1;
 					List<NoteEntry> notes = curEntry.getNotes();
 
-					if(notes.size() < num + 1)
+					if (notes.size() < num + 1)
 						//List isn't even big enough to hold our num, add to end
 						notes.add(new NoteEntry());
 
@@ -167,7 +171,7 @@ public class Spreadsheet {
 
 	public void insertData(Collection<RawDataEntry> entries) throws IOException, ServiceException {
 		for (ListEntry curRawEntry : convertData(entries))
-			ssService.insert(new URL(urlRaw), curRawEntry);
+			ssService.insert(new URL(genRawAddress()), curRawEntry);
 	}
 
 	public void updateData(Collection<RawDataEntry> entries) throws IOException, ServiceException {
@@ -195,21 +199,21 @@ public class Spreadsheet {
 			row.getCustomElements().setValueLocal("status", curEntry.getStatus().getHumanName());
 
 			//Handle values with date column and walkthrough mode column
-			if(curEntry.getClosedDate() != null) {
+			if (curEntry.getClosedDate() != null) {
 				row.getCustomElements().setValueLocal("closed", getNewDateFormat().format(curEntry.getClosedDate()));
 				row.getCustomElements().setValueLocal("cwt", curEntry.isClosedWalkthrough() ? "Y" : "N");
 			} else {
 				row.getCustomElements().setValueLocal("closed", "");
 				row.getCustomElements().setValueLocal("cwt", "");
 			}
-			if(curEntry.getWaitingDate() != null) {
+			if (curEntry.getWaitingDate() != null) {
 				row.getCustomElements().setValueLocal("waiting", getNewDateFormat().format(curEntry.getWaitingDate()));
 				row.getCustomElements().setValueLocal("wwt", curEntry.isWaitingWalkthrough() ? "Y" : "N");
 			} else {
 				row.getCustomElements().setValueLocal("waiting", "");
 				row.getCustomElements().setValueLocal("wwt", "");
 			}
-			
+
 			//Add notes
 			int counter = 0;
 			for (NoteEntry noteEntry : curEntry.getNotes()) {
@@ -221,6 +225,14 @@ public class Spreadsheet {
 			listEntries.add(row);
 		}
 		return listEntries;
+	}
+
+	public String genUiAddress() throws MalformedURLException {
+		return "https://spreadsheets.google.com/feeds/list/" + ssKey + "/" + ssUiId + "/private/full";
+	}
+	
+	public String genRawAddress() throws MalformedURLException {
+		return "https://spreadsheets.google.com/feeds/list/" + ssKey + "/" + ssRawId + "/private/full";
 	}
 
 	public static Spreadsheet get() {
