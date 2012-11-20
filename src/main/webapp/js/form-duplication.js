@@ -262,7 +262,7 @@ $(document).ready(function(){
 		woUtils.setStatus(issueBox, "Open")
 		
 		//Reset sheet id
-		$(".sheetId", issueBox).val("")
+		$(".sheetId", issueBox).val("-1")
 		$(".issueId", issueBox).html("New")
 		
 		//Remove any issue status message
