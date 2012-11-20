@@ -127,6 +127,7 @@ $(document).ready(function(){
 		
 		//Clear data
 		$(".noteDate", clonedNotesBox).val("")
+		$(".note", clonedNotesBox).removeAttr("disabled")
 		
 		//Add
 		clonedNotesBox.insertAfter(lastNotesBox);
@@ -214,6 +215,9 @@ $(document).ready(function(){
 				//Set data
 				$(".noteDate", lastNotesBox).val(noteData[j]["noteDate"])
 				$(".note", lastNotesBox).val(noteData[j]["note"])
+				
+				//Disable note, don't want the user modifying existing note text
+				$(".note", lastNotesBox).attr("disabled", "disabled")
 			}
 			
 			//Update remove button visibility
@@ -252,6 +256,7 @@ $(document).ready(function(){
 		lastNotesBox = notesContainer.children(".notesBox")
 		lastNotesBox.children(".note").val("")
 		lastNotesBox.children(".noteDate").val("")
+		lastNotesBox.children(".note").removeAttr("disabled")
 	
 		//Reset status
 		woUtils.setStatus(issueBox, "Open")
