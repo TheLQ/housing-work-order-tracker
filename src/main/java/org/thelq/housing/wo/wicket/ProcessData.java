@@ -179,7 +179,9 @@ public class ProcessData extends AbstractResource {
 		Spreadsheet.get().updateData(entriesRaw);
 		Spreadsheet.get().insertData(entriesNew);
 
-		response.put("submitStatus", "Added " + entriesNew.size() + " issues for " + building + " " + room + " on "
+		response.put("submitStatus", "Added " + entriesNew.size() + " issues, "
+				+ "updated " + entriesRaw.size() + " issues " 
+				+ "for " + building + " " + room + " on "
 				+ Spreadsheet.getNewDateFormat().format(date));
 
 		return response;
