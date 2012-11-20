@@ -48,6 +48,27 @@ $(document).ready(function(){
 		},
 		beforeSubmit: function() {
 			$("#submitStatus").html("Submitting...");
+			
+			/* Form Checks */
+			allGood = true;
+			$(".note").each(function() {
+				//See if the length is 0 and the note isn't the first one in the issue
+				if($(this).val().length == 0 && $(".note", $(this).parent()).index($(this)) != 0) {
+					alert("A note is empty. Please make sure all notes have text or are removed");
+					allGood = false;
+					return false;
+				}
+			});
+			if(!allGood)
+				return allGood;
+			$(".issueSelect").each(function() {
+				if($(this)[0].selectedIndex == 0) {
+					alert("An issue isn't selected. Please select an issue")
+					allGood = false;
+					return false;
+				}
+			});
+			return allGood
 		},
 		success: function(data) {
 			if(typeof data.error != 'undefined')
@@ -67,7 +88,7 @@ $(document).ready(function(){
 		//url:       "processData?mode=form",         // override for form's 'action' attribute 
 		//type:      "POST",        // 'get' or 'post', override for form's 'method' attribute 
 		dataType:  'json'        // 'xml', 'script', or 'json' (expected server response type) 
-		//clearForm: true,        // clear all form fields after successful submit 
-		//resetForm: true        // reset the form after successful submit 
+	//clearForm: true,        // clear all form fields after successful submit 
+	//resetForm: true        // reset the form after successful submit 
 	});
 });
