@@ -220,6 +220,10 @@ $(document).ready(function(){
 				$(".note", lastNotesBox).attr("disabled", "disabled")
 			}
 			
+			//Undo disabling note if there's only one
+			if($(".note", lastIssueBox).length <= 1)
+				$(".note", lastIssueBox).removeAttr("disabled")
+			
 			//Update remove button visibility
 			autoDisableNoteRemove($(".notesContainer", lastIssueBox))
 			autoDisableIssueRemove()
