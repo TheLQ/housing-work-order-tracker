@@ -38,7 +38,7 @@ public class ConvertUtils {
 		log.info("Logging in...");
 		Spreadsheet spreadsheet = new Spreadsheet("dev_");
 		log.info("Grabbing feed...");
-		ListFeed listFeed = spreadsheet.ssService.getFeed(new URL(spreadsheet.getUrlRaw()), ListFeed.class);
+		ListFeed listFeed = spreadsheet.ssService.getFeed(new URL(spreadsheet.genRawAddress()), ListFeed.class);
 
 		//Pass to different methods to work on data
 		List<ListEntry> enteries = new ArrayList(listFeed.getEntries());
