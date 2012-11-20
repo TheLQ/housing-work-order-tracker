@@ -277,6 +277,18 @@ $(document).ready(function(){
 		});
 	}
 	
+	woUtils.resetRoom = function() {
+		//Reset room and building depending on mode
+		$("#room").val("")
+		if($("#modeSelect").val() == "Normal")
+			$("#building").val("")
+		
+		//Reset status
+		$("#roomStatus").html("Waiting for Input...")
+	}
+	//Keeps standard room status message
+	woUtils.resetRoom()
+	
 	function genName(issueId, issueField, noteId, noteField) {
 		name = "issues[" + issueId + "]";
 		if(noteId != undefined)

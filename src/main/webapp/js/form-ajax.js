@@ -56,6 +56,7 @@ $(document).ready(function(){
 				console.log("Finished submitting form")
 				$("#submitStatus").html("Success! " + data.submitStatus);
 				woUtils.resetForm()
+				woUtils.resetRoom()
 			}
 		},
 		error: function(data) {
