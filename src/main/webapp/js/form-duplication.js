@@ -280,9 +280,7 @@ $(document).ready(function(){
 			else
 				$(this).remove();
 		});
-		$("#submitStatus").html("Waiting on input...")
 	}
-	woUtils.resetForm()
 	
 	woUtils.resetRoom = function() {
 		//Reset room and building depending on mode
@@ -292,6 +290,9 @@ $(document).ready(function(){
 		
 		//Reset status
 		$("#roomStatus").html("Waiting for Input...")
+		
+		//Reset issue status
+		$("#submitStatus").html("Waiting on input...")
 	}
 	//Keeps standard room status message
 	woUtils.resetRoom()
