@@ -50,6 +50,15 @@ $(document).ready(function(){
 			$("#submitStatus").html("Submitting...");
 			
 			/* Form Checks */
+			if($("#building").val().length == 0) {
+				alert("You haven't selected a building!")
+				return false;
+			}
+			else if($("#room").val().length == 0) {
+				alert("You haven't selected a room!")
+				return false;
+			}
+			
 			allGood = true;
 			$(".note").each(function() {
 				//See if the length is 0 and the note isn't the first one in the issue
