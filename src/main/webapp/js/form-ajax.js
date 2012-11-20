@@ -62,7 +62,7 @@ $(document).ready(function(){
 			allGood = true;
 			$(".note").each(function() {
 				//See if the length is 0 and the note isn't the first one in the issue
-				if($(this).val().length == 0 && $(".note", $(this).parent()).index($(this)) != 0) {
+				if($(this).val().length == 0 && $(".note", $(this).parent().parent()).index($(this)) != 0) {
 					alert("A note is empty. Please make sure all notes have text or are removed");
 					allGood = false;
 					return false;
