@@ -104,21 +104,19 @@ public class ProcessData extends AbstractResource {
 		Date date = new Date();
 		List<RawDataEntry> entriesRaw = Spreadsheet.get().loadRawRoom(building, room);
 		List<RawDataEntry> entriesNew = new ArrayList();
-		Map<Integer, Spreadsheet.RawDataEntry> entriesByNum = new HashMap();
-		for (String curField : params.getParameterNames()) {
-			if (!curField.startsWith("issues"))
-				//Must be another field
-				continue;
-			String[] fieldParts = StringUtils.split(curField, "[]");
-			int curIssueNum = Integer.parseInt(fieldParts[1]);
+		int curIssueNum = -1;
+		while (true) {
+			curIssueNum++;
 			String prefix = "issues[" + curIssueNum + "]";
-
-			//Skip parameter if we've already dealt with the entry
-			if (entriesByNum.containsKey(curIssueNum))
-				continue;
+			
+			//Make sure something exists
+			StringValue sheetIdParam = params.getParameterValue(prefix + "sheetId");
+			if(sheetIdParam.isEmpty())
+				//Doesn't exist
+				break;
 
 			//Get the correct RawDataEntry
-			int sheetId = params.getParameterValue(prefix + "sheetId").toInt();
+			int sheetId = sheetIdParam.toInt();
 			Spreadsheet.RawDataEntry entry = null;
 			if (sheetId > 0) {
 				//Has a sheet id, this is updating an existing issue
@@ -144,12 +142,10 @@ public class ProcessData extends AbstractResource {
 				entry.setType(issueParts[0]);
 				entry.setIssue(issueParts[1]);
 			}
-			
-			//Insert all entries into entriesByNum so they can be referenced later
-			entriesByNum.put(curIssueNum, entry);
 
 			//Handle status appropriately
 			String status = params.getParameterValue(prefix + "issueStatus").toString();
+			log.info("Setting issue with prefix " + prefix + " to status " + status);
 			if (status.equalsIgnoreCase("open"))
 				entry.setStatus(Spreadsheet.Status.OPEN);
 			else if (status.equalsIgnoreCase("closed")) {
@@ -162,15 +158,16 @@ public class ProcessData extends AbstractResource {
 				entry.setWaitingWalkthrough(!params.getParameterValue("modeSelect").toString().equalsIgnoreCase("Normal"));
 			}
 
-			//Load notes
-			int curNoteId = -1;
-			String value;
-			while ((value = params.getParameterValue(prefix + "[notes][" + (++curNoteId) + "]note").toString()) != null) {
-				if (entry.getNotes().size() < curNoteId + 1) {
-					//Entry doesn't exist or is different, add a new one
-					entry.getNotes().add(new NoteEntry(value, date));
-					log.info("Added note " + value);
-				}
+			//Load notes (disabled fields aren't submitted, so loop through all of them)
+			for(int i = 0; i <= 10; i++) {
+				//Attempt to get note
+				StringValue noteTextParam = params.getParameterValue(prefix + "[notes][" + i + "]note");
+				if(noteTextParam.isEmpty())
+					continue;
+				
+				String noteText = noteTextParam.toString();
+				log.info("For prefix " + prefix + " created note #" + i + " with text " + noteText);
+				entry.getNotes().add(new NoteEntry(noteText, date));
 			}
 		}
 		
