@@ -106,19 +106,19 @@ public class ProcessData extends AbstractResource {
 		List<RawDataEntry> entriesNew = new ArrayList();
 		Map<Integer, Spreadsheet.RawDataEntry> entriesByNum = new HashMap();
 		for (String curField : params.getParameterNames()) {
-			if (!curField.startsWith("issueBox"))
+			if (!curField.startsWith("issues"))
 				//Must be another field
 				continue;
 			String[] fieldParts = StringUtils.split(curField, "[]");
-			int curIssueNum = Integer.parseInt(fieldParts[2]);
-			String prefix = "issueBox[issueBox][" + curIssueNum + "]";
+			int curIssueNum = Integer.parseInt(fieldParts[1]);
+			String prefix = "issues[" + curIssueNum + "]";
 
 			//Skip parameter if we've already dealt with the entry
 			if (entriesByNum.containsKey(curIssueNum))
 				continue;
 
 			//Get the correct RawDataEntry
-			int sheetId = params.getParameterValue(prefix + "[sheetId]").toInt();
+			int sheetId = params.getParameterValue(prefix + "sheetId").toInt();
 			Spreadsheet.RawDataEntry entry = null;
 			if (sheetId > 0) {
 				//Has a sheet id, this is updating an existing issue
@@ -140,7 +140,7 @@ public class ProcessData extends AbstractResource {
 				entry.setRoom(room);
 				entry.setOpenedDate(date);
 
-				String[] issueParts = params.getParameterValue(prefix + "[issue]").toString().split(" - ");
+				String[] issueParts = params.getParameterValue(prefix + "issueSelect").toString().split(" - ");
 				entry.setType(issueParts[0]);
 				entry.setIssue(issueParts[1]);
 			}
@@ -149,7 +149,7 @@ public class ProcessData extends AbstractResource {
 			entriesByNum.put(curIssueNum, entry);
 
 			//Handle status appropriately
-			String status = params.getParameterValue(prefix + "[statusSelect]").toString();
+			String status = params.getParameterValue(prefix + "issueStatus").toString();
 			if (status.equalsIgnoreCase("open"))
 				entry.setStatus(Spreadsheet.Status.OPEN);
 			else if (status.equalsIgnoreCase("closed")) {
@@ -165,7 +165,7 @@ public class ProcessData extends AbstractResource {
 			//Load notes
 			int curNoteId = -1;
 			String value;
-			while ((value = params.getParameterValue(prefix + "[notesBox][" + (++curNoteId) + "][note]").toString()) != null) {
+			while ((value = params.getParameterValue(prefix + "[notes][" + (++curNoteId) + "]note").toString()) != null) {
 				if (entry.getNotes().size() < curNoteId + 1) {
 					//Entry doesn't exist or is different, add a new one
 					entry.getNotes().add(new NoteEntry(value, date));
