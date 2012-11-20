@@ -226,6 +226,18 @@ public class Spreadsheet {
 		}
 		return listEntries;
 	}
+	
+	/**
+	 * Get the total number of raw rows being used *EXPENSIVE*. 
+	 * @return 
+	 */
+	public int loadTotalRawRows() throws IOException, ServiceException {
+		//In all my searching I could not find a more efficent way to do this
+		//I'm sorry bandwidth counter
+		
+		//Add one to compensate for Java 0 based system
+		return ssService.getFeed(new URL(genRawAddress()), ListFeed.class).getEntries().size() + 1;
+	}
 
 	public String genUiAddress() throws MalformedURLException {
 		return "https://spreadsheets.google.com/feeds/list/" + ssKey + "/" + ssUiId + "/private/full";
