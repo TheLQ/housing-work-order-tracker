@@ -236,6 +236,7 @@ public class Spreadsheet {
 		//I'm sorry bandwidth counter
 		
 		//Add one to compensate for Java 0 based system
+		log.info("Grabbing the entire spreadsheet to see how many rows there are");
 		return ssService.getFeed(new URL(genRawAddress()), ListFeed.class).getEntries().size() + 1;
 	}
 
