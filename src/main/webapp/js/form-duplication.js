@@ -290,9 +290,6 @@ $(document).ready(function(){
 		
 		//Reset status
 		$("#roomStatus").html("Waiting for Input...")
-		
-		//Reset issue status
-		$("#submitStatus").html("Waiting on input...")
 	}
 	//Keeps standard room status message
 	woUtils.resetRoom()
