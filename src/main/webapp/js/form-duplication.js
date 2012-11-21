@@ -131,7 +131,6 @@ $(document).ready(function(){
 
 		autoDisableNoteRemove(notesContainer);
 		updateName();
-		return false;
 	}
 	mainForm.on("click", ".addNote", function(event) {
 		event.preventDefault();
@@ -168,7 +167,6 @@ $(document).ready(function(){
 			return;
 		}
 		notesBox = allNotes.last();
-		console.log("Notes date length: " + notesBox.children(".noteDate").val().length)
 		if(notesBox.children(".noteDate").val().length != 0)
 			removeButton.attr("disabled", "disabled");
 		else
@@ -184,7 +182,7 @@ $(document).ready(function(){
 	woUtils.inject = function(data) {
 		woUtils.resetForm()
 		for(var i in data) {
-			console.log("Parsing issue " + i)
+			console.warn("Parsing issue " + i)
 			lastIssueBox = $(".issueBox", mainForm).last()
 
 			if(issueHasData(lastIssueBox)) {
@@ -213,14 +211,12 @@ $(document).ready(function(){
 				//Set data
 				$(".noteDate", lastNotesBox).val(noteData[j]["noteDate"])
 				$(".note", lastNotesBox).val(noteData[j]["note"])
-
-				//Disable note, don't want the user modifying existing note text
-				$(".note", lastNotesBox).attr("disabled", "disabled")
 			}
 
 			//Undo disabling note if there's only one
-			if($(".note", lastIssueBox).length <= 1)
-				$(".note", lastIssueBox).removeAttr("disabled")
+			allNoteTexts = $(".note", lastIssueBox)
+			if(allNoteTexts.length > 1)
+				allNoteTexts.attr("disabled", "disabled")
 
 			//Update remove button visibility
 			autoDisableNoteRemove($(".notesContainer", lastIssueBox))
