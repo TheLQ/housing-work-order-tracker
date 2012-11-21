@@ -6,25 +6,25 @@
 $(document).ready(function(){
 	/**
 	 * Manages the backend form handling
-	 * 
+	 *
 	 * Question: So why is this nessesary? Why can't we use the automagical Jquery Dynamic Form plugin?
-	 * Answer: The Jquery Dynamic Form plugin is the reason this project has taken 
+	 * Answer: The Jquery Dynamic Form plugin is the reason this project has taken
 	 * 2+ months to write. Yes it does 99% of what were doing here, but the messy
 	 * persistant internal state doesn't mesh well with our super dynamic form.
-	 * 
+	 *
 	 * Want to reset the form to a clean state? Sorry, you can't. Want to remove
 	 * injected values? Sorry, you can't. Want to use the form more than twice
-	 * before it becomes horribly broken? Keep dreaming. 
-	 * 
-	 * I learned something in this project: Do not always resort to libraries. This 
+	 * before it becomes horribly broken? Keep dreaming.
+	 *
+	 * I learned something in this project: Do not always resort to libraries. This
 	 * library is the reason this project took 2 extra months to write.
-	 * 
+	 *
 	 * So here I present a wall of (probably ugly) javascript. I'm sorry.
 	 * -Leon, 11/1/12
 	 */
-	
+
 	var mainForm = $("#mainForm");
-	
+
 	//Rename all the fields to a standard parsable format
 	function updateName() {
 		console.log("Updating all names in form")
@@ -32,7 +32,7 @@ $(document).ready(function(){
 		allBoxes.each(function(issueId) {
 			curIssueBox = $(this)
 			allNotes = $(".notesBox", curIssueBox );
-			//Update all notesBoxes 
+			//Update all notesBoxes
 			$("input, select, textarea", curIssueBox).each(function() {
 				prefix = "issues[" + issueId + "]";
 				parent = $(this).parent()
@@ -40,7 +40,7 @@ $(document).ready(function(){
 					//Figure out the position of the note
 					noteId = allNotes.index(parent)
 					prefix = prefix + "[notes][" + noteId + "]";
-					
+
 					//Update notesBox id
 					parent.attr("id", "notesBox" + noteId)
 				}
@@ -51,33 +51,30 @@ $(document).ready(function(){
 				})
 				if(classes.length > 1)
 					alert("ERROR: Too many classes when trying to update name: " + $(this).attr("class"))
-				
+
 				$(this).attr("name", prefix + classes[0]);
-				
+
 				//Set issuebox id
 				curIssueBox.attr("id", "issueBox" + issueId)
 			});
 		});
-		
+
 	}
 	updateName();
-	
+
 	/**
 	 * Handling add/remove issue buttons
 	 */
 	woUtils.addIssue = function() {
 		lastIssueBox = mainForm.children(".issueBox").last();
 		clonedIssueBox = lastIssueBox.clone();
-		
+
 		//Reset the cloned issue since it might have data in it
 		resetIssue(clonedIssueBox);
-		
+
 		//Finished, add to the end
 		clonedIssueBox.insertAfter(lastIssueBox)
-		
-		//Change the status to open with correct color
-		woUtils.setStatus(clonedIssueBox, "Open")
-		
+
 		updateName();
 		autoDisableIssueRemove();
 	}
@@ -88,15 +85,15 @@ $(document).ready(function(){
 	mainForm.children("#removeIssue").on("click", function(event) {
 		event.preventDefault();
 		lastIssueBox = mainForm.children(".issueBox").last();
-	
+
 		//If there is data, prompt the user for confirmation
 		if(issueHasData(lastIssueBox))
 			if(!confirm("The last issue has data in it. Are you sure you wish to remove it?"))
 				return;
-		
+
 		//All good, remove it
 		lastIssueBox.remove();
-		
+
 		autoDisableIssueRemove();
 	});
 	function autoDisableIssueRemove(){
@@ -114,7 +111,7 @@ $(document).ready(function(){
 	}
 	mainForm.on("change", ".issueSelect", autoDisableIssueRemove);
 	mainForm.on("keyup", ".noteDate, .note", autoDisableIssueRemove);
-	
+
 	/**
 	 * Handling of add/remove note buttons
 	 */
@@ -124,14 +121,14 @@ $(document).ready(function(){
 		allBoxes = notesContainer.children(".notesBox");
 		lastNotesBox = allBoxes.last();
 		clonedNotesBox = lastNotesBox.clone();
-		
+
 		//Clear data
 		$(".noteDate", clonedNotesBox).val("")
 		$(".note", clonedNotesBox).removeAttr("disabled")
-		
+
 		//Add
 		clonedNotesBox.insertAfter(lastNotesBox);
-		
+
 		autoDisableNoteRemove(notesContainer);
 		updateName();
 		return false;
@@ -145,7 +142,7 @@ $(document).ready(function(){
 		console.log("Clicked remove note")
 		notesContainer = $(this).parent();
 		lastNotesBox = notesContainer.children(".notesBox").last();
-		
+
 		//Make sure the text and date fields are empty
 		if(lastNotesBox.children(".noteDate").val().length != 0)
 			console.log("Ignoring remove, note has date which means its in the spreadsheet")
@@ -156,14 +153,14 @@ $(document).ready(function(){
 				lastNotesBox.remove();
 		else
 			lastNotesBox.remove();
-		
+
 		autoDisableNoteRemove(notesContainer);
 	});
-	
+
 	//Automatically disable remove note button if text is entered into the last note
 	function autoDisableNoteRemove(notesContainer) {
 		console.log("Enabling/disabling Note remove button on " + notesContainer.parent().attr("id"))
-		
+
 		removeButton = notesContainer.children(".removeNote")
 		allNotes = notesContainer.children(".notesBox");
 		if(allNotes.length == 1) {
@@ -180,7 +177,7 @@ $(document).ready(function(){
 	mainForm.on("keyup", ".note, .noteDate", function(){
 		autoDisableNoteRemove($(this).parent().parent());
 	});
-	
+
 	/**
 	 * Utilities
 	 */
@@ -189,18 +186,19 @@ $(document).ready(function(){
 		for(var i in data) {
 			console.log("Parsing issue " + i)
 			lastIssueBox = $(".issueBox", mainForm).last()
-			
+
 			if(issueHasData(lastIssueBox)) {
+				console.debug("Adding another issue")
 				woUtils.addIssue()
 				lastIssueBox = $(".issueBox", mainForm).last()
 			}
-			
+
 			//Start setting data
 			$(".sheetId", lastIssueBox).val(data[i]["sheetId"])
 			$(".issueId", lastIssueBox).html("#" + data[i]["sheetId"])
 			$(".issueSelect", lastIssueBox).val(data[i]["issue"])
 			woUtils.setStatus(lastIssueBox, data[i]["status"]);
-			
+
 			//Special note handling
 			noteData = data[i]["notesBox"]
 			for(var j in noteData) {
@@ -211,28 +209,28 @@ $(document).ready(function(){
 					woUtils.addNote(lastIssueBox)
 					lastNotesBox = $(".notesBox", lastIssueBox).last();
 				}
-				
+
 				//Set data
 				$(".noteDate", lastNotesBox).val(noteData[j]["noteDate"])
 				$(".note", lastNotesBox).val(noteData[j]["note"])
-				
+
 				//Disable note, don't want the user modifying existing note text
 				$(".note", lastNotesBox).attr("disabled", "disabled")
 			}
-			
+
 			//Undo disabling note if there's only one
 			if($(".note", lastIssueBox).length <= 1)
 				$(".note", lastIssueBox).removeAttr("disabled")
-			
+
 			//Update remove button visibility
 			autoDisableNoteRemove($(".notesContainer", lastIssueBox))
 			autoDisableIssueRemove()
 		}
-		
+
 		//Update status based on current autoclose settings
 		woUtils.autoCloseIssues();
 	}
-	
+
 	function issueHasData(issueBox) {
 		isData = false;
 		if($(".statusSelect", issueBox).get().selectedIndex < 1)
@@ -241,13 +239,13 @@ $(document).ready(function(){
 			if($(this).val().length != 0)
 				isData = true;
 		});
-		
+
 		return isData;
 	}
-	
+
 	function resetIssue(issueBox) {
 		console.log("Resetting issue " + issueBox.attr("id"))
-		
+
 		//Remove all noteBoxes except 1
 		notesContainer = issueBox.children(".notesContainer");
 		notesContainer.children(".notesBox").each(function(i) {
@@ -255,27 +253,27 @@ $(document).ready(function(){
 				return;
 			$(this).remove()
 		});
-		
+
 		//Reset the remaining noteBox
 		lastNotesBox = notesContainer.children(".notesBox")
 		lastNotesBox.children(".note").val("")
 		lastNotesBox.children(".noteDate").val("")
 		lastNotesBox.children(".note").removeAttr("disabled")
-	
+
 		//Reset status
 		woUtils.setStatus(issueBox, "Open")
-		
+
 		//Reset sheet id
 		$(".sheetId", issueBox).val("-1")
 		$(".issueId", issueBox).html("New")
-		
+
 		//Remove any issue status message
 		$(".issueInfo", issueBox).html("")
-		
+
 		//Reset issue select
 		$(".issueSelect", issueBox)[0].selectedIndex = 0;
 	}
-	
+
 	woUtils.resetForm = function() {
 		console.log("Resetting form...")
 		mainForm.children(".issueBox").each(function(i) {
@@ -285,19 +283,19 @@ $(document).ready(function(){
 				$(this).remove();
 		});
 	}
-	
+
 	woUtils.resetRoom = function() {
 		//Reset room and building depending on mode
 		$("#room").val("")
 		if($("#modeSelect").val() == "Normal")
 			$("#building").val("")
-		
+
 		//Reset status
 		$("#roomStatus").html("Waiting for Input...")
 	}
 	//Keeps standard room status message
 	woUtils.resetRoom()
-	
+
 	function genName(issueId, issueField, noteId, noteField) {
 		name = "issues[" + issueId + "]";
 		if(noteId != undefined)
