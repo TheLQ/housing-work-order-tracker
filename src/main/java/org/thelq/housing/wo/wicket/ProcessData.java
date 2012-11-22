@@ -214,7 +214,7 @@ public class ProcessData extends AbstractResource {
 			curNewIssue.put("sheetId", entry.getSheetId());
 			curNewIssue.put("issue", generateIssueName(entry));
 			curNewIssue.put("status", StringUtils.capitalize(entry.getStatus().toString().toLowerCase()));
-			curNewIssue.put("notesBox", new JSONArray());
+			curNewIssue.put("notes", new JSONArray());
 			Iterator<Spreadsheet.NoteEntry> notesItr = entry.getNotes().iterator();
 			do {
 				//Make sure this collection is never empty, should have at least an empty string in it
@@ -225,7 +225,7 @@ public class ProcessData extends AbstractResource {
 					log.info("NoteEntry date: " + curNoteEntry.getDate() + " | Note: " + curNoteEntry.getNote());
 				note.put("noteDate", (curNoteEntry != null) ? Spreadsheet.getNewDateFormat().format(curNoteEntry.getDate()) : "");
 				note.put("note", (curNoteEntry != null) ? StringUtils.defaultString(curNoteEntry.getNote()) : "");
-				curNewIssue.accumulate("notesBox", note);
+				curNewIssue.accumulate("notes", note);
 			} while (notesItr.hasNext());
 			return curNewIssue;
 	}
