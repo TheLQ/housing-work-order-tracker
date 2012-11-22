@@ -34,7 +34,6 @@ public class HomePage extends WebPage {
 
 	public void buildForm() throws MalformedURLException, ServiceException, IOException {
 		Spreadsheet.UIData uidata = Spreadsheet.get().loadUI();
-		add(new Label("hello", "Hello World"));
 		add(new DropDownChoice("building", uidata.getBuildings(), new SameChoiceRenderer()));
 
 		//Generate issue drop down
