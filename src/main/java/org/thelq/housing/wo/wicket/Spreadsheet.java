@@ -124,11 +124,11 @@ public class Spreadsheet {
 	 * @throws ParseException
 	 */
 	protected List<RawDataEntry> loadRawIssues(String building, String room) throws UnsupportedEncodingException, MalformedURLException, ServiceException, IOException, ParseException {
-		if(building == null && room != null)
+		if(StringUtils.isBlank(building) && !StringUtils.isBlank(room))
 			//Gave us a room with no building
 			throw new RuntimeException("Attempted to load raw issues from room " + room + " but no building was given");
-		String buildingQuery  = (building != null) ? "building = " + building : "";
-		String roomQuery = (room != null) ? " and room = \"" + room + "\"" : "";
+		String buildingQuery  = (StringUtils.isBlank(building)) ? "building = " + building : "";
+		String roomQuery = (StringUtils.isBlank(room)) ? " and room = \"" + room + "\"" : "";
 		String query = URLEncoder.encode(buildingQuery + roomQuery + " and status != Closed", "UTF-8");
 		log.info("Querying sheet with: " + query);
 		ListFeed listFeed = ssService.getFeed(new URL(genRawAddress() + "?sq=" + query), ListFeed.class);
