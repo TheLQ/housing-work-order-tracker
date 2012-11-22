@@ -15,6 +15,7 @@ import com.google.gdata.util.AuthenticationException;
 import com.google.gdata.util.ServiceException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
@@ -94,11 +95,16 @@ public class Spreadsheet {
 	}
 
 	public List<RawDataEntry> loadRawRoom(String building, String room) throws MalformedURLException, IOException, ServiceException, ParseException {
-		if (StringUtils.isBlank(building))
-			throw new NullPointerException("Attempting to load raw room with null building");
+ 		if (StringUtils.isBlank(building))
+ 			throw new NullPointerException("Attempting to load raw room with null building");
 		if (StringUtils.isBlank(room))
 			throw new NullPointerException("Attempting to load raw room with null room");
-		String query = URLEncoder.encode("building = " + building + " and room = \"" + room + "\" and status != Closed", "UTF-8");
+		return loadRawIssues(building, room);
+	}
+
+	protected List<RawDataEntry> loadRawIssues(String building, String room) throws UnsupportedEncodingException, MalformedURLException, ServiceException, IOException, ParseException {
+		String roomQuery = (room != null) ? " and room = \"" + room + "\"" : "";
+		String query = URLEncoder.encode("building = " + building + roomQuery + " and status != Closed", "UTF-8");
 		log.info("Querying sheet with: " + query);
 		ListFeed listFeed = ssService.getFeed(new URL(genRawAddress() + "?sq=" + query), ListFeed.class);
 		return loadRaw(listFeed);
@@ -226,15 +232,15 @@ public class Spreadsheet {
 		}
 		return listEntries;
 	}
-	
+
 	/**
-	 * Get the total number of raw rows being used *EXPENSIVE*. 
-	 * @return 
+	 * Get the total number of raw rows being used *EXPENSIVE*.
+	 * @return
 	 */
 	public int loadTotalRawRows() throws IOException, ServiceException {
 		//In all my searching I could not find a more efficent way to do this
 		//I'm sorry bandwidth counter
-		
+
 		//Add one to compensate for Java 0 based system
 		log.info("Grabbing the entire spreadsheet to see how many rows there are");
 		return ssService.getFeed(new URL(genRawAddress()), ListFeed.class).getEntries().size() + 1;
@@ -243,7 +249,7 @@ public class Spreadsheet {
 	public String genUiAddress() throws MalformedURLException {
 		return "https://spreadsheets.google.com/feeds/list/" + ssKey + "/" + ssUiId + "/private/full";
 	}
-	
+
 	public String genRawAddress() throws MalformedURLException {
 		return "https://spreadsheets.google.com/feeds/list/" + ssKey + "/" + ssRawId + "/private/full";
 	}
