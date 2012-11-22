@@ -94,6 +94,15 @@ public class Spreadsheet {
 		return data;
 	}
 
+	public List<RawDataEntry> loadRawBuilding(String building) throws UnsupportedEncodingException, MalformedURLException, MalformedURLException, ServiceException, ServiceException, IOException, ParseException {
+		if (StringUtils.isBlank(building))
+			throw new NullPointerException("Attempting to load raw room with null building");
+		if(building.equalsIgnoreCase("all"))
+			return loadRawAll();
+		else
+			return loadRawIssues(building, null);
+	}
+
 	public List<RawDataEntry> loadRawRoom(String building, String room) throws MalformedURLException, IOException, ServiceException, ParseException {
  		if (StringUtils.isBlank(building))
  			throw new NullPointerException("Attempting to load raw room with null building");
