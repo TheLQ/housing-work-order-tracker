@@ -37,11 +37,11 @@ import org.thelq.housing.wo.wicket.Spreadsheet.NoteEntry;
 import org.thelq.housing.wo.wicket.Spreadsheet.RawDataEntry;
 
 /**
- * Handle input for room issues and form submission. 
+ * Handle input for room issues and form submission.
  * <p>
  * NOTE TO FUTURE MAINTAINERS
  * <p>
- * This is not how your supposed to use Wicket. Wicket says that everything should be a 
+ * This is not how your supposed to use Wicket. Wicket says that everything should be a
  * listener to the many different components that your supposed to have wicket manage.
  * However this form is not your typical wicket form: There is a set of fields that
  * gets duplicated and another set of fields inside of that box that gets duplicated
@@ -51,7 +51,7 @@ import org.thelq.housing.wo.wicket.Spreadsheet.RawDataEntry;
  * about looking at it
  * <p>
  * To prevent this, I've abused Request cycle and a Wicket resource as a form processor.
- * This gives easily maintainable code that makes sense by parsing the raw POST 
+ * This gives easily maintainable code that makes sense by parsing the raw POST
  * data. Might look a little ugly, but it allows me to write 4x the amount of functionality
  * in half to a quarter of the time. It works for me, and thats whats important
  *
@@ -110,7 +110,7 @@ public class ProcessData extends AbstractResource {
 		while (true) {
 			curIssueNum++;
 			String prefix = "issues[" + curIssueNum + "]";
-			
+
 			//Make sure something exists
 			StringValue sheetIdParam = params.getParameterValue(prefix + "sheetId");
 			if(sheetIdParam.isEmpty())
@@ -168,19 +168,19 @@ public class ProcessData extends AbstractResource {
 				StringValue noteTextParam = params.getParameterValue(prefix + "[notes][" + i + "]note");
 				if(noteTextParam.isEmpty())
 					continue;
-				
+
 				String noteText = noteTextParam.toString();
 				log.info("For prefix " + prefix + " created note #" + i + " with text " + noteText);
 				entry.getNotes().add(new NoteEntry(noteText, date));
 			}
 		}
-		
+
 		//Insert and update our data
 		Spreadsheet.get().updateData(entriesRaw);
 		Spreadsheet.get().insertData(entriesNew);
 
 		response.put("submitStatus", "Added " + entriesNew.size() + " issues, "
-				+ "updated " + entriesRaw.size() + " issues " 
+				+ "updated " + entriesRaw.size() + " issues "
 				+ "for " + building + " " + room + " on "
 				+ Spreadsheet.getNewDateFormat().format(date));
 
@@ -210,7 +210,7 @@ public class ProcessData extends AbstractResource {
 			do {
 				//Make sure this collection is never empty, should have at least an empty string in it
 				Spreadsheet.NoteEntry curNoteEntry = notesItr.hasNext() ? notesItr.next() : null;
-				
+
 				JSONObject note = new JSONObject();
 				if(curNoteEntry != null)
 					log.info("NoteEntry date: " + curNoteEntry.getDate() + " | Note: " + curNoteEntry.getNote());
@@ -227,7 +227,7 @@ public class ProcessData extends AbstractResource {
 		return response;
 	}
 
-	protected String generateIssueName(RawDataEntry entry) {
+	protected static String generateIssueName(RawDataEntry entry) {
 		return entry.getType().toLowerCase() + " - " + entry.getIssue();
 	}
 
