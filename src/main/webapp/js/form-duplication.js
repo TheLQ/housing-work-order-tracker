@@ -198,7 +198,7 @@ $(document).ready(function(){
 			woUtils.setStatus(lastIssueBox, data[i]["status"]);
 
 			//Special note handling
-			noteData = data[i]["notesBox"]
+			noteData = data[i]["notes"]
 			for(var j in noteData) {
 				lastNotesBox = $(".notesBox", lastIssueBox).last();
 				if($(".noteDate", lastNotesBox).val().length != 0 || $(".note", lastNotesBox).val().length != 0) {
