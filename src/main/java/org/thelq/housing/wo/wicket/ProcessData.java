@@ -199,14 +199,23 @@ public class ProcessData extends AbstractResource {
 			//Ignore anything that isn't this room
 			if (!curEntry.getRoom().equalsIgnoreCase(room))
 				continue;
+			issues.add(generateJsonFromEntry(curEntry));
+		}
 
+		response.put("data", issues);
+		response.put("response", "Found " + issues.size() + " issues(s) for " + building + " " + room
+				+ " on " + Spreadsheet.getNewDateFormat().format(new Date()));
+		return response;
+	}
+
+	protected static JSONObject generateJsonFromEntry(Spreadsheet.RawDataEntry entry) {
 			//Generate response
 			JSONObject curNewIssue = new JSONObject();
-			curNewIssue.put("sheetId", curEntry.getSheetId());
-			curNewIssue.put("issue", generateIssueName(curEntry));
-			curNewIssue.put("status", StringUtils.capitalize(curEntry.getStatus().toString().toLowerCase()));
+			curNewIssue.put("sheetId", entry.getSheetId());
+			curNewIssue.put("issue", generateIssueName(entry));
+			curNewIssue.put("status", StringUtils.capitalize(entry.getStatus().toString().toLowerCase()));
 			curNewIssue.put("notesBox", new JSONArray());
-			Iterator<Spreadsheet.NoteEntry> notesItr = curEntry.getNotes().iterator();
+			Iterator<Spreadsheet.NoteEntry> notesItr = entry.getNotes().iterator();
 			do {
 				//Make sure this collection is never empty, should have at least an empty string in it
 				Spreadsheet.NoteEntry curNoteEntry = notesItr.hasNext() ? notesItr.next() : null;
@@ -218,13 +227,7 @@ public class ProcessData extends AbstractResource {
 				note.put("note", (curNoteEntry != null) ? StringUtils.defaultString(curNoteEntry.getNote()) : "");
 				curNewIssue.accumulate("notesBox", note);
 			} while (notesItr.hasNext());
-			issues.add(curNewIssue);
-		}
-
-		response.put("data", issues);
-		response.put("response", "Found " + issues.size() + " issues(s) for " + building + " " + room
-				+ " on " + Spreadsheet.getNewDateFormat().format(new Date()));
-		return response;
+			return curNewIssue;
 	}
 
 	protected static String generateIssueName(RawDataEntry entry) {
