@@ -36,6 +36,14 @@ public class HomePage extends WebPage {
 		Spreadsheet.UIData uidata = Spreadsheet.get().loadUI();
 		add(new DropDownChoice("building", uidata.getBuildings(), new SameChoiceRenderer()));
 
+		//Handle right side table
+		add(new DropDownChoice("existBuilding", uidata.getBuildings(), new SameChoiceRenderer()) {
+			@Override
+			protected CharSequence getDefaultChoice(String selectedValue) {
+				return "\n<option selected=\"selected\" value=\"all\">All</option>";
+			}
+		});
+
 		//Generate issue drop down
 		List<String> combinedIssues = new ArrayList();
 		for (Map.Entry<String, List<String>> curEntry : uidata.getIssues().entrySet())
