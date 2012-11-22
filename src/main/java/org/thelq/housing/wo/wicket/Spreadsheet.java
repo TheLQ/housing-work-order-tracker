@@ -97,10 +97,11 @@ public class Spreadsheet {
 	public List<RawDataEntry> loadRawBuilding(String building) throws UnsupportedEncodingException, MalformedURLException, MalformedURLException, ServiceException, ServiceException, IOException, ParseException {
 		if (StringUtils.isBlank(building))
 			throw new NullPointerException("Attempting to load raw room with null building");
+
+		//loadRawIssues doesn't understand all, but it does understand null
 		if(building.equalsIgnoreCase("all"))
-			return loadRawAll();
-		else
-			return loadRawIssues(building, null);
+			building = null;
+		return loadRawIssues(building, null);
 	}
 
 	public List<RawDataEntry> loadRawRoom(String building, String room) throws MalformedURLException, IOException, ServiceException, ParseException {
@@ -123,8 +124,12 @@ public class Spreadsheet {
 	 * @throws ParseException
 	 */
 	protected List<RawDataEntry> loadRawIssues(String building, String room) throws UnsupportedEncodingException, MalformedURLException, ServiceException, IOException, ParseException {
+		if(building == null && room != null)
+			//Gave us a room with no building
+			throw new RuntimeException("Attempted to load raw issues from room " + room + " but no building was given");
+		String buildingQuery  = (building != null) ? "building = " + building : "";
 		String roomQuery = (room != null) ? " and room = \"" + room + "\"" : "";
-		String query = URLEncoder.encode("building = " + building + roomQuery + " and status != Closed", "UTF-8");
+		String query = URLEncoder.encode(buildingQuery + roomQuery + " and status != Closed", "UTF-8");
 		log.info("Querying sheet with: " + query);
 		ListFeed listFeed = ssService.getFeed(new URL(genRawAddress() + "?sq=" + query), ListFeed.class);
 		return loadRaw(listFeed);
