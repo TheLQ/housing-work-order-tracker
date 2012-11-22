@@ -111,6 +111,17 @@ public class Spreadsheet {
 		return loadRawIssues(building, room);
 	}
 
+	/**
+	 * Utility to load raw issues with filtering by building (required) and room (optional)
+	 * @param building
+	 * @param room
+	 * @return
+	 * @throws UnsupportedEncodingException
+	 * @throws MalformedURLException
+	 * @throws ServiceException
+	 * @throws IOException
+	 * @throws ParseException
+	 */
 	protected List<RawDataEntry> loadRawIssues(String building, String room) throws UnsupportedEncodingException, MalformedURLException, ServiceException, IOException, ParseException {
 		String roomQuery = (room != null) ? " and room = \"" + room + "\"" : "";
 		String query = URLEncoder.encode("building = " + building + roomQuery + " and status != Closed", "UTF-8");
