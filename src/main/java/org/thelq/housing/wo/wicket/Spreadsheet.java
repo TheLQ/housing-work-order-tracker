@@ -128,8 +128,8 @@ public class Spreadsheet {
 		if(StringUtils.isBlank(building) && !StringUtils.isBlank(room))
 			//Gave us a room with no building
 			throw new RuntimeException("Attempted to load raw issues from room " + room + " but no building was given");
-		String buildingQuery  = (StringUtils.isBlank(building)) ? "building = " + building : "";
-		String roomQuery = (StringUtils.isBlank(room)) ? " and room = \"" + room + "\"" : "";
+		String buildingQuery  = (!StringUtils.isBlank(building)) ? "building = " + building : "";
+		String roomQuery = (!StringUtils.isBlank(room)) ? " and room = \"" + room + "\"" : "";
 		String query = URLEncoder.encode(buildingQuery + roomQuery + " and status != Closed", "UTF-8");
 		log.info("Querying sheet with: " + query);
 		ListFeed listFeed = ssService.getFeed(new URL(genRawAddress() + "?sq=" + query), ListFeed.class);
