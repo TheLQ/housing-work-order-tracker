@@ -113,7 +113,8 @@ public class Spreadsheet {
 	}
 
 	/**
-	 * Utility to load raw issues with filtering by building (required) and room (optional)
+	 * Utility to load raw issues with filtering by building (required) and room (optional).
+	 * Null checks are assumed to be handled by the caller method
 	 * @param building
 	 * @param room
 	 * @return
