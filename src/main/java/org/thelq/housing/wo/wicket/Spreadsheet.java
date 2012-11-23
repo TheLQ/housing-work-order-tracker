@@ -9,12 +9,9 @@ import com.google.gdata.client.spreadsheet.SpreadsheetService;
 import com.google.gdata.data.spreadsheet.CustomElementCollection;
 import com.google.gdata.data.spreadsheet.ListEntry;
 import com.google.gdata.data.spreadsheet.ListFeed;
-import com.google.gdata.data.spreadsheet.WorksheetEntry;
-import com.google.gdata.data.spreadsheet.WorksheetFeed;
 import com.google.gdata.util.AuthenticationException;
 import com.google.gdata.util.ServiceException;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -30,9 +27,11 @@ import java.util.Map;
 import java.util.Properties;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -157,7 +156,7 @@ public class Spreadsheet {
 				else if (columnName.equalsIgnoreCase("id"))
 					curEntry.setSheetId(Integer.valueOf(value));
 				else if (columnName.equalsIgnoreCase("Opened"))
-					curEntry.setOpenedDate(getNewDateFormat().parse(value));
+					curEntry.setOpenedDate(getNewDateFormat().parseDateTime(value));
 				else if (columnName.equalsIgnoreCase("WT"))
 					curEntry.setOpenedWalkthrough(value.equals("Y"));
 				else if (columnName.equalsIgnoreCase("Building"))
@@ -171,11 +170,11 @@ public class Spreadsheet {
 				else if (columnName.equalsIgnoreCase("Status"))
 					curEntry.setStatus(Status.valueOf(value.toUpperCase()));
 				else if (columnName.equalsIgnoreCase("Closed"))
-					curEntry.setClosedDate(getNewDateFormat().parse(value));
+					curEntry.setClosedDate(getNewDateFormat().parseDateTime(value));
 				else if (columnName.equalsIgnoreCase("CWT"))
 					curEntry.setClosedWalkthrough(value.equals("Y"));
 				else if (columnName.equalsIgnoreCase("Waiting"))
-					curEntry.setWaitingDate(getNewDateFormat().parse(value));
+					curEntry.setWaitingDate(getNewDateFormat().parseDateTime(value));
 				else if (columnName.equalsIgnoreCase("wwt"))
 					curEntry.setWaitingWalkthrough(value.equals("Y"));
 				else if (StringUtils.startsWithIgnoreCase(columnName, "Notes")) {
@@ -189,7 +188,7 @@ public class Spreadsheet {
 
 					//Set the appropiate value based on if this is the date or not
 					if (StringUtils.endsWithIgnoreCase(columnName, "date"))
-						notes.get(num).setDate(Spreadsheet.getNewDateFormat().parse(value));
+						notes.get(num).setDate(getNewDateFormat().parseDateTime(value));
 					else
 						notes.get(num).setNote(value);
 				} else
@@ -223,7 +222,7 @@ public class Spreadsheet {
 		for (RawDataEntry curEntry : rawEntries) {
 			ListEntry row = (curEntry.getListEntry() != null) ? curEntry.getListEntry() : new ListEntry();
 			row.getCustomElements().setValueLocal("id", "" + curEntry.getSheetId());
-			row.getCustomElements().setValueLocal("opened", getNewDateFormat().format(curEntry.getOpenedDate()));
+			row.getCustomElements().setValueLocal("opened", getNewDateFormat().print(curEntry.getOpenedDate()));
 			row.getCustomElements().setValueLocal("wt", curEntry.isOpenedWalkthrough() ? "Y" : "N");
 			row.getCustomElements().setValueLocal("building", curEntry.getBuilding());
 			row.getCustomElements().setValueLocal("room", curEntry.getRoom());
@@ -233,14 +232,14 @@ public class Spreadsheet {
 
 			//Handle values with date column and walkthrough mode column
 			if (curEntry.getClosedDate() != null) {
-				row.getCustomElements().setValueLocal("closed", getNewDateFormat().format(curEntry.getClosedDate()));
+				row.getCustomElements().setValueLocal("closed", getNewDateFormat().print(curEntry.getClosedDate()));
 				row.getCustomElements().setValueLocal("cwt", curEntry.isClosedWalkthrough() ? "Y" : "N");
 			} else {
 				row.getCustomElements().setValueLocal("closed", "");
 				row.getCustomElements().setValueLocal("cwt", "");
 			}
 			if (curEntry.getWaitingDate() != null) {
-				row.getCustomElements().setValueLocal("waiting", getNewDateFormat().format(curEntry.getWaitingDate()));
+				row.getCustomElements().setValueLocal("waiting", getNewDateFormat().print(curEntry.getWaitingDate()));
 				row.getCustomElements().setValueLocal("wwt", curEntry.isWaitingWalkthrough() ? "Y" : "N");
 			} else {
 				row.getCustomElements().setValueLocal("waiting", "");
@@ -252,7 +251,7 @@ public class Spreadsheet {
 			for (NoteEntry noteEntry : curEntry.getNotes()) {
 				counter++;
 				if (StringUtils.isBlank(row.getCustomElements().getValue("notes" + counter + "date")))
-					row.getCustomElements().setValueLocal("notes" + counter + "date", getNewDateFormat().format(noteEntry.getDate()));
+					row.getCustomElements().setValueLocal("notes" + counter + "date", getNewDateFormat().print(noteEntry.getDate()));
 				row.getCustomElements().setValueLocal("notes" + counter, noteEntry.getNote());
 			}
 			listEntries.add(row);
@@ -286,14 +285,14 @@ public class Spreadsheet {
 	}
 
 	@Deprecated
-	public static SimpleDateFormat getOldDateFormat() {
-		SimpleDateFormat date = new SimpleDateFormat("MMMMMMMMMM dd, yyyy hh:mm:ss aa zzz");
+	public static DateTimeFormatter getOldDateFormat() {
+		DateTimeFormatter date = DateTimeFormat.forPattern("MMMMMMMMMM dd, yyyy hh:mm:ss aa zzz");
 		//date.setTimeZone(TimeZone.getTimeZone("EDT"));
 		return date;
 	}
 
-	public static SimpleDateFormat getNewDateFormat() {
-		SimpleDateFormat date = new SimpleDateFormat("MMM dd yyyy, hh:mm aa");
+	public static DateTimeFormatter getNewDateFormat() {
+		DateTimeFormatter date = DateTimeFormat.forPattern("MMM dd yyyy, hh:mm aa");
 		//date.setTimeZone(TimeZone.getTimeZone("EDT"));
 		return date;
 	}
@@ -301,16 +300,16 @@ public class Spreadsheet {
 	@Data
 	public static class RawDataEntry {
 		protected int sheetId;
-		protected Date openedDate;
+		protected DateTime openedDate;
 		protected boolean openedWalkthrough;
 		protected String building;
 		protected String room;
 		protected String type;
 		protected String issue;
 		protected Status status;
-		protected Date closedDate;
+		protected DateTime closedDate;
 		protected boolean closedWalkthrough;
-		protected Date waitingDate;
+		protected DateTime waitingDate;
 		protected boolean waitingWalkthrough;
 		protected List<NoteEntry> notes = new ArrayList();
 		protected ListEntry listEntry;
@@ -328,7 +327,7 @@ public class Spreadsheet {
 	@NoArgsConstructor
 	public static class NoteEntry {
 		protected String note;
-		protected Date date;
+		protected DateTime date;
 	}
 
 	public static enum Status {

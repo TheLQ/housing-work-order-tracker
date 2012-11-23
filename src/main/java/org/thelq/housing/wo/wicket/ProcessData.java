@@ -106,7 +106,7 @@ public class ProcessData extends AbstractResource {
 		log.info("Building: " + building + " | room: " + room);
 
 		//Parse out POST data
-		Date date = new Date();
+		DateTime date = new DateTime();
 		List<RawDataEntry> entriesRaw = Spreadsheet.get().loadRawRoom(building, room);
 		List<RawDataEntry> entriesNew = new ArrayList();
 		final int totalRawRows = Spreadsheet.get().loadTotalRawRows() ;
@@ -187,7 +187,7 @@ public class ProcessData extends AbstractResource {
 		response.put("submitStatus", "Added " + entriesNew.size() + " issues, "
 				+ "updated " + entriesRaw.size() + " issues "
 				+ "for " + building + " " + room + " on "
-				+ Spreadsheet.getNewDateFormat().format(date));
+				+ Spreadsheet.getNewDateFormat().print(date));
 
 		return response;
 	}
@@ -209,7 +209,7 @@ public class ProcessData extends AbstractResource {
 
 		response.put("data", issues);
 		response.put("response", "Found " + issues.size() + " issues(s) for " + building + " " + room
-				+ " on " + Spreadsheet.getNewDateFormat().format(new Date()));
+				+ " on " + Spreadsheet.getNewDateFormat().print(new DateTime()));
 		return response;
 	}
 
@@ -234,7 +234,7 @@ public class ProcessData extends AbstractResource {
 
 		response.put("data", issueMap);
 		response.put("response", "Loaded " + rawEntries.size() + " issues into " + issueMap.size() + " rooms "
-				+ " on " + Spreadsheet.getNewDateFormat().format(new Date()));
+				+ " on " + Spreadsheet.getNewDateFormat().print(new DateTime()));
 		return response;
 	}
 
@@ -244,8 +244,8 @@ public class ProcessData extends AbstractResource {
 			curNewIssue.put("sheetId", entry.getSheetId());
 			curNewIssue.put("issue", generateIssueName(entry));
 			curNewIssue.put("status", StringUtils.capitalize(entry.getStatus().toString().toLowerCase()));
-			curNewIssue.put("opened", (entry.getOpenedDate() != null) ? Spreadsheet.getNewDateFormat().format(entry.getOpenedDate()) : "");
-			curNewIssue.put("closed", (entry.getClosedDate() != null) ? Spreadsheet.getNewDateFormat().format(entry.getClosedDate()) : "");
+			curNewIssue.put("opened", (entry.getOpenedDate() != null) ? Spreadsheet.getNewDateFormat().print(entry.getOpenedDate()) : "");
+			curNewIssue.put("closed", (entry.getClosedDate() != null) ? Spreadsheet.getNewDateFormat().print(entry.getClosedDate()) : "");
 			curNewIssue.put("notes", new JSONArray());
 			Iterator<Spreadsheet.NoteEntry> notesItr = entry.getNotes().iterator();
 			do {
@@ -255,7 +255,7 @@ public class ProcessData extends AbstractResource {
 				JSONObject note = new JSONObject();
 				if(curNoteEntry != null)
 					log.info("NoteEntry date: " + curNoteEntry.getDate() + " | Note: " + curNoteEntry.getNote());
-				note.put("noteDate", (curNoteEntry != null) ? Spreadsheet.getNewDateFormat().format(curNoteEntry.getDate()) : "");
+				note.put("noteDate", (curNoteEntry != null) ? Spreadsheet.getNewDateFormat().print(curNoteEntry.getDate()) : "");
 				note.put("note", (curNoteEntry != null) ? StringUtils.defaultString(curNoteEntry.getNote()) : "");
 				curNewIssue.accumulate("notes", note);
 			} while (notesItr.hasNext());
