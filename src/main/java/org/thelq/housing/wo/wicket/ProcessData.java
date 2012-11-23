@@ -252,12 +252,12 @@ public class ProcessData extends AbstractResource {
 			curNewIssue.put("opened", "");
 			curNewIssue.put("openedAge", "");
 		}
-		if (entry.getClosedDate() != null) {
-			curNewIssue.put("closed", Spreadsheet.getNewDateFormat().print(entry.getClosedDate()));
-			curNewIssue.put("closedAge", Days.daysBetween(entry.getClosedDate(), new DateTime()).getDays());
+		if (entry.getWaitingDate() != null) {
+			curNewIssue.put("waiting", Spreadsheet.getNewDateFormat().print(entry.getWaitingDate()));
+			curNewIssue.put("waitingAge", Days.daysBetween(entry.getWaitingDate(), new DateTime()).getDays());
 		} else {
-			curNewIssue.put("closed", "");
-			curNewIssue.put("closedAge", "");
+			curNewIssue.put("waiting", "");
+			curNewIssue.put("waitingAge", "");
 		}
 		curNewIssue.put("notes", new JSONArray());
 		Iterator<Spreadsheet.NoteEntry> notesItr = entry.getNotes().iterator();
