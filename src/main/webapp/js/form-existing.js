@@ -43,8 +43,8 @@ $(document).ready(function(){
 
 				$(".existingSheetId", lastExistingIssueBox).html(locationData[i]["sheetId"])
 				$(".existingIssue", lastExistingIssueBox).html(locationData[i]["issue"])
-				$(".existingOpened", lastExistingIssueBox).html(locationData[i]["opened"])
-				$(".existingWaiting", lastExistingIssueBox).html(locationData[i]["closed"])
+				$(".existingOpened", lastExistingIssueBox).html(locationData[i]["opened"] + " (" + locationData[i]["openedAge"] + " days old)")
+				$(".existingWaiting", lastExistingIssueBox).html(locationData[i]["closed"] + " (" + locationData[i]["closedAge"] + " days old)")
 
 				//Set status
 				$(".existingStatus", lastExistingIssueBox).html(locationData[i]["status"])

@@ -34,6 +34,7 @@ import org.apache.wicket.request.resource.AbstractResource.WriteCallback;
 import org.apache.wicket.request.resource.IResource.Attributes;
 import org.apache.wicket.util.string.StringValue;
 import org.joda.time.DateTime;
+import org.joda.time.Days;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.thelq.housing.wo.wicket.Spreadsheet.NoteEntry;
@@ -109,7 +110,7 @@ public class ProcessData extends AbstractResource {
 		DateTime date = new DateTime();
 		List<RawDataEntry> entriesRaw = Spreadsheet.get().loadRawRoom(building, room);
 		List<RawDataEntry> entriesNew = new ArrayList();
-		final int totalRawRows = Spreadsheet.get().loadTotalRawRows() ;
+		final int totalRawRows = Spreadsheet.get().loadTotalRawRows();
 		int lastSheetId = totalRawRows - 1;
 		int curIssueNum = -1;
 		while (true) {
@@ -118,7 +119,7 @@ public class ProcessData extends AbstractResource {
 
 			//Make sure something exists
 			StringValue sheetIdParam = params.getParameterValue(prefix + "sheetId");
-			if(sheetIdParam.isEmpty())
+			if (sheetIdParam.isEmpty())
 				//Doesn't exist
 				break;
 
@@ -168,10 +169,10 @@ public class ProcessData extends AbstractResource {
 			}
 
 			//Load notes (disabled fields aren't submitted, so loop through all of them)
-			for(int i = 0; i <= 10; i++) {
+			for (int i = 0; i <= 10; i++) {
 				//Attempt to get note
 				StringValue noteTextParam = params.getParameterValue(prefix + "[notes][" + i + "]note");
-				if(noteTextParam.isEmpty())
+				if (noteTextParam.isEmpty())
 					continue;
 
 				String noteText = noteTextParam.toString();
@@ -222,12 +223,12 @@ public class ProcessData extends AbstractResource {
 		//Process and sort incoming list entries into issueMap
 		String building = params.getParameterValue("building").toString();
 		List<RawDataEntry> rawEntries = Spreadsheet.get().loadRawBuilding(building);
-		for(RawDataEntry curEntry : rawEntries) {
+		for (RawDataEntry curEntry : rawEntries) {
 			//Generate location string to be used as a key and displayed in form
 			String location = curEntry.getBuilding() + " " + curEntry.getRoom();
 
 			//Insert
-			if(!issueMap.containsKey(location))
+			if (!issueMap.containsKey(location))
 				issueMap.put(location, new ArrayList());
 			issueMap.get(location).add(generateJsonFromEntry(curEntry));
 		}
@@ -239,27 +240,39 @@ public class ProcessData extends AbstractResource {
 	}
 
 	protected static JSONObject generateJsonFromEntry(Spreadsheet.RawDataEntry entry) {
-			//Generate response
-			JSONObject curNewIssue = new JSONObject();
-			curNewIssue.put("sheetId", entry.getSheetId());
-			curNewIssue.put("issue", generateIssueName(entry));
-			curNewIssue.put("status", StringUtils.capitalize(entry.getStatus().toString().toLowerCase()));
-			curNewIssue.put("opened", (entry.getOpenedDate() != null) ? Spreadsheet.getNewDateFormat().print(entry.getOpenedDate()) : "");
-			curNewIssue.put("closed", (entry.getClosedDate() != null) ? Spreadsheet.getNewDateFormat().print(entry.getClosedDate()) : "");
-			curNewIssue.put("notes", new JSONArray());
-			Iterator<Spreadsheet.NoteEntry> notesItr = entry.getNotes().iterator();
-			do {
-				//Make sure this collection is never empty, should have at least an empty string in it
-				Spreadsheet.NoteEntry curNoteEntry = notesItr.hasNext() ? notesItr.next() : null;
+		//Generate response
+		JSONObject curNewIssue = new JSONObject();
+		curNewIssue.put("sheetId", entry.getSheetId());
+		curNewIssue.put("issue", generateIssueName(entry));
+		curNewIssue.put("status", StringUtils.capitalize(entry.getStatus().toString().toLowerCase()));
+		if (entry.getOpenedDate() != null) {
+			curNewIssue.put("opened", Spreadsheet.getNewDateFormat().print(entry.getOpenedDate()));
+			curNewIssue.put("openedAge", Days.daysBetween(entry.getOpenedDate(), new DateTime()).getDays());
+		} else {
+			curNewIssue.put("opened", "");
+			curNewIssue.put("openedAge", "");
+		}
+		if (entry.getClosedDate() != null) {
+			curNewIssue.put("closed", Spreadsheet.getNewDateFormat().print(entry.getClosedDate()));
+			curNewIssue.put("closedAge", Days.daysBetween(entry.getClosedDate(), new DateTime()).getDays());
+		} else {
+			curNewIssue.put("closed", "");
+			curNewIssue.put("closedAge", "");
+		}
+		curNewIssue.put("notes", new JSONArray());
+		Iterator<Spreadsheet.NoteEntry> notesItr = entry.getNotes().iterator();
+		do {
+			//Make sure this collection is never empty, should have at least an empty string in it
+			Spreadsheet.NoteEntry curNoteEntry = notesItr.hasNext() ? notesItr.next() : null;
 
-				JSONObject note = new JSONObject();
-				if(curNoteEntry != null)
-					log.info("NoteEntry date: " + curNoteEntry.getDate() + " | Note: " + curNoteEntry.getNote());
-				note.put("noteDate", (curNoteEntry != null) ? Spreadsheet.getNewDateFormat().print(curNoteEntry.getDate()) : "");
-				note.put("note", (curNoteEntry != null) ? StringUtils.defaultString(curNoteEntry.getNote()) : "");
-				curNewIssue.accumulate("notes", note);
-			} while (notesItr.hasNext());
-			return curNewIssue;
+			JSONObject note = new JSONObject();
+			if (curNoteEntry != null)
+				log.info("NoteEntry date: " + curNoteEntry.getDate() + " | Note: " + curNoteEntry.getNote());
+			note.put("noteDate", (curNoteEntry != null) ? Spreadsheet.getNewDateFormat().print(curNoteEntry.getDate()) : "");
+			note.put("note", (curNoteEntry != null) ? StringUtils.defaultString(curNoteEntry.getNote()) : "");
+			curNewIssue.accumulate("notes", note);
+		} while (notesItr.hasNext());
+		return curNewIssue;
 	}
 
 	protected static String generateIssueName(RawDataEntry entry) {
