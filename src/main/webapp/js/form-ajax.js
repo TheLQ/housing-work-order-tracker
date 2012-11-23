@@ -5,10 +5,7 @@
  */
 $(document).ready(function(){
 	//Dynamic room lookup
-	$("#room, #building").on('input change', function() {
-		room = $("#room").val();
-		building = $("#building option:selected").val();
-
+	woUtils.loadIssues = function(room, building) {
 		console.debug("Room: " + room.length + " | Building: " + $("#building")[0].selectedIndex)
 
 		//Ignore rooms with less than 3 characters, user is probably typing in a room
@@ -37,6 +34,9 @@ $(document).ready(function(){
 			}
 		}
 		);
+	}
+	$("#room, #building").on('input change', function() {
+		woUtils.loadIssues($("#room").val(), $("#building option:selected").val())
 	});
 
 	//Automagical AJAX submit
