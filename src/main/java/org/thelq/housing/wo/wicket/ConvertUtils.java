@@ -24,17 +24,33 @@ import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.apache.commons.lang3.StringUtils;
+import org.joda.time.DateMidnight;
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeField;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
+import org.joda.time.format.DateTimeFormatterBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * Utilities for converting the sheet from the old format to the new format
+ * <p/>
  * @author Leon Blakey <lord.quackstar at gmail.com>
  */
 public class ConvertUtils {
 	private static Logger log = LoggerFactory.getLogger(ConvertUtils.class);
+	protected static DateTimeFormatter formatter;
 
 	public static void main(String[] args) throws MalformedURLException, ParseException, IOException, ServiceException {
+		//Init
+		formatter = new DateTimeFormatterBuilder()
+				.append(null, Spreadsheet.getOldDateFormat().getParser())
+				.append(null, Spreadsheet.getNewDateFormat().getParser())
+				.append(null, DateTimeFormat.forPattern("MM/dd/yyyy kk:mm:ss").getParser())
+				.toFormatter();
+
+
 		log.info("Logging in...");
 		Spreadsheet spreadsheet = new Spreadsheet("dev_");
 		log.info("Grabbing feed...");
@@ -61,27 +77,12 @@ public class ConvertUtils {
 			CustomElementCollection rowData = row.getCustomElements();
 
 			//Convert dates
-			SimpleDateFormat formatterOld = Spreadsheet.getOldDateFormat(); //new SimpleDateFormat("MMMMMMMMMM dd, yyyy hh:mm:ss aa zzz");
-			SimpleDateFormat formatterNew = Spreadsheet.getNewDateFormat(); //new SimpleDateFormat("MMM dd yyyy, hh:mm aa");
-			Date oldOpenDate = getDateFromFormat(formatterNew, formatterOld, rowData.getValue("opened"));
-			rowData.setValueLocal("opened", formatterNew.format(oldOpenDate));
+			DateTime oldOpenDate = formatter.parseDateTime(rowData.getValue("opened"));
+			rowData.setValueLocal("opened", Spreadsheet.getNewDateFormat().print(oldOpenDate));
 			String oldClosedString = rowData.getValue("closed");
 			if (StringUtils.isNotEmpty(oldClosedString)) {
-				Date oldClosedDate = getDateFromFormat(formatterNew, formatterOld, rowData.getValue("closed"));
-				rowData.setValueLocal("closed", formatterNew.format(oldClosedDate));
-			}
-		}
-	}
-
-	protected static Date getDateFromFormat(SimpleDateFormat format1, SimpleDateFormat format2, String dateSTring) throws ParseException {
-		try {
-			return format1.parse(dateSTring);
-		} catch (ParseException e) {
-			try {
-				return format2.parse(dateSTring);
-			} catch (ParseException ex) {
-				//Stupid format due to Javascript bug
-				return new SimpleDateFormat("MM/dd/yyyy kk:mm:ss").parse(dateSTring);
+				DateTime oldClosedDate = formatter.parseDateTime(rowData.getValue("closed"));
+				rowData.setValueLocal("closed", Spreadsheet.getNewDateFormat().print(oldClosedDate));
 			}
 		}
 	}
@@ -94,12 +95,10 @@ public class ConvertUtils {
 			CustomElementCollection rowData = row.getCustomElements();
 
 			//Convert dates
-			SimpleDateFormat formatterOld = Spreadsheet.getOldDateFormat();
-			SimpleDateFormat formatterNew = Spreadsheet.getNewDateFormat();
-			Date openDate = getDateFromFormat(formatterNew, formatterOld, rowData.getValue("opened"));
+			DateTime openDate = formatter.parseDateTime(rowData.getValue("opened"));
 
 			//Insert into map with timestamp for sorting
-			long time = openDate.getTime();
+			long time = openDate.getMillis();
 			if (!counterMap.containsKey(time))
 				counterMap.put(time, new ArrayList());
 			counterMap.get(time).add(row);
@@ -116,17 +115,16 @@ public class ConvertUtils {
 
 	public static void convertNotesToDate(List<ListEntry> rows) {
 		System.out.println("Converting notes to notes dates");
+		Pattern dateRegex = Pattern.compile("[0-9]{1,2}");
 		for (ListEntry row : rows) {
 			CustomElementCollection rowData = row.getCustomElements();
 
 			//Loop over notes
-			Pattern dateRegex = Pattern.compile("[0-9]{1,2}");
-			Calendar cal = Calendar.getInstance();
 			for (int i = 1; i <= 10; i++) {
 				//Get our date
 				String note = StringUtils.defaultString(rowData.getValue("notes" + i));
 				String[] notesParts = StringUtils.split(note, " ", 2);
-				Date noteDate;
+				DateMidnight noteDate = new DateMidnight();
 				if (StringUtils.isBlank(note))
 					//Ignore as there's no note
 					continue;
@@ -138,34 +136,24 @@ public class ConvertUtils {
 					matcher.find();
 					int day = Integer.parseInt(matcher.group());
 
-					//Java is stupididly complex when it comes to dates
-					int year = cal.get(Calendar.YEAR);
-					cal.clear();
-					cal.set(year, month, day);
-
-					//Yay
-					noteDate = cal.getTime();
+					//And with the magic of Joda time
+					noteDate = new DateMidnight(2012, month, day);
 					note = notesParts[1].trim();
-				} else {
-					//No date, give default date in 1970
-					cal.clear();
-					noteDate = cal.getTime();
 				}
 
 				//Set date and value
-				rowData.setValueLocal("notes" + i + "date", Spreadsheet.getNewDateFormat().format(noteDate));
+				rowData.setValueLocal("notes" + i + "date", Spreadsheet.getNewDateFormat().print(noteDate));
 				rowData.setValueLocal("notes" + i, note);
 			}
 		}
 	}
-	
+
 	public static void convertToTrimmedStrings(List<ListEntry> rows) {
-		for(ListEntry row : rows) {
+		for (ListEntry row : rows) {
 			CustomElementCollection rowData = row.getCustomElements();
-			for(String columnName : rowData.getTags()) {
+			for (String columnName : rowData.getTags())
 				//Trim all values
 				rowData.setValueLocal(columnName, rowData.getValue(columnName).trim());
-			}
 		}
 	}
 }
