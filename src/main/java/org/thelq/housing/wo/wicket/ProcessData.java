@@ -7,6 +7,7 @@ package org.thelq.housing.wo.wicket;
 
 import com.google.gdata.util.ServiceException;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -16,6 +17,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 import java.util.regex.Pattern;
 import javax.annotation.RegEx;
 import lombok.Data;
@@ -31,6 +33,7 @@ import org.apache.wicket.request.resource.AbstractResource.ResourceResponse;
 import org.apache.wicket.request.resource.AbstractResource.WriteCallback;
 import org.apache.wicket.request.resource.IResource.Attributes;
 import org.apache.wicket.util.string.StringValue;
+import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.thelq.housing.wo.wicket.Spreadsheet.NoteEntry;
@@ -77,6 +80,8 @@ public class ProcessData extends AbstractResource {
 						responseString = handleFormSubmit().toString();
 					else if (mode.equalsIgnoreCase("room"))
 						responseString = handleRoomSubmit().toString();
+					else if (mode.equalsIgnoreCase("existing"))
+						responseString = handleExistingSubmit().toString();
 					else
 						responseString = new JSONObject().put("error", "Unknown mode " + mode).toString();
 				} catch (Exception ex) {
@@ -208,12 +213,39 @@ public class ProcessData extends AbstractResource {
 		return response;
 	}
 
+	public JSONObject handleExistingSubmit() throws UnsupportedEncodingException, UnsupportedEncodingException, MalformedURLException, ServiceException, IOException, ParseException {
+		JSONObject response = new JSONObject();
+		IRequestParameters params = RequestCycle.get().getRequest().getRequestParameters();
+		//Use TreeMap since it can sort keys
+		Map<String, List<JSONObject>> issueMap = new TreeMap();
+
+		//Process and sort incoming list entries into issueMap
+		String building = params.getParameterValue("building").toString();
+		List<RawDataEntry> rawEntries = Spreadsheet.get().loadRawBuilding(building);
+		for(RawDataEntry curEntry : rawEntries) {
+			//Generate location string to be used as a key and displayed in form
+			String location = curEntry.getBuilding() + " " + curEntry.getRoom();
+
+			//Insert
+			if(!issueMap.containsKey(location))
+				issueMap.put(location, new ArrayList());
+			issueMap.get(location).add(generateJsonFromEntry(curEntry));
+		}
+
+		response.put("data", issueMap);
+		response.put("response", "Loaded " + rawEntries.size() + " issues into " + issueMap.size() + " rooms "
+				+ " on " + Spreadsheet.getNewDateFormat().format(new Date()));
+		return response;
+	}
+
 	protected static JSONObject generateJsonFromEntry(Spreadsheet.RawDataEntry entry) {
 			//Generate response
 			JSONObject curNewIssue = new JSONObject();
 			curNewIssue.put("sheetId", entry.getSheetId());
 			curNewIssue.put("issue", generateIssueName(entry));
 			curNewIssue.put("status", StringUtils.capitalize(entry.getStatus().toString().toLowerCase()));
+			curNewIssue.put("opened", (entry.getOpenedDate() != null) ? Spreadsheet.getNewDateFormat().format(entry.getOpenedDate()) : "");
+			curNewIssue.put("closed", (entry.getClosedDate() != null) ? Spreadsheet.getNewDateFormat().format(entry.getClosedDate()) : "");
 			curNewIssue.put("notes", new JSONArray());
 			Iterator<Spreadsheet.NoteEntry> notesItr = entry.getNotes().iterator();
 			do {
