@@ -87,7 +87,7 @@ $(document).ready(function(){
 				$("#submitStatus").html("Success! " + data.submitStatus);
 				woUtils.resetForm()
 				woUtils.resetRoom()
-				woUtils.handleExisting($("#existBuilding").val())
+				handleExisting($("#existBuilding").val())
 			}
 		},
 		error: function(data) {
