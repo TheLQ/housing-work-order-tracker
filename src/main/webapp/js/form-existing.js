@@ -48,6 +48,7 @@ $(document).ready(function(){
 
 				//Set status
 				$(".existingStatus", lastExistingIssueBox).html(locationData[i]["status"])
+				$(".existingStatus", lastExistingIssueBox).removeClass("label-important label-warning label-success")
 				if(locationData[i]["status"] == "Open")
 					$(".existingStatus", lastExistingIssueBox).addClass("label-important")
 				else if(locationData[i]["status"] == "Waiting")
@@ -64,7 +65,6 @@ $(document).ready(function(){
 		$(".existingLocation", existingBox).html("");
 		$(".existingSheetId", existingBox).html("")
 		$(".existingStatus", existingBox).html("")
-		$(".existingStatus", existingBox).removeClass("label-important label-warning label-success")
 		$(".existingIssue", existingBox).html("")
 		$(".existingOpened", existingBox).html("")
 		$(".existingWaiting", existingBox).html("")
