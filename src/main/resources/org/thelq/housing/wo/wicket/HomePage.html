@@ -41,7 +41,7 @@
 						<p style="clear: both">Status: <span id="roomStatus"></span></p>
 					</div>
 					<!-- Issue Select template -->
-					<div class="well well-small row-fluid issueBox" id="issueBox0">
+					<div class="well well-small well-bottom row-fluid issueBox" id="issueBox0">
 						<div class="span6">
 							<input type="hidden" name="sheetId" class="sheetId" value="-1"/>
 							Issue <span class="issueId">New</span>: <span class="issueInfo"></span>
@@ -70,12 +70,12 @@
 				</form>
 			</div>
 			<div class="span6 form-inline" id="existingContainer">
-				<div class="well well-small" style="text-align: center">
+				<div class="well well-small well-bottom" style="text-align: center;">
 					<h4>Existing Issues</h4>
 					<b>Building:</b> <select id="existBuilding" name="existBuilding" wicket:id="existBuilding"></select>
 					<br/>Existing Status: <span id="existingStatus">Waiting for input...</span>
 				</div>
-				<div class="well well-small existingBox" style="white-space: nowrap">
+				<div class="well well-small well-bottom existingBox" style="white-space: nowrap;">
 					<b>Room:</b> <span class="existingLocation"></span>
 					<div class="well well-small existingIssueBox" style="margin-bottom: 0px">
 						<div class="row-fluid">

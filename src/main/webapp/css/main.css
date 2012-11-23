@@ -23,3 +23,7 @@ label {
 .note {
 	width: 100%;
 }
+
+.well-bottom {
+	margin-bottom: 10px
+}
