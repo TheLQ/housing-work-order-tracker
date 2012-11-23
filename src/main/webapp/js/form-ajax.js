@@ -5,36 +5,38 @@
  */
 $(document).ready(function(){
 	//Dynamic room lookup
-	$("#room").live('input', function() {
-		room = $(this).val();
+	$("#room, #building").on('input change', function() {
+		room = $("#room").val();
+		building = $("#building option:selected").val();
+
+		console.debug("Room: " + room.length + " | Building: " + $("#building")[0].selectedIndex)
 
 		//Ignore rooms with less than 3 characters, user is probably typing in a room
 		if(room.length < 3)
 			return;
 
-		building = $("#building option:selected").val();
-		if(building == "")
-			$("#roomStatus").html("No building is selected!");
-		else {
-			//Need to get room info from server
-			$("#roomStatus").html("Fetching info for " + building + " " + room + "...");
-			$.ajaxSetup ({
-				cache: false
-			});
-			$.getJSON("processData?mode=room", {
-				building: building,
-				room: room
-			}, function(json) {
-				if(typeof json.error != 'undefined')
-					$("#roomStatus").html("Server Error! " + json.error);
-				else {
-					console.log("Finished looking up room")
-					$("#roomStatus").html(json.response)
-					woUtils.inject(json.data);
-				}
+		//Ignore building that is unselected
+		if($("#building")[0].selectedIndex == 0)
+			return;
+
+		//Passed validation, get room info from server
+		$("#roomStatus").html("Fetching info for " + building + " " + room + "...");
+		$.ajaxSetup ({
+			cache: false
+		});
+		$.getJSON("processData?mode=room", {
+			building: building,
+			room: room
+		}, function(json) {
+			if(typeof json.error != 'undefined')
+				$("#roomStatus").html("Server Error! " + json.error);
+			else {
+				console.log("Finished looking up room")
+				$("#roomStatus").html(json.response)
+				woUtils.inject(json.data);
 			}
-			);
 		}
+		);
 	});
 
 	//Automagical AJAX submit
