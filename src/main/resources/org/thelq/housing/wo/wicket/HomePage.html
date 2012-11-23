@@ -69,22 +69,25 @@
 					<br/>Submit Status: <span id="submitStatus">Waiting on input...</span>
 				</form>
 			</div>
-			<div class="span6 form-inline">
+			<div class="span6 form-inline" id="existingContainer">
 				<div class="well well-small" style="text-align: center">
 					<h4>Existing Issues</h4>
 					<b>Building:</b> <select id="existBuilding" name="existBuilding" wicket:id="existBuilding"></select>
+					<br/>Existing Status: <span id="existingStatus">Waiting for input...</span>
 				</div>
-				<div class="well well-small">
-					<b>Room:</b> Threlkeld 339
-					<div class="well well-small" style="margin-bottom: 0px">
+				<div class="well well-small existingBox">
+					<b>Room:</b> <span class="existingLocation"></span>
+					<div class="well well-small existingIssueBox" style="margin-bottom: 0px">
 						<div class="row-fluid">
 							<div class="span4">
-								<b>Issue #34:</b>  <span class="label label-important">Open</span>
-								<br/>Cable - Broken
+								<b>Issue #<span class="existingSheetId"></span>:</b>  <span class="label label-important existingStatus"></span>
+								<br/><span class="existingIssue"></span>
 							</div>
 							<div class="span8" style="text-align: right">
-								<b>Opened:</b> Aug 08 2012, 12:36 PM (WT: N) (2 days old)
-								<br/><b>Waiting:</b> Aug 09 2012, 03:44 PM (WT: N) (2 days old)
+								<b>Opened:</b> <span class="existingOpened"></span>
+								<div class="existingWaitingWrap" style="display: none">
+									<b>Waiting:</b> <span class="existingWaiting"></span>
+								</div>
 							</div>
 						</div>
 					</div>
@@ -101,6 +104,7 @@
 		<script type="text/javascript" src="js/form-utils.js"></script>
 		<script type="text/javascript" src="js/form-duplication.js"></script>
 		<script type="text/javascript" src="js/form-automation.js"></script>
+		<script type="text/javascript" src="js/form-existing.js"></script>
 		<script type="text/javascript" src="js/form-ajax.js"></script>
 	</body>
 </html>
