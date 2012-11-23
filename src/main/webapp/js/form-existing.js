@@ -21,7 +21,6 @@ $(document).ready(function(){
 				newExistingBox.insertAfter(lastExistingBox)
 				woUtils.resetExistingIssue(newExistingBox)
 				lastExistingBox = newExistingBox
-
 			}
 
 			//Show location
@@ -29,7 +28,6 @@ $(document).ready(function(){
 
 			//Parse each issue that is under this location
 			locationData = data[location]
-
 			for(i in locationData) {
 				console.debug("Parsing existing issue #" + i + " at location " + location)
 
@@ -49,8 +47,6 @@ $(document).ready(function(){
 					$(".existingWaiting", lastExistingIssueBox).html(locationData[i]["waiting"] + " (" + locationData[i]["waitingAge"] + " days old)")
 					$(".existingWaitingWrap", lastExistingIssueBox).show()
 				}
-
-
 
 				//Set status
 				$(".existingStatus", lastExistingIssueBox).html(locationData[i]["status"])
@@ -85,6 +81,17 @@ $(document).ready(function(){
 		//Reset remaining issue
 		woUtils.resetExistingIssue($(".existingBox", existingContainer))
 	}
+
+	//When the user presses the load button, load the issue
+	existingContainer.on("click", ".existingLoad", function() {
+		//Extract building and room from location and update values
+		locationParts = $(".existingLocation", $(this).parent()).html().split(" ")
+		$("#building").val(locationParts[0])
+		$("#room").val(locationParts[1])
+
+		//Load
+		woUtils.loadIssues(locationParts[0], locationParts[1])
+	})
 
 	function removeAllButFirst(i) {
 		if(i == 0)
