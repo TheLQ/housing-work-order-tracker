@@ -44,7 +44,13 @@ $(document).ready(function(){
 				$(".existingSheetId", lastExistingIssueBox).html(locationData[i]["sheetId"])
 				$(".existingIssue", lastExistingIssueBox).html(locationData[i]["issue"])
 				$(".existingOpened", lastExistingIssueBox).html(locationData[i]["opened"] + " (" + locationData[i]["openedAge"] + " days old)")
-				$(".existingWaiting", lastExistingIssueBox).html(locationData[i]["waiting"] + " (" + locationData[i]["waitingAge"] + " days old)")
+				$(".existingWaitingWrap", lastExistingIssueBox).hide()
+				if(locationData[i]["waiting"].length != 0) {
+					$(".existingWaiting", lastExistingIssueBox).html(locationData[i]["waiting"] + " (" + locationData[i]["waitingAge"] + " days old)")
+					$(".existingWaitingWrap", lastExistingIssueBox).show()
+				}
+
+
 
 				//Set status
 				$(".existingStatus", lastExistingIssueBox).html(locationData[i]["status"])
