@@ -5,7 +5,7 @@
  */
 $(document).ready(function(){
 	//Dynamic room lookup
-	woUtils.loadIssues = function(room, building) {
+	woUtils.loadIssues = function(building, room) {
 		console.debug("Room: " + room.length + " | Building: " + $("#building")[0].selectedIndex)
 
 		//Ignore rooms with less than 3 characters, user is probably typing in a room
