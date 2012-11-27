@@ -75,10 +75,10 @@
 					<b>Building:</b> <select id="existBuilding" name="existBuilding" wicket:id="existBuilding"></select>
 					<br/>Existing Status: <span id="existingStatus">Waiting for input...</span>
 				</div>
-				<div class="well well-small well-bottom existingBox" style="white-space: nowrap;">
+				<div class="well well-small well-bottom existingBox">
 					<b>Room:</b> <span class="existingLocation"></span> <button class="btn btn-info btn-small existingLoad">Load</button>
-					<div class="well well-small existingIssueBox" style="margin-bottom: 0px">
-						<div class="row-fluid">
+					<div class="well well-small existingIssueBox" style="margin-bottom: 0px;">
+						<div class="row-fluid" style="white-space: nowrap">
 							<div class="span4">
 								<b>Issue #<span class="existingSheetId"></span>:</b>  <span class="label label-important existingStatus"></span>
 								<br/><span class="existingIssue"></span>
@@ -89,6 +89,10 @@
 									<b>Waiting:</b> <span class="existingWaiting"></span>
 								</div>
 							</div>
+						</div>
+						<div class="existingLastNoteContainer">
+							<b>Last note:</b> <span class="existingLastNote"></span>
+							(<span class="existingLastNoteDays">63</span> days old)
 						</div>
 					</div>
 				</div>

@@ -57,6 +57,16 @@ $(document).ready(function(){
 					$(".existingStatus", lastExistingIssueBox ).addClass("label-warning")
 				else
 					alert("Unknown status " + locationData[i]["status"] + " contained at position " + location)
+
+				//Note handling
+				$(".existingLastNoteContainer", lastExistingIssueBox).hide()
+				if(locationData[i]["notes"][0]["note"].length != 0) {
+					//Show the last note
+					lastNote = locationData[i]["notes"][locationData[i]["notes"].length - 1]
+					$(".existingLastNote", lastExistingIssueBox).html(lastNote["note"])
+					$(".existingLastNoteDays", lastExistingIssueBox).html(lastNote["noteAge"])
+					$(".existingLastNoteContainer", lastExistingIssueBox).show()
+				}
 			}
 		}
 	}
@@ -70,6 +80,10 @@ $(document).ready(function(){
 		$(".existingIssue", existingBox).html("")
 		$(".existingOpened", existingBox).html("")
 		$(".existingWaiting", existingBox).html("")
+		$(".existingLastNoteContainer", existingBox).hide();
+		$(".existingLastNote", existingBox).html("")
+		$(".existingLastNote", existingBox).html("")
+		$(".existingLastNoteDays", existingBox).html("");
 
 		existingBox.children(".existingIssueBox").each(removeAllButFirst);
 	}
