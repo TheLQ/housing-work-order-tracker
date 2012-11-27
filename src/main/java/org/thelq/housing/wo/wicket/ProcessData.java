@@ -266,10 +266,14 @@ public class ProcessData extends AbstractResource {
 			Spreadsheet.NoteEntry curNoteEntry = notesItr.hasNext() ? notesItr.next() : null;
 
 			JSONObject note = new JSONObject();
-			if (curNoteEntry != null)
+			if (curNoteEntry != null) {
 				log.info("NoteEntry date: " + curNoteEntry.getDate() + " | Note: " + curNoteEntry.getNote());
-			note.put("noteDate", (curNoteEntry != null) ? Spreadsheet.getNewDateFormat().print(curNoteEntry.getDate()) : "");
-			note.put("note", (curNoteEntry != null) ? StringUtils.defaultString(curNoteEntry.getNote()) : "");
+				note.put("noteDate", Spreadsheet.getNewDateFormat().print(curNoteEntry.getDate()));
+				note.put("note", StringUtils.defaultString(curNoteEntry.getNote()));
+			} else {
+				note.put("noteDate", "");
+				note.put("note", "");
+			}
 			curNewIssue.accumulate("notes", note);
 		} while (notesItr.hasNext());
 		return curNewIssue;
