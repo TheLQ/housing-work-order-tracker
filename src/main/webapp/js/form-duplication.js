@@ -228,15 +228,18 @@ $(document).ready(function(){
 	}
 
 	function issueHasData(issueBox) {
-		isData = false;
-		if($(".statusSelect", issueBox).get().selectedIndex < 1)
-			isData = true;
+		hasData = false;
+		if($(".issueSelect", issueBox)[0].selectedIndex != 0)
+			hasData = true;
 		$(".note, .noteDate", issueBox).each(function(){
-			if($(this).val().length != 0)
-				isData = true;
+			if($(this).val().length != 0) {
+				hasData = true;
+				//Stop the each loop
+				return false;
+			}
 		});
 
-		return isData;
+		return hasData;
 	}
 
 	function resetIssue(issueBox) {
