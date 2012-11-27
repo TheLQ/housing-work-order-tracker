@@ -60,15 +60,58 @@ $(document).ready(function(){
 
 				//Note handling
 				$(".existingLastNoteContainer", lastExistingIssueBox).hide()
+				$(".exisitngNoteToggle", lastExistingIssueBox).hide()
 				if(locationData[i]["notes"][0]["note"].length != 0) {
 					//Show the last note
 					lastNote = locationData[i]["notes"][locationData[i]["notes"].length - 1]
 					$(".existingLastNote", lastExistingIssueBox).html(lastNote["note"])
 					$(".existingLastNoteDays", lastExistingIssueBox).html(lastNote["noteAge"])
 					$(".existingLastNoteContainer", lastExistingIssueBox).show()
+					$(".exisitngNoteToggle", lastExistingIssueBox).show()
+
+					//Configure the rest of the notes for long view
+					notes = locationData[i]["notes"];
+					for(j in notes) {
+						lastNoteBox = $(".existingNoteBox", lastExistingIssueBox).last()
+						$(".existingNoteDate", lastNoteBox).html(notes[j]["noteDate"])
+						$(".existingNoteAge", lastNoteBox).html(notes[j]["noteAge"])
+						$(".existingNote", lastNoteBox).html(notes[j]["note"])
+						addExistingNote(lastExistingIssueBox)
+					}
+					//Remove last extra blank issue
+					$(".existingNoteBox", lastExistingIssueBox).last().remove()
 				}
 			}
 		}
+	}
+
+	$("#existingContainer").on("click", ".exisitngNoteToggle", function() {
+		text = $(this).html();
+		existingIssueBox = $(this).parent()
+		if(text == "Show more") {
+			$(".existingLastNoteContainer", existingIssueBox).hide()
+			$(".existingNoteContainer", existingIssueBox).show()
+			$(this).html("Show less")
+		} else if(text == "Show less") {
+			$(".existingLastNoteContainer", existingIssueBox).show()
+			$(".existingNoteContainer", existingIssueBox).hide()
+			$(this).html("Show more")
+		}
+	})
+
+	//Note: Here we don't care about keeping the IDs up to date since its not being submitted
+	function addExistingNote(existingIssueBox) {
+		lastNoteBox = $(".existingNoteBox", existingIssueBox).last()
+
+		newNoteBox = lastNoteBox.clone()
+		newNoteBox.insertAfter(lastNoteBox)
+		resetExistingNote(newNoteBox);
+	}
+
+	function resetExistingNote(existingNoteBox) {
+		$(".existingNoteDate", existingNoteBox).html("")
+		$(".existingNoteAge", existingNoteBox).html("")
+		$(".existingNote", existingNoteBox).html("")
 	}
 
 	woUtils.resetExistingIssue = function(existingBox) {
@@ -84,6 +127,15 @@ $(document).ready(function(){
 		$(".existingLastNote", existingBox).html("")
 		$(".existingLastNote", existingBox).html("")
 		$(".existingLastNoteDays", existingBox).html("");
+		$(".exisitngNoteToggle", existingBox).html("Show more")
+
+		//Reset notes
+		$(".existingNoteBox", existingBox).each(function(i) {
+			if(i == 0)
+				resetExistingNote($(this))
+			else
+				$(this).remove()
+		})
 
 		existingBox.children(".existingIssueBox").each(removeAllButFirst);
 	}
