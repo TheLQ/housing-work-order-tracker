@@ -270,7 +270,7 @@ public class ProcessData extends AbstractResource {
 				log.info("NoteEntry date: " + curNoteEntry.getDate() + " | Note: " + curNoteEntry.getNote());
 				note.put("noteDate", Spreadsheet.getNewDateFormat().print(curNoteEntry.getDate()));
 				note.put("note", StringUtils.defaultString(curNoteEntry.getNote()));
-				note.put("noteAge", Days.daysBetween(curNoteEntry.getDate(), new DateTime()));
+				note.put("noteAge", Days.daysBetween(curNoteEntry.getDate(), new DateTime()).getDays());
 			} else {
 				note.put("noteDate", "");
 				note.put("note", "");
