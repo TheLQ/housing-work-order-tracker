@@ -11,6 +11,15 @@ $(document).ready(function(){
 
 	woUtils.injectExisting = function(data) {
 		woUtils.resetExisting()
+
+		//Hide the entire container if there's no data
+		$(".existingBox", existingContainer).show();
+		console.warn("Data: ", data);
+		if ($.isEmptyObject(data)) {
+			$(".existingBox", existingContainer).hide();
+			return;
+		}
+
 		for(var location in data) {
 			console.info("Starting to parse existing issues at " + location)
 			lastExistingBox = $(".existingBox", existingContainer).last()
