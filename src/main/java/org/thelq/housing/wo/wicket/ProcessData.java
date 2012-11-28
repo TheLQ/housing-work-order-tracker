@@ -12,14 +12,19 @@ import java.net.MalformedURLException;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.SortedSet;
 import java.util.TreeMap;
+import java.util.TreeSet;
 import java.util.regex.Pattern;
 import javax.annotation.RegEx;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
@@ -217,20 +222,35 @@ public class ProcessData extends AbstractResource {
 	public JSONObject handleExistingSubmit() throws UnsupportedEncodingException, UnsupportedEncodingException, MalformedURLException, ServiceException, IOException, ParseException {
 		JSONObject response = new JSONObject();
 		IRequestParameters params = RequestCycle.get().getRequest().getRequestParameters();
-		//Use TreeMap since it can sort keys
-		Map<String, List<JSONObject>> issueMap = new TreeMap();
 
 		//Process and sort incoming list entries into issueMap
 		String building = params.getParameterValue("building").toString();
+		String sort = params.getParameterValue("sort").toString();
 		List<RawDataEntry> rawEntries = Spreadsheet.get().loadRawBuilding(building);
-		for (RawDataEntry curEntry : rawEntries) {
-			//Generate location string to be used as a key and displayed in form
-			String location = curEntry.getBuilding() + " " + curEntry.getRoom();
 
-			//Insert
-			if (!issueMap.containsKey(location))
-				issueMap.put(location, new ArrayList());
-			issueMap.get(location).add(generateJsonFromEntry(curEntry));
+		//First, get and sort entries by timestamp
+		SortedSet<RawDataEntry> timedEntries = new TreeSet(new RawDataEntryComparator(SortType.valueOf(sort.toUpperCase())));
+		timedEntries.addAll(rawEntries);
+
+		//Now, grab the topmost entry and process
+		Map<String, List<JSONObject>> issueMap = new LinkedHashMap();
+		while (!timedEntries.isEmpty()) {
+			RawDataEntry topEntry = timedEntries.first();
+
+			//Put all this room's issues in the map at once
+			for (Iterator<RawDataEntry> timedItr = timedEntries.iterator(); timedItr.hasNext();) {
+				RawDataEntry curEntry = timedItr.next();
+				if (!curEntry.getBuilding().equals(topEntry.getBuilding()) || !curEntry.getRoom().equals(topEntry.getRoom()))
+					continue;
+
+				String location = curEntry.getBuilding() + " " + curEntry.getRoom();
+				if (!issueMap.containsKey(location))
+					issueMap.put(location, new ArrayList());
+				issueMap.get(location).add(generateJsonFromEntry(curEntry));
+
+				//Remove so future iterations don't see it
+				timedItr.remove();
+			}
 		}
 
 		response.put("data", issueMap);
@@ -297,5 +317,34 @@ public class ProcessData extends AbstractResource {
 		 */
 		protected Map<Integer, String> issueMap = new HashMap();
 		protected Map<Integer, List<String>> notesMap = new HashMap();
+	}
+
+	@AllArgsConstructor
+	protected static class RawDataEntryComparator implements Comparator<RawDataEntry> {
+		protected SortType sort;
+
+		@Override
+		public int compare(RawDataEntry o1, RawDataEntry o2) {
+			if (sort == SortType.ASCENDING || sort == SortType.DECENDING) {
+				//Compare with the most recent timestamp
+				long recentTime1 = ((o1.getWaitingDate() != null) ? o1.getWaitingDate() : o1.getOpenedDate()).getMillis();
+				long recentTime2 = ((o2.getWaitingDate() != null) ? o2.getWaitingDate() : o2.getOpenedDate()).getMillis();
+				int compareResult = Long.compare(recentTime1, recentTime2);
+				//Normal ordering if ascending, reverse if decending
+				return (sort == SortType.ASCENDING) ? compareResult : compareResult * (-1);
+			} else if (sort == SortType.ROOM) {
+				//Append issue and number to location so they are never the exact same (causes them to be considered duplicates)
+				String location1 = o1.getBuilding() + " " + o1.getRoom() + generateIssueName(o1) + o1.getSheetId();
+				String location2 = o2.getBuilding() + " " + o2.getRoom() + generateIssueName(o2) + o2.getSheetId();
+				return location1.compareToIgnoreCase(location2);
+			} else
+				throw new RuntimeException("Unknown sort type " + sort);
+		}
+	}
+
+	protected static enum SortType {
+		ROOM,
+		ASCENDING,
+		DECENDING
 	}
 }
