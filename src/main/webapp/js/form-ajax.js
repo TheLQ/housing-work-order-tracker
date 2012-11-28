@@ -87,7 +87,7 @@ $(document).ready(function(){
 				$("#submitStatus").html("Success! " + data.submitStatus);
 				woUtils.resetForm()
 				woUtils.resetRoom()
-				handleExisting($("#existBuilding").val())
+				handleExisting()
 			}
 		},
 		error: function(data) {
@@ -103,14 +103,15 @@ $(document).ready(function(){
 	});
 
 	//Existing issue handling
-	function handleExisting(building) {
+	function handleExisting() {
 		$("#existingStatus").html("Loading...")
 
 		$.ajaxSetup ({
 			cache: false
 		});
 		$.getJSON("processData?mode=existing", {
-			building: building
+			building: $("#existBuilding").val(),
+			sort: $("#existingSort").val()
 		}, function(json) {
 			if(typeof json.error != 'undefined')
 				$("#existingStatus").html("Server Error! " + json.error);
@@ -122,8 +123,8 @@ $(document).ready(function(){
 		}
 		);
 	}
-	$("#existBuilding").on("change", function() {
-		handleExisting($(this).val())
+	$("#existBuilding, #existingSort").on("change", function() {
+		handleExisting()
 	})
-	handleExisting($("#existBuilding").val())
+	handleExisting()
 });

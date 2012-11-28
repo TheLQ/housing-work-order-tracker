@@ -72,7 +72,12 @@
 			<div class="span6 form-inline" id="existingContainer">
 				<div class="well well-small well-bottom" style="text-align: center;">
 					<h4>Existing Issues</h4>
-					<b>Building:</b> <select id="existBuilding" name="existBuilding" wicket:id="existBuilding"></select>
+					<b>Building:</b> <select id="existBuilding" wicket:id="existBuilding"></select>
+					<b>Sort:</b> <select id="existingSort" style="width: 8em">
+						<option>Room</option>
+						<option>Ascending</option>
+						<option>Decending</option>
+					</select>
 					<br/>Existing Status: <span id="existingStatus">Waiting for input...</span>
 				</div>
 				<div class="well well-small well-bottom existingBox">
