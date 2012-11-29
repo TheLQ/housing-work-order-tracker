@@ -26,7 +26,10 @@ $(document).ready(function(){
 			building: building,
 			room: room
 		}, function(json) {
-			if(typeof json.error != 'undefined')
+			if(json == null)
+				$("#existingStatus").html("JS Error! Data is null, so there's no data to process." +
+						"Is there an Exception in the server logs?");
+			else if(typeof json.error != 'undefined')
 				$("#roomStatus").html("Server Error! " + json.error);
 			else {
 				console.log("Finished looking up room")
@@ -77,7 +80,10 @@ $(document).ready(function(){
 			return allGood
 		},
 		success: function(data) {
-			if(typeof data.error != 'undefined')
+			if(data == null)
+				$("#existingStatus").html("JS Error! Data is null, so there's no data to process." +
+						"Is there an Exception in the server logs?");
+			else if(typeof data.error != 'undefined')
 				$("#submitStatus").html("Server Error! " + data.error);
 			else {
 				console.log("Finished submitting form")
@@ -141,7 +147,10 @@ $(document).ready(function(){
 			building: $("#existBuilding").val(),
 			sort: $("#existingSort").val()
 		}, function(json) {
-			if(typeof json.error != 'undefined')
+			if(json == null)
+				$("#existingStatus").html("JS Error! Data is null, so there's no data to process." +
+						"Is there an Exception in the server logs?");
+			else if(typeof json.error != 'undefined')
 				$("#existingStatus").html("Server Error! " + json.error);
 			else {
 				console.log("Finished querying exisitng issues")
