@@ -80,7 +80,36 @@ $(document).ready(function(){
 				console.log("Finished submitting form")
 				$("#submitStatus").html("Success! " + data.submitStatus);
 				woUtils.resetForm()
-				woUtils.resetRoom()
+
+				//Autoloading of next room
+				mode = $("#modeSelect").val();
+				if(mode != "Normal") {
+					//Determine exactly what is the "next room"
+					building = null;
+					room = null;
+					if(mode == "Walkthrough") {
+						building = $("#building").val()
+						room = parseInt($("#room").val(), 10) + 1
+					} else {
+						//Autofix mode, try to find the next issue
+						found = false;
+						$(".existingLocation").each(function() {
+							if(found) {
+								//Previous iteration found the location, so return this one
+								locations = $(this).html().split(" ")
+								building = locations[0]
+								room = locations[1]
+								return false;
+							}
+							if($(this).html() == $("#building").val() + " " + $("#room").val())
+								found = true;
+						})
+						console.debug("Autoloating next issue Building: " + building + " | Next room: " + room)
+					}
+					woUtils.loadIssues(building, room)
+				} else {
+					woUtils.resetRoom()
+				}
 				handleExisting()
 			}
 		},
