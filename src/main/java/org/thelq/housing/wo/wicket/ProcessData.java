@@ -329,7 +329,7 @@ public class ProcessData extends AbstractResource {
 				//Compare with the most recent timestamp
 				long recentTime1 = ((o1.getWaitingDate() != null) ? o1.getWaitingDate() : o1.getOpenedDate()).getMillis();
 				long recentTime2 = ((o2.getWaitingDate() != null) ? o2.getWaitingDate() : o2.getOpenedDate()).getMillis();
-				int compareResult = Long.compare(recentTime1, recentTime2);
+				int compareResult = compareLong(recentTime1, recentTime2);
 				//Normal ordering if ascending, reverse if decending
 				return (sort == SortType.ASCENDING) ? compareResult : compareResult * (-1);
 			} else if (sort == SortType.ROOM) {
@@ -339,6 +339,10 @@ public class ProcessData extends AbstractResource {
 				return location1.compareToIgnoreCase(location2);
 			} else
 				throw new RuntimeException("Unknown sort type " + sort);
+		}
+
+		protected static int compareLong(long x, long y) {
+			return (x < y) ? -1 : ((x == y) ? 0 : 1);
 		}
 	}
 
