@@ -14,7 +14,6 @@ $(document).ready(function(){
 
 		//Hide the entire container if there's no data
 		$(".existingBox", existingContainer).show();
-		console.warn("Data: ", data);
 		if ($.isEmptyObject(data)) {
 			$(".existingBox", existingContainer).hide();
 			return;
