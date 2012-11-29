@@ -73,6 +73,7 @@ public class ProcessData extends AbstractResource {
 	protected ResourceResponse newResourceResponse(Attributes a) {
 		ResourceResponse r = new ResourceResponse();
 		r.setContentType("application/json");
+		r.disableCaching();
 		r.setWriteCallback(new WriteCallback() {
 			@Override
 			public void writeData(Attributes a) {
