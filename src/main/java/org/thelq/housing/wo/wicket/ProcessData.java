@@ -330,6 +330,11 @@ public class ProcessData extends AbstractResource {
 				//Compare with the most recent timestamp
 				long recentTime1 = ((o1.getWaitingDate() != null) ? o1.getWaitingDate() : o1.getOpenedDate()).getMillis();
 				long recentTime2 = ((o2.getWaitingDate() != null) ? o2.getWaitingDate() : o2.getOpenedDate()).getMillis();
+				//We don't want them to be the same
+				if(recentTime1 == recentTime2) {
+					recentTime1 += o1.getSheetId();
+					recentTime2 += o2.getSheetId();
+				}
 				int compareResult = compareLong(recentTime1, recentTime2);
 				//Normal ordering if ascending, reverse if decending
 				return (sort == SortType.ASCENDING) ? compareResult : compareResult * (-1);
