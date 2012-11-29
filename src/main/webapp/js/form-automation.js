@@ -6,9 +6,9 @@
 $(document).ready(function(){
 	/**
 	 * This (somewhat poorly named) script handles general automation of the form,
-	 * or essentially stuff that doesn't fit elsewhere 
+	 * or essentially stuff that doesn't fit elsewhere
 	 */
-	
+
 	//AutoFixIt display toggle
 	function toggleAutoFix() {
 		console.log("Toggling autofix visibility based on current mode " + $("#modeSelect").val())
@@ -28,7 +28,7 @@ $(document).ready(function(){
 	$('#modeSelect').change(function () {
 		toggleAutoFix();
 	});
-				
+
 	//AutoFixIt autoclosing issues
 	woUtils.autoCloseIssues = function() {
 		selectedIssues = $("#autoFix").val();
@@ -48,14 +48,14 @@ $(document).ready(function(){
 	}
 	$('#autoFix').change(woUtils.autoCloseIssues);
 	$(".issueSelect").change(woUtils.autoCloseIssues);
-				
+
 	//Status Message
 	woUtils.setStatus = function(issueBox, val) {
 		console.log("Updating status for " + issueBox.attr("id"))
 		select = $(".issueStatus", issueBox);
 		if(val != undefined)
 			select.val(val)
-					
+
 		//Set color based on value
 		if(val == "Open")
 			select.removeClass("btn-danger btn-warning btn-success").addClass("btn-danger");
@@ -66,5 +66,23 @@ $(document).ready(function(){
 	}
 	$("#mainForm").on("change", ".issueStatus", function() {
 		woUtils.setStatus($(this).closest(".issueBox"), $(this).val())
+	});
+
+	//Disable issue options that have already been used
+	woUtils.autoDisableIssues = function() {
+		console.warn("Auto disabling issues")
+
+		//Undisable all the options
+		$(".issueSelect option").removeAttr("disabled")
+
+		//Gather all selected options that aren't the first "Choose One" option
+		$(".issueSelect option").filter(":selected").not('[value=""]').each(function() {
+			//Disable this option in all other issueSelect's
+			console.debug("Current option: " + $(this).val())
+			$(".issueSelect option[value='" + $(this).val() + "']").not($(this)).attr("disabled", "disabled")
+		});
+	}
+	$("#mainForm").on("change", ".issueSelect", function() {
+		woUtils.autoDisableIssues()
 	});
 });

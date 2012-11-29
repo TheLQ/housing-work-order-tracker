@@ -225,6 +225,9 @@ $(document).ready(function(){
 
 		//Update status based on current autoclose settings
 		woUtils.autoCloseIssues();
+
+		//Disable already selected options
+		woUtils.autoDisableIssues();
 	}
 
 	function issueHasData(issueBox) {
