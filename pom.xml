@@ -56,6 +56,13 @@
 				<version>0.9.5</version>
 			</plugin>
 
+			<!-- Jetty for testing. Run with jetty:run and goto http://localhost:8080/housing-wo-wicket/ -->
+			<plugin>
+				<groupId>org.mortbay.jetty</groupId>
+				<artifactId>maven-jetty-plugin</artifactId>
+				<version>6.1.26</version>
+			</plugin>
+
 			<!--
 				Upload application to the appspot automatically, during release:perform
 			-->
