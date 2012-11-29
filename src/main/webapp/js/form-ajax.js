@@ -86,10 +86,10 @@ $(document).ready(function(){
 
 				//Autoloading of next room
 				mode = $("#modeSelect").val();
-				if(mode != "Normal") {
+				if(mode != "Normal" && $(".existingLocation").length > 1) {
 					//Determine exactly what is the "next room"
-					building = null;
-					room = null;
+					building = "";
+					room = "";
 					if(mode == "Walkthrough") {
 						building = $("#building").val()
 						room = parseInt($("#room").val(), 10) + 1
@@ -109,7 +109,9 @@ $(document).ready(function(){
 						})
 						console.debug("Autoloating next issue Building: " + building + " | Next room: " + room)
 					}
-					woUtils.loadIssues(building, room)
+					//Make sure we have enough data
+					if(building.length != 0 && room.length != 0)
+						woUtils.loadIssues(building, room)
 				} else {
 					woUtils.resetRoom()
 				}
