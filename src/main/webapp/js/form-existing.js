@@ -160,10 +160,6 @@ $(document).ready(function(){
 	existingContainer.on("click", ".existingLoad", function() {
 		//Extract building and room from location and update values
 		locationParts = $(".existingLocation", $(this).parent()).html().split(" ")
-		$("#building").val(locationParts[0])
-		$("#room").val(locationParts[1])
-
-		//Load
 		woUtils.loadIssues(locationParts[0], locationParts[1])
 	})
 

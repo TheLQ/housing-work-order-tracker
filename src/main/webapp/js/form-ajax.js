@@ -10,9 +10,12 @@ $(document).ready(function(){
 		if(room.length < 3)
 			return;
 
-		//Ignore building that is unselected
-		if($("#building")[0].selectedIndex == 0)
+		//Make sure building isn't the default choice
+		if(building == $("#building option").first().val())
 			return;
+
+		$("#building").val(building)
+		$("#room").val(room)
 
 		//Passed validation, get room info from server
 		$("#roomStatus").html("Fetching info for " + building + " " + room + "...");
