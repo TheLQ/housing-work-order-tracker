@@ -27,7 +27,7 @@ $(document).ready(function(){
 			room: room
 		}, function(json) {
 			if(json == null)
-				$("#existingStatus").html("JS Error! Data is null, so there's no data to process." +
+				$("#roomStatus").html("JS Error! Data is null, so there's no data to process." +
 						"Is there an Exception in the server logs?");
 			else if(typeof json.error != 'undefined')
 				$("#roomStatus").html("Server Error! " + json.error);
@@ -81,7 +81,7 @@ $(document).ready(function(){
 		},
 		success: function(data) {
 			if(data == null)
-				$("#existingStatus").html("JS Error! Data is null, so there's no data to process." +
+				$("#submitStatus").html("JS Error! Data is null, so there's no data to process." +
 						"Is there an Exception in the server logs?");
 			else if(typeof data.error != 'undefined')
 				$("#submitStatus").html("Server Error! " + data.error);
