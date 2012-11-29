@@ -40,12 +40,6 @@ $(document).ready(function(){
 	//Automagical AJAX submit
 	$("#mainForm").ajaxForm({
 		//target:        '#submitStatus',   // target element(s) to be updated with server response
-		beforeSerialize: function() {
-			$(".issueBox").each(function() {
-				curStatus = $(".statusName", $(this)).html();
-				$(".statusSelect", $(this)).val(curStatus);
-			});
-		},
 		beforeSubmit: function() {
 			$("#submitStatus").html("Submitting...");
 
