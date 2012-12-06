@@ -91,7 +91,7 @@
 		<dependency>
 			<groupId>org.apache.wicket</groupId>
 			<artifactId>wicket-core</artifactId>
-			<version>6.2.0</version>
+			<version>6.3.0</version>
 			<exclusions>
 				<!-- Depends on old version, conflicts with project -->
 				<exclusion>
