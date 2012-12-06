@@ -131,7 +131,7 @@ public class Spreadsheet {
 		String roomQuery = (!StringUtils.isBlank(room)) ? " and room = \"" + room + "\"" : "";
 		String andSep = (!StringUtils.isBlank(building) || !StringUtils.isBlank(room)) ? " and " : "";
 		String query = URLEncoder.encode(buildingQuery + roomQuery + andSep + "status != Closed", "UTF-8");
-		log.info("Querying sheet with: " + query);
+		log.debug("Querying sheet with: " + query);
 		ListFeed listFeed = ssService.getFeed(new URL(genRawAddress() + "?sq=" + query), ListFeed.class);
 		return loadRaw(listFeed);
 	}
@@ -268,7 +268,7 @@ public class Spreadsheet {
 		//I'm sorry bandwidth counter
 
 		//Add one to compensate for Java 0 based system
-		log.info("Grabbing the entire spreadsheet to see how many rows there are");
+		log.debug("Grabbing the entire spreadsheet to see how many rows there are");
 		return ssService.getFeed(new URL(genRawAddress()), ListFeed.class).getEntries().size() + 1;
 	}
 
