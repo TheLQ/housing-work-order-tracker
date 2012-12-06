@@ -149,8 +149,8 @@ public class ConvertUtils {
 		for (ListEntry row : rows) {
 			CustomElementCollection rowData = row.getCustomElements();
 			for (String columnName : rowData.getTags())
-				//Trim all values
-				rowData.setValueLocal(columnName, rowData.getValue(columnName).trim());
+				//Trim all values (use StringUtils since it handles null values)
+				rowData.setValueLocal(columnName, StringUtils.trimToEmpty(rowData.getValue(columnName)));
 		}
 	}
 }
