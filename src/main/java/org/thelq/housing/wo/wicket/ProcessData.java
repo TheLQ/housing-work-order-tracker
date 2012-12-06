@@ -110,7 +110,7 @@ public class ProcessData extends AbstractResource {
 		//Note: room is a string since some buildings (IE Louisville) have suites with letters
 		String room = params.getParameterValue("room").toString();
 
-		log.info("Building: " + building + " | room: " + room);
+		log.debug("Building: " + building + " | room: " + room);
 
 		//Parse out POST data
 		DateTime date = new DateTime();
@@ -152,7 +152,7 @@ public class ProcessData extends AbstractResource {
 				entry.setRoom(room);
 				entry.setOpenedDate(date);
 				entry.setSheetId(++lastSheetId);
-				log.info("Created new issue with sheet id " + entry.getSheetId());
+				log.debug("Created new issue with sheet id " + entry.getSheetId());
 
 				String[] issueParts = params.getParameterValue(prefix + "issueSelect").toString().split(" - ");
 				entry.setType(issueParts[0]);
@@ -161,7 +161,7 @@ public class ProcessData extends AbstractResource {
 
 			//Handle status appropriately
 			String status = params.getParameterValue(prefix + "issueStatus").toString();
-			log.info("Setting issue with prefix " + prefix + " to status " + status);
+			log.debug("Setting issue with prefix " + prefix + " to status " + status);
 			if (status.equalsIgnoreCase("open"))
 				entry.setStatus(Spreadsheet.Status.OPEN);
 			else if (status.equalsIgnoreCase("closed")) {
@@ -182,7 +182,7 @@ public class ProcessData extends AbstractResource {
 					continue;
 
 				String noteText = noteTextParam.toString();
-				log.info("For prefix " + prefix + " created note #" + i + " with text " + noteText);
+				log.debug("For prefix " + prefix + " created note #" + i + " with text " + noteText);
 				entry.getNotes().add(new NoteEntry(noteText, date));
 			}
 		}
@@ -288,7 +288,7 @@ public class ProcessData extends AbstractResource {
 
 			JSONObject note = new JSONObject();
 			if (curNoteEntry != null) {
-				log.info("NoteEntry date: " + curNoteEntry.getDate() + " | Note: " + curNoteEntry.getNote());
+				log.debug("NoteEntry date: " + curNoteEntry.getDate() + " | Note: " + curNoteEntry.getNote());
 				note.put("noteDate", Spreadsheet.getNewDateFormat().print(curNoteEntry.getDate()));
 				note.put("note", StringUtils.defaultString(curNoteEntry.getNote()));
 				note.put("noteAge", Days.daysBetween(curNoteEntry.getDate(), new DateTime()).getDays());
