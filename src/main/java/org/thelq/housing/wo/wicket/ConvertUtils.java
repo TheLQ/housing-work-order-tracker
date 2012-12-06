@@ -14,10 +14,7 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -26,10 +23,10 @@ import java.util.regex.Pattern;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateMidnight;
 import org.joda.time.DateTime;
-import org.joda.time.DateTimeField;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.DateTimeFormatterBuilder;
+import org.joda.time.format.DateTimeParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,11 +41,11 @@ public class ConvertUtils {
 
 	public static void main(String[] args) throws MalformedURLException, ParseException, IOException, ServiceException {
 		//Init
-		formatter = new DateTimeFormatterBuilder()
-				.append(null, Spreadsheet.getOldDateFormat().getParser())
-				.append(null, Spreadsheet.getNewDateFormat().getParser())
-				.append(null, DateTimeFormat.forPattern("MM/dd/yyyy kk:mm:ss").getParser())
-				.toFormatter();
+		formatter = new DateTimeFormatterBuilder().append(null, new DateTimeParser[]{
+					Spreadsheet.getNewDateFormat().getParser(),
+					Spreadsheet.getOldDateFormat().getParser(),
+					DateTimeFormat.forPattern("MM/dd/yyyy kk:mm:ss").getParser()
+				}).toFormatter();
 
 
 		log.info("Logging in...");
