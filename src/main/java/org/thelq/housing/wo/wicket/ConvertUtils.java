@@ -44,7 +44,8 @@ public class ConvertUtils {
 		formatter = new DateTimeFormatterBuilder().append(null, new DateTimeParser[]{
 					Spreadsheet.getNewDateFormat().getParser(),
 					Spreadsheet.getOldDateFormat().getParser(),
-					DateTimeFormat.forPattern("MM/dd/yyyy kk:mm:ss").getParser()
+					DateTimeFormat.forPattern("MM/dd/yyyy kk:mm:ss").getParser(),
+					DateTimeFormat.forPattern("MM/dd/yyyy").getParser()
 				}).toFormatter();
 
 
