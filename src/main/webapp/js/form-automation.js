@@ -56,13 +56,13 @@ $(document).ready(function(){
 		if(val != undefined)
 			select.val(val)
 
-		//Set color based on value
+		//Set color based on value (classes don't work on Chrome, manually set color)
 		if(val == "Open")
-			select.removeClass("btn-danger btn-warning btn-success").addClass("btn-danger");
+			select.css("background-color", "#DA4F49")
 		else if(val == "Waiting")
-			select.removeClass("btn-danger btn-warning btn-success").addClass("btn-warning");
+			select.css("background-color", "#FAA723")
 		else if(val == "Closed")
-			select.removeClass("btn-danger btn-warning btn-success").addClass("btn-success")
+			select.css("background-color", "#5BB75B")
 	}
 	$("#mainForm").on("change", ".issueStatus", function() {
 		woUtils.setStatus($(this).closest(".issueBox"), $(this).val())
