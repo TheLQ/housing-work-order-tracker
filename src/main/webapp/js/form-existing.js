@@ -138,7 +138,7 @@ $(document).ready(function(){
 		$(".existingLastNote", existingBox).html("")
 		$(".existingLastNote", existingBox).html("")
 		$(".existingLastNoteDays", existingBox).html("");
-		$(".exisitngNoteToggle", existingBox).html("Show more")
+		setExistingNoteVisibility(existingBox, false);
 
 		//Reset notes
 		$(".existingNoteBox", existingBox).each(function(i) {
