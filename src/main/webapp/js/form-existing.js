@@ -93,18 +93,21 @@ $(document).ready(function(){
 		}
 	}
 
-	$("#existingContainer").on("click", ".exisitngNoteToggle", function() {
-		text = $(this).html();
-		existingIssueBox = $(this).parent()
-		if(text == "Show more") {
+	function setExistingNoteVisibility(existingIssueBox, more) {
+		if(more) {
 			$(".existingLastNoteContainer", existingIssueBox).hide()
 			$(".existingNoteContainer", existingIssueBox).show()
 			$(this).html("Show less")
-		} else if(text == "Show less") {
+		} else {
 			$(".existingLastNoteContainer", existingIssueBox).show()
 			$(".existingNoteContainer", existingIssueBox).hide()
 			$(this).html("Show more")
 		}
+	}
+	$("#existingContainer").on("click", ".exisitngNoteToggle", function() {
+		text = $(this).html();
+		existingIssueBox = $(this).parent()
+		setExistingNoteVisibility(existingIssueBox, text == "Show more")
 	})
 
 	//Note: Here we don't care about keeping the IDs up to date since its not being submitted
